@@ -5,9 +5,9 @@ package z_spark.tileengine.tile
 
 	public class TileNone  extends TileBase implements ITile
 	{
-		public function TileNone(row:int,col:int,dir:int,pos:Vector2D,dirv:Vector2D)
+		public function TileNone(row:int,col:int,pos:Vector2D,dirv:Vector2D)
 		{
-			super(row,col,dir,pos,dirv);
+			super(row,col,pos,dirv);
 			_type=TileType.TYPE_NONE;
 		}
 		

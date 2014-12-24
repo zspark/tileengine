@@ -7,7 +7,6 @@ package z_spark.tileengine
 	import z_spark.tileengine.tile.TileLeftSlopGround;
 	import z_spark.tileengine.tile.TileNone;
 	import z_spark.tileengine.tile.TilePlaneGround;
-	import z_spark.tileengine.tile.TilePlaneWall;
 	import z_spark.tileengine.tile.TileRightSlopGround;
 
 	use namespace zspark_tileegine_internal;
@@ -18,19 +17,12 @@ package z_spark.tileengine
 		private static const DIR_TO_DIRVECTOR:Array=[];
 		
 		private var _tileSize:uint;
-		/**
-		 * 目前只支持正方形格子； 
-		 * @param tileSize
-		 * 
-		 */
+		
 		public function TileMap(){
-			TYPE_TO_TILE_CLASS[TileType.TYPE_PLANE_WALL]=TilePlaneWall;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_PLANE_GROUND]=TilePlaneGround;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_LEFT_SLOP_GROUND]=TileLeftSlopGround;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_RIGHT_SLOP_GROUND]=TileRightSlopGround;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
-			
-			tileSize=10;//default 10;
 		}
 		
 
@@ -89,6 +81,7 @@ package z_spark.tileengine
 		 * 
 		 */
 		public function set tileMapRawInfo(mapRawInfo:Array):void{
+			if(_tileSize==0)throw Error("格子尺寸尚未设置，不能参与引擎计算。");
 			if(_mapInfo)_mapInfo.length=0;
 			else _mapInfo=[];
 			//row
@@ -100,7 +93,7 @@ package z_spark.tileengine
 					var cls:Class=TYPE_TO_TILE_CLASS[type] as Class;
 					if(cls){
 						var dir:int=mapRawInfo[i][j].dir;
-						var tile:ITile=new cls(i,j,dir,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
+						var tile:ITile=new cls(i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
 					}else{
 						throw Error("格子原始数据错误，有不能被识别或不支持的格子编号！(i,j)=("+i+','+j+"),tileType="+mapRawInfo[i][j].type);
 					}

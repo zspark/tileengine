@@ -11,7 +11,6 @@ package z_spark.tileengine.tile
 		protected var _type:int;
 		protected var _row:int;
 		protected var _col:int;
-		protected var _dir:int;
 		protected var _localPos:Vector2D;//referance;
 		protected var _dirVector:Vector2D;//referance
 		
@@ -19,10 +18,9 @@ package z_spark.tileengine.tile
 			protected var debugDrawColor:uint=0x000000;
 		};
 		
-		public function TileBase(roww:int,column:int,direction:int,localPos:Vector2D,dirV:Vector2D){
+		public function TileBase(roww:int,column:int,localPos:Vector2D,dirV:Vector2D){
 			_row=roww;
 			_col=column;
-			_dir=direction;
 			_localPos=localPos;
 			_dirVector=dirV;
 		}

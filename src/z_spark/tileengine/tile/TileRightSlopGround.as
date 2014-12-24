@@ -15,9 +15,9 @@ package z_spark.tileengine.tile
 	 */
 	public class TileRightSlopGround extends TileBase
 	{
-		public function TileRightSlopGround(row:int,col:int,dir:int,pos:Vector2D,dirv:Vector2D)
+		public function TileRightSlopGround(row:int,col:int,pos:Vector2D,dirv:Vector2D)
 		{
-			super(row,col,dir,pos,dirv);
+			super(row,col,pos,dirv);
 			_type=TileType.TYPE_RIGHT_SLOP_GROUND;
 			CONFIG::DEBUG{
 				debugDrawColor=ColorUtil.COLOR_GRAY;
