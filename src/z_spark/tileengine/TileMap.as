@@ -4,10 +4,9 @@ package z_spark.tileengine
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
-	import z_spark.tileengine.tile.TileLeftSlopGround;
 	import z_spark.tileengine.tile.TileNone;
-	import z_spark.tileengine.tile.TilePlaneGround;
-	import z_spark.tileengine.tile.TileRightSlopGround;
+	import z_spark.tileengine.tile.TilePlane;
+	import z_spark.tileengine.tile.TileSlop;
 
 	use namespace zspark_tileegine_internal;
 	public class TileMap
@@ -19,9 +18,8 @@ package z_spark.tileengine
 		private var _tileSize:uint;
 		
 		public function TileMap(){
-			TYPE_TO_TILE_CLASS[TileType.TYPE_PLANE_GROUND]=TilePlaneGround;
-			TYPE_TO_TILE_CLASS[TileType.TYPE_LEFT_SLOP_GROUND]=TileLeftSlopGround;
-			TYPE_TO_TILE_CLASS[TileType.TYPE_RIGHT_SLOP_GROUND]=TileRightSlopGround;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_PLANE]=TilePlane;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_SLOP]=TileSlop;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
 		}
 		
@@ -47,17 +45,17 @@ package z_spark.tileengine
 			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_DOWN]=new Vector2D(_tileSize,0);
 			
 			const F:Number=Math.SQRT2*.5;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP_OUTER]=new Vector2D(-F,-F);
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP]=new Vector2D(-F,-F);
-			DIR_TO_DIRVECTOR[TileDir.DIR_TOP]=new Vector2D(0,-1);
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP_OUTER]=new Vector2D(F,-F);
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP]=new Vector2D(F,-F);
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT]=new Vector2D(-1,0);
-			DIR_TO_DIRVECTOR[TileDir.DIR_MIDDLE]=new Vector2D(0,0);
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT]=new Vector2D(1,0);
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_DOWN]=new Vector2D(-F,F);
-			DIR_TO_DIRVECTOR[TileDir.DIR_DOWN]=new Vector2D(0,1);
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_DOWN]=new Vector2D(F,F);
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP_OUTER]=[new Vector2D(-F,-F)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP]=[new Vector2D(-F,-F)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_TOP]=[new Vector2D(0,-1)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP_OUTER]=[new Vector2D(F,-F)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP]=[new Vector2D(F,-F)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT]=[new Vector2D(-1,0)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_MIDDLE]=[new Vector2D(0,0)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT]=[new Vector2D(1,0)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_DOWN]=[new Vector2D(-F,F)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_DOWN]=[new Vector2D(0,1)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_DOWN]=[new Vector2D(F,F)];
 		}
 
 //		TODO:waiting..

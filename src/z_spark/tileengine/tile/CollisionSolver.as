@@ -12,47 +12,56 @@ package z_spark.tileengine.tile
 		protected var _row:int;
 		protected var _col:int;
 		protected var _localPos:Vector2D;//referance;
-		protected var _dirVector:Vector2D;//referance
+		protected var _dirArray:Array;//referance
 		
 		CONFIG::DEBUG{
 			protected var debugDrawColor:uint=0x000000;
 		};
 		
-		public function CollisionSolver(roww:int,column:int,localPos:Vector2D,dirV:Vector2D){
-			_row=roww;
+		public function CollisionSolver(row:int,column:int,localPos:Vector2D,dirArray:Array){
+			_row=row;
 			_col=column;
 			_localPos=localPos;
-			_dirVector=dirV;
+			_dirArray=dirArray;
 		}
 		
 		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):Boolean
 		{
+			//获取参与计算的格子正方向；
+			var right_vct:Vector2D;
+			if(_dirArray.length==1)right_vct=_dirArray[0];
+			else{
+				var old_pos_to_local_pos_vct:Vector2D=new Vector2D(_localPos.x-targetPos.x+targetSpd.x,_localPos.y-targetPos.y+targetSpd.y);
+				//这里做了粗略处理，将==0的差积处理使用了_dirArray[1]的方向向量；
+				right_vct=MathUtil.crossPZmag(old_pos_to_local_pos_vct,targetSpd)>=0 ? _dirArray[1] : _dirArray[0];
+			}
+			
 			//检查targetSpd的速度方向是否与该格子正方向同向；
-			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,_dirVector);
+			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,right_vct);
 			if(dir_spd_projection>0){
-				return handleSameDir(dir_spd_projection,tilesize, targetPos,targetSpd);
+				return handleSameDir(dir_spd_projection,tilesize,right_vct, targetPos,targetSpd);
 			}else{
-				return handleDifferentDir(dir_spd_projection,tilesize,targetPos,targetSpd);
+				return handleDifferentDir(dir_spd_projection,tilesize,right_vct,targetPos,targetSpd);
 			}
 		}
 		
-		protected function handleDifferentDir(spdProjection:Number, tilesize:uint, targetPos:Vector2D, targetSpd:Vector2D):Boolean
+		protected function handleDifferentDir(spdProjection:Number, tilesize:uint, dirVector:Vector2D,targetPos:Vector2D, targetSpd:Vector2D):Boolean
 		{
 			//计算目标点到平面的距离；
 			var tmp:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
 			tmp.sub(targetPos);
-			var dis_half:Number=MathUtil.dotProduct(_dirVector,tmp);
+			var dis_half:Number=MathUtil.dotProduct(dirVector,tmp);
 			if(dis_half>0){
 				
 				//物体已经穿过了斜面；
 				
 				/*计算位置*/
-				tmp.resetV(_dirVector);
+				tmp.resetV(dirVector);
 				tmp.mul(2*dis_half);
 				targetPos.add(tmp);
 				
 				/*计算速度*/
-				tmp.resetV(_dirVector);
+				tmp.resetV(dirVector);
 				tmp.mul(-2*spdProjection);
 				targetSpd.add(tmp);
 				
@@ -62,14 +71,20 @@ package z_spark.tileengine.tile
 			}
 		}
 		
-		protected function handleSameDir(spdProjection:Number,tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):Boolean
+		protected function handleSameDir(spdProjection:Number,tilesize:uint, dirVector:Vector2D,targetPos:Vector2D,targetSpd:Vector2D):Boolean
 		{
 			return false;
 		}
 		
 		CONFIG::DEBUG{
 			protected function toString():String{
-				return "[ type:"+_type+",col:"+_col+",row:"+_row+",dirv:"+_dirVector.toString()+" ]";
+				var s:String;
+				if(_dirArray.length==1){
+					s=_dirArray[0].toString();
+				}else{
+					s=_dirArray[0].toString()+" , "+_dirArray[1].toString();
+				}
+				return "[ type:"+_type+",col:"+_col+",row:"+_row+",dirArray:"+s+" ]";
 			}
 			
 			public function debugDraw(grap:Graphics, sz:int):void

@@ -13,14 +13,14 @@ package z_spark.tileengine.tile
 	 * @author z_Spark
 	 * 
 	 */
-	public class TileRightSlopGround extends CollisionSolver
+	public class TilePlane extends CollisionSolver
 	{
-		public function TileRightSlopGround(row:int,col:int,pos:Vector2D,dirv:Vector2D)
+		public function TilePlane(row:int,col:int,pos:Vector2D,dirv:Array)
 		{
 			super(row,col,pos,dirv);
-			_type=TileType.TYPE_RIGHT_SLOP_GROUND;
+			_type=TileType.TYPE_PLANE;
 			CONFIG::DEBUG{
-				debugDrawColor=ColorUtil.COLOR_GRAY;
+				debugDrawColor=ColorUtil.COLOR_BLUE_DARK;
 			};
 		}
 		
@@ -28,11 +28,14 @@ package z_spark.tileengine.tile
 			override public function debugDraw(grap:Graphics,sz:int):void{
 				grap.lineStyle(1,debugDrawColor);
 				grap.moveTo(_col*sz,_row*sz);
+				grap.lineTo(_col*sz+sz,_row*sz);
 				grap.lineTo(_col*sz+sz,_row*sz+sz);
 				grap.lineTo(_col*sz,_row*sz+sz);
 				grap.lineTo(_col*sz,_row*sz);
 				grap.endFill();
 			}
 		};
+
+		
 	}
 }

@@ -13,12 +13,12 @@ package z_spark.tileengine.tile
 	 * @author z_Spark
 	 * 
 	 */
-	public class TileLeftSlopGround extends CollisionSolver
+	public class TileSlop extends CollisionSolver
 	{
-		public function TileLeftSlopGround(row:int,col:int,pos:Vector2D,dirv:Vector2D)
+		public function TileSlop(row:int,col:int,pos:Vector2D,dirv:Array)
 		{
 			super(row,col,pos,dirv);
-			_type=TileType.TYPE_LEFT_SLOP_GROUND;
+			_type=TileType.TYPE_SLOP;
 			CONFIG::DEBUG{
 				debugDrawColor=ColorUtil.COLOR_GRAY;
 			};
@@ -27,10 +27,18 @@ package z_spark.tileengine.tile
 		CONFIG::DEBUG{
 			override public function debugDraw(grap:Graphics,sz:int):void{
 				grap.lineStyle(1,debugDrawColor);
-				grap.moveTo(_col*sz+sz,_row*sz);
-				grap.lineTo(_col*sz+sz,_row*sz+sz);
-				grap.lineTo(_col*sz,_row*sz+sz);
-				grap.lineTo(_col*sz+sz,_row*sz);
+				if(_localPos.x==0 && _localPos.y==0){
+					
+					grap.moveTo(_col*sz,_row*sz);
+					grap.lineTo(_col*sz+sz,_row*sz+sz);
+					grap.lineTo(_col*sz,_row*sz+sz);
+					grap.lineTo(_col*sz,_row*sz);
+				}else{
+					grap.moveTo(_col*sz+sz,_row*sz);
+					grap.lineTo(_col*sz+sz,_row*sz+sz);
+					grap.lineTo(_col*sz,_row*sz+sz);
+					grap.lineTo(_col*sz+sz,_row*sz);
+				}
 				grap.endFill();
 			}
 		};
