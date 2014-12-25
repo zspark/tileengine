@@ -44,14 +44,16 @@ package z_spark.tileengine.solver
 				var obj:ITileWorldObject=objs[i];
 				obj.spdVector.add(_gravity);
 				obj.posVector.add(obj.spdVector);
-				var tile:ITile=tilemap.getTileByXY(obj.posVector.x,obj.posVector.y);
 				
 				var iteratorCount:int=0;
 				var again:Boolean=true;
 				while(again){
 					iteratorCount++;
 					if(iteratorCount>_iteratorMax)break;
-					else again=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+					else {
+						var tile:ITile=tilemap.getTileByXY(obj.posVector.x,obj.posVector.y);
+						again=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+					}
 				}
 				
 				obj.frameEndCall();

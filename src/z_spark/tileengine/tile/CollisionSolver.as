@@ -25,6 +25,11 @@ package z_spark.tileengine.tile
 			_dirArray=dirArray;
 		}
 		
+		public function set dirArray(value:Array):void
+		{
+			_dirArray =value;
+		}
+
 		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):Boolean
 		{
 			//获取参与计算的格子正方向；
@@ -38,14 +43,12 @@ package z_spark.tileengine.tile
 			
 			//检查targetSpd的速度方向是否与该格子正方向同向；
 			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,right_vct);
-			if(dir_spd_projection>0){
-				return handleSameDir(dir_spd_projection,tilesize,right_vct, targetPos,targetSpd);
-			}else{
-				return handleDifferentDir(dir_spd_projection,tilesize,right_vct,targetPos,targetSpd);
-			}
+			if(dir_spd_projection<0){
+				return handleCollide(dir_spd_projection,tilesize,right_vct, targetPos,targetSpd);
+			}else return false;
 		}
 		
-		protected function handleDifferentDir(spdProjection:Number, tilesize:uint, dirVector:Vector2D,targetPos:Vector2D, targetSpd:Vector2D):Boolean
+		protected function handleCollide(spdProjection:Number, tilesize:uint, dirVector:Vector2D,targetPos:Vector2D, targetSpd:Vector2D):Boolean
 		{
 			//计算目标点到平面的距离；
 			var tmp:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
@@ -71,13 +74,8 @@ package z_spark.tileengine.tile
 			}
 		}
 		
-		protected function handleSameDir(spdProjection:Number,tilesize:uint, dirVector:Vector2D,targetPos:Vector2D,targetSpd:Vector2D):Boolean
-		{
-			return false;
-		}
-		
 		CONFIG::DEBUG{
-			protected function toString():String{
+			public function toString():String{
 				var s:String;
 				if(_dirArray.length==1){
 					s=_dirArray[0].toString();

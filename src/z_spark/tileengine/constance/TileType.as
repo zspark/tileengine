@@ -11,5 +11,8 @@ package z_spark.tileengine.constance
 		 *______/--------\_____  
 		 */
 		public static const TYPE_SLOP:int=0x03;
+		
+		public static const TYPE_ITERATOR:int=0x80;
+		public static const TYPE_AMEND:int=0x90;
 	}
 }
