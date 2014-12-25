@@ -8,23 +8,18 @@ package z_spark.tileengine.solver
 
 	use namespace zspark_tileegine_internal;
 	/**
-	 * 碰撞计算器； 
+	 * 力作用器； 
+	 * 风，雨水等影响整个TileWorld的力；
 	 * @author z_Spark
 	 * 
 	 */
-	public class CollisionSolver
+	public class ForceImpactor
 	{
 		/**
 		 * 碰撞检测迭代最大次数，数值越大，越精确，但越耗性能，你懂的； 
 		 * 不懂碰撞原理的客户端程序不要随意变动该值；
 		 */
 		private var _iteratorMax:uint=2;
-		public function CollisionSolver()
-		{
-		}
-		
-		private var _gravity:Vector2D;
-
 		zspark_tileegine_internal function get iteratorMax():uint
 		{
 			return _iteratorMax;
@@ -34,7 +29,9 @@ package z_spark.tileengine.solver
 		{
 			_iteratorMax = value;
 		}
-
+		public function ForceImpactor(){}
+		
+		private var _gravity:Vector2D;
 		zspark_tileegine_internal function set gravity(value:Vector2D):void{
 			_gravity=value;
 		}
@@ -48,7 +45,15 @@ package z_spark.tileengine.solver
 				obj.spdVector.add(_gravity);
 				obj.posVector.add(obj.spdVector);
 				var tile:ITile=tilemap.getTileByXY(obj.posVector.x,obj.posVector.y);
-				tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+				
+				var iteratorCount:int=0;
+				var again:Boolean=true;
+				while(again){
+					iteratorCount++;
+					if(iteratorCount>_iteratorMax)break;
+					else again=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+				}
+				
 				obj.frameEndCall();
 				
 				CONFIG::DEBUG{

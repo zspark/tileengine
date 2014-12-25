@@ -6,7 +6,7 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.math.Vector2D;
 	
 
-	public class TileBase implements ITile
+	public class CollisionSolver implements ITile
 	{
 		protected var _type:int;
 		protected var _row:int;
@@ -18,7 +18,7 @@ package z_spark.tileengine.tile
 			protected var debugDrawColor:uint=0x000000;
 		};
 		
-		public function TileBase(roww:int,column:int,localPos:Vector2D,dirV:Vector2D){
+		public function CollisionSolver(roww:int,column:int,localPos:Vector2D,dirV:Vector2D){
 			_row=roww;
 			_col=column;
 			_localPos=localPos;
@@ -56,7 +56,7 @@ package z_spark.tileengine.tile
 				tmp.mul(-2*spdProjection);
 				targetSpd.add(tmp);
 				
-				return true;
+				return false;
 			}else{
 				return false;
 			}

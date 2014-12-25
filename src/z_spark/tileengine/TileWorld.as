@@ -4,19 +4,19 @@ package z_spark.tileengine
 	import flash.events.Event;
 	
 	import z_spark.tileengine.math.Vector2D;
-	import z_spark.tileengine.solver.CollisionSolver;
+	import z_spark.tileengine.solver.ForceImpactor;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld
 	{
-		private var _collisionSolver:CollisionSolver;
+		private var _collisionSolver:ForceImpactor;
 		private var _tileMap:TileMap;
 		private var _stage:Stage;
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
 			_tileWorldObjectArr=new Vector.<ITileWorldObject>();
-			_collisionSolver=new CollisionSolver();
+			_collisionSolver=new ForceImpactor();
 			_tileMap=new TileMap();
 		}
 		

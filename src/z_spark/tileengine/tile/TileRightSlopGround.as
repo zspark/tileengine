@@ -13,7 +13,7 @@ package z_spark.tileengine.tile
 	 * @author z_Spark
 	 * 
 	 */
-	public class TileRightSlopGround extends TileBase
+	public class TileRightSlopGround extends CollisionSolver
 	{
 		public function TileRightSlopGround(row:int,col:int,pos:Vector2D,dirv:Vector2D)
 		{

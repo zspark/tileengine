@@ -13,7 +13,7 @@ package z_spark.tileengine.tile
 	 * @author z_Spark
 	 * 
 	 */
-	public class TilePlaneGround extends TileBase implements ITile
+	public class TilePlaneGround extends CollisionSolver implements ITile
 	{
 		public function TilePlaneGround(row:int,col:int,pos:Vector2D,dirv:Vector2D)
 		{
