@@ -1,7 +1,5 @@
 package z_spark.tileengine.tile
 {
-	import flash.display.Graphics;
-	
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
 
@@ -22,7 +20,13 @@ package z_spark.tileengine.tile
 			public function toString():String{
 				return "";
 			}
-			public function debugDraw(grap:Graphics,sz:int):void{
+			protected var _debugDrawColor:uint=0x000000;
+			public function get debugDrawColor():uint{
+				return _debugDrawColor;
+			}
+			
+			public function get dirArray():Array{
+				return null;
 			}
 		};
 		

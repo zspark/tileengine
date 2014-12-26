@@ -17,7 +17,7 @@ package z_spark.tileengine.tile
 			super(type,row,col,pos,dirv);
 			_type=TileType.TYPE_ITERATOR;
 			CONFIG::DEBUG{
-				debugDrawColor=ColorUtil.COLOR_ORANGE;
+				_debugDrawColor=ColorUtil.COLOR_ORANGE;
 			};
 		}
 		
