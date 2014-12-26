@@ -21,5 +21,10 @@ package z_spark.tileengine.constance
 		
 		public static const DIR_LEFT_TOP_OUTER:int=0x09;
 		public static const DIR_RIGHT_TOP_OUTER:int=0x0a;
+		
+		public static const DIR_RIGHT_AND_TOP:int=0x0b;
+		public static const DIR_LEFT_AND_TOP:int=0x0c;
+		
+		
 	}
 }

@@ -4,7 +4,6 @@ package z_spark.tileengine
 	import flash.events.Event;
 	
 	import z_spark.tileengine.math.Vector2D;
-	import z_spark.tileengine.solver.ForceImpactor;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld

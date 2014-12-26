@@ -1,8 +1,5 @@
-package z_spark.tileengine.solver
+package z_spark.tileengine
 {
-	import z_spark.tileengine.ITileWorldObject;
-	import z_spark.tileengine.TileMap;
-	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 

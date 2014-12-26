@@ -13,13 +13,13 @@ package z_spark.tileengine.tile
 			function toString():String;
 		};
 		
-		/**
-		 * 重写格子方向向量，会顶掉之前公用的向量引用，持有新的，
-		 * 并且公用的引用（除非再次赋值）不会自动恢复； 
-		 * @param value
-		 * 
-		 */
-		function set dirArray(value:Array):void;
+//		/**
+//		 * 重写格子方向向量，会顶掉之前公用的向量引用，持有新的，
+//		 * 并且公用的引用（除非再次赋值）不会自动恢复； 
+//		 * @param value
+//		 * 
+//		 */
+//		function set dirArray(value:Array):void;
 			
 //		function get dir():int;
 //		

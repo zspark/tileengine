@@ -2,12 +2,13 @@ package z_spark.tileengine
 {
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileType;
+	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.tile.TileAmend;
 	import z_spark.tileengine.tile.TileIterator;
 	import z_spark.tileengine.tile.TileNone;
-	import z_spark.tileengine.tile.TilePlane;
-	import z_spark.tileengine.tile.TileSlop;
+	import z_spark.tileengine.tile.TileNormal;
 
 	use namespace zspark_tileegine_internal;
 	public class TileMap
@@ -19,10 +20,10 @@ package z_spark.tileengine
 		private var _tileSize:uint;
 		
 		public function TileMap(){
-			TYPE_TO_TILE_CLASS[TileType.TYPE_PLANE]=TilePlane;
-			TYPE_TO_TILE_CLASS[TileType.TYPE_SLOP]=TileSlop;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_NORMAL]=TileNormal;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_ITERATOR]=TileIterator;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_AMEND]=TileAmend;
 		}
 		
 
@@ -45,19 +46,23 @@ package z_spark.tileengine
 			DIR_TO_LOCALPOS[TileDir.DIR_LEFT_DOWN]=new Vector2D(0,0);
 			DIR_TO_LOCALPOS[TileDir.DIR_DOWN]=new Vector2D(0,_tileSize);
 			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_DOWN]=new Vector2D(_tileSize,0);
+			DIR_TO_LOCALPOS[TileDir.DIR_LEFT_AND_TOP]=new Vector2D(0,0);
+			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_AND_TOP]=new Vector2D(_tileSize,0);
 			
 			const F:Number=Math.SQRT2*.5;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP_OUTER]=[new Vector2D(-F,-F)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP]=[new Vector2D(-F,-F)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_TOP]=[new Vector2D(0,-1)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP_OUTER]=[new Vector2D(F,-F)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP]=[new Vector2D(F,-F)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT]=[new Vector2D(-1,0)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_MIDDLE]=[new Vector2D(0,0)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT]=[new Vector2D(1,0)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_DOWN]=[new Vector2D(-F,F)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_DOWN]=[new Vector2D(0,1)];
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_DOWN]=[new Vector2D(F,F)];
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP_OUTER]=TileWorldConst.DIRVECTOR_LEFT_TOP_OUTER;
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP]=TileWorldConst.DIRVECTOR_LEFT_TOP;
+			DIR_TO_DIRVECTOR[TileDir.DIR_TOP]=TileWorldConst.DIRVECTOR_TOP;
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP_OUTER]=TileWorldConst.DIRVECTOR_RIGHT_TOP_OUTER;
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP]=TileWorldConst.DIRVECTOR_RIGHT_TOP;
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT]=TileWorldConst.DIRVECTOR_LEFT;
+			DIR_TO_DIRVECTOR[TileDir.DIR_MIDDLE]=TileWorldConst.DIRVECTOR_MIDDLE;
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT]=TileWorldConst.DIRVECTOR_RIGHT;
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_DOWN]=TileWorldConst.DIRVECTOR_LEFT_DOWN;
+			DIR_TO_DIRVECTOR[TileDir.DIR_DOWN]=TileWorldConst.DIRVECTOR_DOWN;
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_DOWN]=TileWorldConst.DIRVECTOR_RIGHT_DOWN;
+			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_AND_TOP]=TileWorldConst.DIRVECTOR_LEFT_AND_TOP;
+			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_AND_TOP]=TileWorldConst.DIRVECTOR_RIGHT_AND_TOP;
 		}
 
 //		TODO:waiting..
@@ -93,7 +98,7 @@ package z_spark.tileengine
 					var cls:Class=TYPE_TO_TILE_CLASS[type] as Class;
 					if(cls){
 						var dir:int=mapRawInfo[i][j].dir;
-						var tile:ITile=new cls(i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
+						var tile:ITile=new cls(type,i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
 					}else{
 						throw Error("格子原始数据错误，有不能被识别或不支持的格子编号！(i,j)=("+i+','+j+"),tileType="+mapRawInfo[i][j].type);
 					}
