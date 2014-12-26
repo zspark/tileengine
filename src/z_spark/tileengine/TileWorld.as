@@ -14,7 +14,8 @@ package z_spark.tileengine
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
-			_tileWorldObjectArr=new Vector.<ITileWorldObject>();
+			_awakeObjectList=new Vector.<WorldObjectModel>();
+			_sleepingObjectList=new Vector.<WorldObjectModel>();
 			_collisionSolver=new ForceImpactor();
 			_tileMap=new TileMap();
 		}
@@ -51,16 +52,30 @@ package z_spark.tileengine
 		
 		private function onEHandler(event:Event):void
 		{
-			_collisionSolver.update(_tileWorldObjectArr,_tileMap);
+			_collisionSolver.update(_awakeObjectList,_tileMap);
 		}
 		
-		private var _tileWorldObjectArr:Vector.<ITileWorldObject>;
-		public function addWorldObject(obj:ITileWorldObject):void{
-			_tileWorldObjectArr.push(obj);
+		private var _awakeObjectList:Vector.<WorldObjectModel>;
+		private var _sleepingObjectList:Vector.<WorldObjectModel>;
+		public function addWorldObject(model:WorldObjectModel):void{
+			_awakeObjectList.push(model);
 		}
 		
-		public function removeWorldObject(obj:ITileWorldObject):void{
-			_tileWorldObjectArr.splice(_tileWorldObjectArr.indexOf(obj),1);
+		public function removeWorldObject(model:WorldObjectModel):void{
+			if(_awakeObjectList.indexOf(model)>=0)
+				_awakeObjectList.splice(_awakeObjectList.indexOf(model),1);
+			else if(_sleepingObjectList.indexOf(model)>=0)
+				_sleepingObjectList.splice(_sleepingObjectList.indexOf(model),1);
+		}
+		
+		zspark_tileegine_internal function sleep(model:WorldObjectModel):void{
+			_awakeObjectList.splice(_awakeObjectList.indexOf(model),1);
+			_sleepingObjectList.push(model);
+		}
+		
+		zspark_tileegine_internal function awake(model:WorldObjectModel):void{
+			_sleepingObjectList.splice(_awakeObjectList.indexOf(model),1);
+			_awakeObjectList.push(model);
 		}
 	}
 }

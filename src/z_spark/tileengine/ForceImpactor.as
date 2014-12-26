@@ -10,7 +10,7 @@ package z_spark.tileengine
 	 * @author z_Spark
 	 * 
 	 */
-	public class ForceImpactor
+	final public class ForceImpactor
 	{
 		/**
 		 * 碰撞检测迭代最大次数，数值越大，越精确，但越耗性能，你懂的； 
@@ -26,6 +26,7 @@ package z_spark.tileengine
 		{
 			_iteratorMax = value;
 		}
+		
 		public function ForceImpactor(){}
 		
 		private var _gravity:Vector2D;
@@ -36,9 +37,10 @@ package z_spark.tileengine
 			return _gravity;
 		}
 		
-		public function update(objs:Vector.<ITileWorldObject>,tilemap:TileMap):void{
+		private static const MIN_SPD:Number=0.5;
+		zspark_tileegine_internal function update(objs:Vector.<WorldObjectModel>,tilemap:TileMap):void{
 			for(var i:int=0,m:int=objs.length;i<m;i++){
-				var obj:ITileWorldObject=objs[i];
+				var obj:WorldObjectModel=objs[i];
 				obj.spdVector.add(_gravity);
 				obj.posVector.add(obj.spdVector);
 				

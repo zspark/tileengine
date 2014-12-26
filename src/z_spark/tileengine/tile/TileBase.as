@@ -8,6 +8,8 @@ package z_spark.tileengine.tile
 		protected var _type:int;
 		protected var _row:int;
 		protected var _col:int;
+		protected var _bounceFactor:Number=.4;
+		protected var _frictionFactor:Number=.1;
 		
 		public function TileBase(type:int,row:int,col:int)
 		{
@@ -46,6 +48,15 @@ package z_spark.tileengine.tile
 					tmp.resetV(planeDir);
 					tmp.mul(-2*dir_spd_projection);
 					targetSpd.add(tmp);
+					
+					/*衰减*/
+					var tmp2:Vector2D=new Vector2D(planeDir.x-targetSpd.x,planeDir.y-targetSpd.y);
+					tmp2.mul(_frictionFactor);
+					tmp.resetV(planeDir);
+					tmp.mul(-_bounceFactor);
+					targetSpd.add(tmp);
+					targetSpd.add(tmp2);
+					
 				}
 			}
 			return false;

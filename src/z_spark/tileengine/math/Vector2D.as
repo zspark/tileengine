@@ -1,5 +1,6 @@
 package z_spark.tileengine.math
 {
+	
 	final public class Vector2D
 	{
 		private var _x:Number;
@@ -48,6 +49,10 @@ package z_spark.tileengine.math
 		
 		public function get mag():Number{
 			return Math.sqrt(_x*_x+_y*_y);
+		}
+		
+		public function get magSqare():Number{
+			return _x*_x+_y*_y;
 		}
 
 		public function get x():Number
