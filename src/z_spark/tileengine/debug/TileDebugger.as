@@ -31,7 +31,7 @@ package z_spark.tileengine.debug
 					for (var j:int=0;j<mapInfo[i].length;j++){
 						var tile:ITile=mapInfo[i][j] as ITile;
 						if(tile is TileNone)continue;
-						debugDraw(tile,tile.debugDrawColor);
+						debugDraw(tile);
 					}
 				}
 			};
@@ -40,13 +40,12 @@ package z_spark.tileengine.debug
 			private static var _canvas:Sprite;
 			private static var _tileMap:TileMap;
 			
-			public static function debugDraw(tile:ITile,debugDrawColor:uint):void{
+			public static function debugDraw(tile:ITile):void{
 				var grap:Graphics=_canvas.graphics;
 				var sz:int=_tileMap.tileSize;
 				var _col:int=tile.col;
 				var _row:int=tile.row;
 				var _dirArray:Array=tile.dirArray;
-				var color:uint=0x000000;
 				const ltpos:Point=new Point(_col*sz,_row*sz);
 				var debugPosArray:Array=[];
 				
@@ -59,31 +58,26 @@ package z_spark.tileengine.debug
 					case TileWorldConst.DIRVECTOR_LEFT_AND_TOP:
 					case TileWorldConst.DIRVECTOR_RIGHT_AND_TOP:
 					{
-						color=ColorUtil.COLOR_BLUE_DARK;
 						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x+sz,ltpos.y+sz),new Point(ltpos.x,ltpos.y+sz)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_LEFT_DOWN:
 					{
-						color=0xFF00FF;
 						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x+sz,ltpos.y+sz)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_LEFT_TOP:
 					{
-						color=0xFF00FF;
 						debugPosArray=[new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x+sz,ltpos.y+sz),new Point(ltpos.x,ltpos.y+sz)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_RIGHT_DOWN:
 					{
-						color=0xFF00FF;
 						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x,ltpos.y+sz)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_RIGHT_TOP:
 					{
-						color=0xFF00FF;
 						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y+sz),new Point(ltpos.x,ltpos.y+sz)];
 						break;
 					}
@@ -105,8 +99,7 @@ package z_spark.tileengine.debug
 				
 				
 				if(debugPosArray.length>0){
-					if(debugDrawColor!=0x0)color=debugDrawColor;
-					grap.lineStyle(1,color);
+					grap.lineStyle(1,ColorUtil.COLOR_BLUE_DARK);
 					for (var i:int=0;i<debugPosArray.length;i++){
 						if(i==0)grap.moveTo(debugPosArray[i].x,debugPosArray[i].y);
 						else{
@@ -121,7 +114,7 @@ package z_spark.tileengine.debug
 					const downv:Vector2D=new Vector2D(0,1);
 					const leftv:Vector2D=new Vector2D(-1,0);
 					const rightv:Vector2D=new Vector2D(1,0);
-					grap.beginFill(color,0.5);
+					grap.beginFill(ColorUtil.COLOR_BLUE_DARK,0.5);
 					for each(var v:Vector2D in _dirArray){
 						if(MathUtil.dotProduct(v,upv)==1){
 							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y,ltpos.x+sz,ltpos.y]));

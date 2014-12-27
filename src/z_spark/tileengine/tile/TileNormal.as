@@ -29,7 +29,6 @@ package z_spark.tileengine.tile
 		
 		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
-			
 			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
 			//获取参与计算的格子方向；
 			var right_vct:Vector2D;
@@ -62,8 +61,7 @@ package z_spark.tileengine.tile
 			};
 			return fixTarget(right_vct,globalPos,targetPos,targetSpd);
 		}
-		
-		CONFIG::DEBUG{
+		CONFIG::DEBUG_DRAW_TIMELY{
 			private var _intervalId:uint;
 			private var _recovered:Boolean=true;
 			public function recoverDebugDraw():void{
@@ -72,8 +70,8 @@ package z_spark.tileengine.tile
 				TileDebugger.debugDraw(this,_debugDrawColor);
 				_recovered=true;
 			}
-			
-			
+		};
+		CONFIG::DEBUG{
 			public function toString():String{
 				var s:String;
 				if(_dirArray.length==1){
