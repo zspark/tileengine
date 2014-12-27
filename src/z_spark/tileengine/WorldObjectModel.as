@@ -1,9 +1,12 @@
 package z_spark.tileengine
 {
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.tile.ITile;
 	
 	use namespace zspark_tileegine_internal;
 	/**
@@ -13,6 +16,19 @@ package z_spark.tileengine
 	 */
 	public class WorldObjectModel extends EventDispatcher
 	{
+		private static const MIN_SPD:Number=0.5;
+		private static const MAX_SLEEPING_COUNT:int=4;
+		private var _obj:Sprite;
+		public function get obj():Sprite
+		{
+			return _obj;
+		}
+		
+		public function set obj(value:Sprite):void
+		{
+			_obj = value;
+		}
+		
 		public function WorldObjectModel()
 		{
 			_spdV=new Vector2D();
@@ -23,6 +39,12 @@ package z_spark.tileengine
 		public function get spdVector():Vector2D
 		{
 			return _spdV;
+		}
+		
+		public function set spdVector(value:Vector2D):void 
+		{
+			_spdV=value;
+			_world.wakeup(this);
 		}
 		
 		private var _posV:Vector2D;
@@ -36,23 +58,36 @@ package z_spark.tileengine
 			_world=value;
 		}
 		
+		private var _hitPlaneCount:int=0;
+		private var _lastTile:ITile;
 		private var _allowDispatch:Boolean=false;
-		zspark_tileegine_internal function frameEndCall():void
+		zspark_tileegine_internal function frameEndCall(tile:ITile,handleStatus:int):void
 		{
+			if(handleStatus!=TileHandleStatus.ST_PASS){
+				if(tile===_lastTile){
+					_hitPlaneCount++;
+					if(_hitPlaneCount>MAX_SLEEPING_COUNT && _spdV.mag<MIN_SPD){
+						_world.sleep(this);
+						_hitPlaneCount=0;
+						_lastTile=null;
+					}
+				}else {
+					_hitPlaneCount=0;
+				}
+			}
+			_lastTile=tile;
+			
+			if(_obj){
+				_obj.x=_posV.x;
+				_obj.y=_posV.y;
+			}
 			_allowDispatch && dispatchEvent(new Event("update"));
 		}
 		
-		zspark_tileegine_internal function wakeUp():void{
-			_world.awake(this);
-		}
-		
-		zspark_tileegine_internal function sleep():void{
-			_world.sleep(this);
-		}
-		
 		CONFIG::DEBUG{
-			public function addToHistory():void
-			{
+			private var _posHistoryCache:Array=[];
+			public function addToHistory():void{
+				_posHistoryCache.push(_posV.clone());
 			}
 		};
 	}

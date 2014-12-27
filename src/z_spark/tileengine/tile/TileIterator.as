@@ -1,6 +1,7 @@
 package z_spark.tileengine.tile
 {
 	import z_spark.as3lib.utils.ColorUtil;
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
 
@@ -21,10 +22,10 @@ package z_spark.tileengine.tile
 			};
 		}
 		
-		override public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):Boolean
+		override public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			super.testCollision(tilesize,targetPos,targetSpd);
-			return true;
+			return TileHandleStatus.ST_ITERATOR;
 		}
 		
 	}

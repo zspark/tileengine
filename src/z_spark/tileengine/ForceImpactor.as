@@ -1,5 +1,6 @@
 package z_spark.tileengine
 {
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 
@@ -37,25 +38,45 @@ package z_spark.tileengine
 			return _gravity;
 		}
 		
-		private static const MIN_SPD:Number=0.5;
 		zspark_tileegine_internal function update(objs:Vector.<WorldObjectModel>,tilemap:TileMap):void{
-			for(var i:int=0,m:int=objs.length;i<m;i++){
-				var obj:WorldObjectModel=objs[i];
+//			for(var i:int=0,m:int=objs.length;i<m;i++){
+//				var obj:WorldObjectModel=objs[i];
+			for each(var obj:WorldObjectModel in objs){
 				obj.spdVector.add(_gravity);
 				obj.posVector.add(obj.spdVector);
 				
 				var iteratorCount:int=0;
+				var status:int;
 				var again:Boolean=true;
 				while(again){
 					iteratorCount++;
 					if(iteratorCount>_iteratorMax)break;
 					else {
 						var tile:ITile=tilemap.getTileByXY(obj.posVector.x,obj.posVector.y);
-						again=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+						status=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+						switch(status)
+						{
+							case TileHandleStatus.ST_ITERATOR:
+							{
+								obj.frameEndCall(null,status);
+								break;
+							}
+							case TileHandleStatus.ST_FIXED:
+							{
+								again=false;
+								obj.frameEndCall(tile,status);
+								break;
+							}
+							case TileHandleStatus.ST_PASS:
+							default:
+							{
+								again=false;
+								obj.frameEndCall(null,status);
+								break;
+							}
+						}
 					}
 				}
-				
-				obj.frameEndCall();
 				
 				CONFIG::DEBUG{
 //					obj.addToHistory();

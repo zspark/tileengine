@@ -59,6 +59,7 @@ package z_spark.tileengine
 		private var _sleepingObjectList:Vector.<WorldObjectModel>;
 		public function addWorldObject(model:WorldObjectModel):void{
 			_awakeObjectList.push(model);
+			model.tileWorld=this;
 		}
 		
 		public function removeWorldObject(model:WorldObjectModel):void{
@@ -66,6 +67,8 @@ package z_spark.tileengine
 				_awakeObjectList.splice(_awakeObjectList.indexOf(model),1);
 			else if(_sleepingObjectList.indexOf(model)>=0)
 				_sleepingObjectList.splice(_sleepingObjectList.indexOf(model),1);
+			
+			model.tileWorld=null;
 		}
 		
 		zspark_tileegine_internal function sleep(model:WorldObjectModel):void{
@@ -73,8 +76,9 @@ package z_spark.tileengine
 			_sleepingObjectList.push(model);
 		}
 		
-		zspark_tileegine_internal function awake(model:WorldObjectModel):void{
+		zspark_tileegine_internal function wakeup(model:WorldObjectModel):void{
 			_sleepingObjectList.splice(_awakeObjectList.indexOf(model),1);
+			if(_awakeObjectList.indexOf(model)>=0)return;
 			_awakeObjectList.push(model);
 		}
 	}

@@ -113,6 +113,14 @@ package z_spark.tileengine
 			}
 		};
 		
+		public function get mapRowNum():uint{
+			return _mapInfo[0].length;
+		}
+		
+		public function get mapColNum():uint{
+			return _mapInfo.length;
+		}
+		
 		public function getTileByRC(row:uint,col:uint):ITile{
 			return _mapInfo[row][col];
 		}

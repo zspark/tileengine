@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 
@@ -28,7 +29,7 @@ package z_spark.tileengine.tile
 			return _row;
 		}
 		
-		protected function fixTarget(planeDir:Vector2D,planeGolbalPos:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):Boolean
+		protected function fixTarget(planeDir:Vector2D,planeGolbalPos:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			//检查targetSpd的速度方向是否与该格子正方向同向；
 			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,planeDir);
@@ -57,9 +58,10 @@ package z_spark.tileengine.tile
 					targetSpd.add(tmp);
 					targetSpd.add(tmp2);
 					
+					return TileHandleStatus.ST_FIXED;
 				}
 			}
-			return false;
+			return TileHandleStatus.ST_PASS;
 		}
 	}
 }

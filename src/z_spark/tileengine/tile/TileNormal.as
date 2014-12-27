@@ -1,8 +1,13 @@
 package z_spark.tileengine.tile
 {
+	import flash.utils.clearTimeout;
+	import flash.utils.setTimeout;
+	
 	import z_spark.tileengine.zspark_tileegine_internal;
-	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.debug.TileDebugger;
 	import z_spark.tileengine.math.MathUtil;
+	import z_spark.tileengine.math.Vector2D;
 	
 	use namespace zspark_tileegine_internal;
 	/**
@@ -22,7 +27,7 @@ package z_spark.tileengine.tile
 			_dirArray=dirv;
 		}
 		
-		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):Boolean
+		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			
 			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
@@ -34,12 +39,41 @@ package z_spark.tileengine.tile
 				//这里做了粗略处理，将==0的差积处理使用了_dirArray[1]的方向向量；
 				right_vct=MathUtil.crossPZmag(tmp,targetSpd)>=0 ? _dirArray[1] : _dirArray[0];
 			}
-			fixTarget(right_vct,globalPos,targetPos,targetSpd);
 			
-			return false;
+//			CONFIG::DEBUG{
+//				var status:int=fixTarget(right_vct,globalPos,targetPos,targetSpd);
+//				switch(status)
+//				{
+//					case TileHandleStatus.ST_FIXED:
+//					{
+//						if(_recovered){
+//							TileDebugger.debugDraw(this,0xFFFFFF-_debugDrawColor);
+//							_intervalId=setTimeout(recoverDebugDraw,200);
+//							_recovered=false;
+//						}
+//						break;
+//					}
+//					default:
+//					{
+//						break;
+//					}
+//				}
+//				return status;
+//			};
+			return fixTarget(right_vct,globalPos,targetPos,targetSpd);
 		}
 		
 		CONFIG::DEBUG{
+			private var _intervalId:uint;
+			private var _recovered:Boolean=true;
+			public function recoverDebugDraw():void{
+				if(_recovered)return;
+				clearTimeout(_intervalId);
+				TileDebugger.debugDraw(this,_debugDrawColor);
+				_recovered=true;
+			}
+			
+			
 			public function toString():String{
 				var s:String;
 				if(_dirArray.length==1){

@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
 
@@ -11,9 +12,9 @@ package z_spark.tileengine.tile
 			_type=TileType.TYPE_NONE;
 		}
 		
-		public function testCollision(tilesize:uint, targetPos:Vector2D, targetSpd:Vector2D):Boolean
+		public function testCollision(tilesize:uint, targetPos:Vector2D, targetSpd:Vector2D):int
 		{
-			return false;
+			return TileHandleStatus.ST_PASS;
 		}
 		
 		CONFIG::DEBUG{
