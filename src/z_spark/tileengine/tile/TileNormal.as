@@ -40,26 +40,26 @@ package z_spark.tileengine.tile
 				right_vct=MathUtil.crossPZmag(tmp,targetSpd)>=0 ? _dirArray[1] : _dirArray[0];
 			}
 			
-//			CONFIG::DEBUG{
-//				var status:int=fixTarget(right_vct,globalPos,targetPos,targetSpd);
-//				switch(status)
-//				{
-//					case TileHandleStatus.ST_FIXED:
-//					{
-//						if(_recovered){
-//							TileDebugger.debugDraw(this,0xFFFFFF-_debugDrawColor);
-//							_intervalId=setTimeout(recoverDebugDraw,200);
-//							_recovered=false;
-//						}
-//						break;
-//					}
-//					default:
-//					{
-//						break;
-//					}
-//				}
-//				return status;
-//			};
+			CONFIG::DEBUG_DRAW_TIMELY{
+				var status:int=fixTarget(right_vct,globalPos,targetPos,targetSpd);
+				switch(status)
+				{
+					case TileHandleStatus.ST_FIXED:
+					{
+						if(_recovered){
+							TileDebugger.debugDraw(this,0xFFFFFF-_debugDrawColor);
+							_intervalId=setTimeout(recoverDebugDraw,200);
+							_recovered=false;
+						}
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+				return status;
+			};
 			return fixTarget(right_vct,globalPos,targetPos,targetSpd);
 		}
 		
