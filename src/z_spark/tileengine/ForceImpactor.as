@@ -46,37 +46,16 @@ package z_spark.tileengine
 				obj.posVector.add(obj.spdVector);
 				
 				var iteratorCount:int=0;
-				var status:int;
-				var again:Boolean=true;
-				while(again){
+				var status:int=TileHandleStatus.ST_ITERATOR;
+				while(status==TileHandleStatus.ST_ITERATOR){
 					iteratorCount++;
 					if(iteratorCount>_iteratorMax)break;
 					else {
 						var tile:ITile=tilemap.getTileByXY(obj.posVector.x,obj.posVector.y);
 						status=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
-						switch(status)
-						{
-							case TileHandleStatus.ST_ITERATOR:
-							{
-								obj.frameEndCall(null,status);
-								break;
-							}
-							case TileHandleStatus.ST_FIXED:
-							{
-								again=false;
-								obj.frameEndCall(tile,status);
-								break;
-							}
-							case TileHandleStatus.ST_PASS:
-							default:
-							{
-								again=false;
-								obj.frameEndCall(null,status);
-								break;
-							}
-						}
 					}
 				}
+				obj.frameEndCall(tile,status);
 				
 				CONFIG::DEBUG{
 //					obj.addToHistory();

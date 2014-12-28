@@ -5,6 +5,7 @@ package z_spark.tileengine
 	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.tile.TileAdjacentSide;
 	import z_spark.tileengine.tile.TileAmend;
 	import z_spark.tileengine.tile.TileIterator;
 	import z_spark.tileengine.tile.TileNone;
@@ -24,6 +25,7 @@ package z_spark.tileengine
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_ITERATOR]=TileIterator;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_AMEND]=TileAmend;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_ADJACENT_SIDE]=TileAdjacentSide;
 		}
 		
 

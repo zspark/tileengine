@@ -21,10 +21,6 @@ package z_spark.tileengine.tile
 			public function toString():String{
 				return "";
 			}
-			protected var _debugDrawColor:uint=0x000000;
-			public function get debugDrawColor():uint{
-				return _debugDrawColor;
-			}
 			
 			public function get dirArray():Array{
 				return null;

@@ -1,7 +1,5 @@
 package z_spark.tileengine.tile
 {
-	import flash.display.Graphics;
-	
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
@@ -57,10 +55,6 @@ package z_spark.tileengine.tile
 		CONFIG::DEBUG{
 			public function toString():String{
 				return "";
-			}
-			protected var _debugDrawColor:uint=0x000000;
-			public function get debugDrawColor():uint{
-				return _debugDrawColor;
 			}
 			
 			public function get dirArray():Array{

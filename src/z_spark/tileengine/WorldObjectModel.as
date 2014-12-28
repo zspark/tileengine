@@ -5,6 +5,7 @@ package z_spark.tileengine
 	import flash.events.EventDispatcher;
 	
 	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 	
@@ -66,8 +67,8 @@ package z_spark.tileengine
 			if(handleStatus!=TileHandleStatus.ST_PASS){
 				if(tile===_lastTile){
 					_hitPlaneCount++;
-					if(_hitPlaneCount>MAX_SLEEPING_COUNT && _spdV.mag<MIN_SPD){
-						_world.sleep(this);
+					if(_hitPlaneCount>MAX_SLEEPING_COUNT && _spdV.mag<MIN_SPD)// && MathUtil.dotProduct(_spdV,_world.gravity)<=.002-_world.gravity.magSqare)
+					{	_world.sleep(this);
 						_hitPlaneCount=0;
 						_lastTile=null;
 					}

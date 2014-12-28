@@ -58,10 +58,34 @@ package z_spark.tileengine.tile
 					targetSpd.add(tmp);
 					targetSpd.add(tmp2);
 					
+					CONFIG::DEBUG_DRAW_TIMELY{
+						if(_recovered){
+							TileDebugger.debugDraw(this,0xFFFFFF-_debugDrawColor);
+							_intervalId=setTimeout(recoverDebugDraw,200);
+							_recovered=false;
+						}
+					};
+					
 					return TileHandleStatus.ST_FIXED;
 				}
 			}
 			return TileHandleStatus.ST_PASS;
+		}
+		
+		CONFIG::DEBUG_DRAW_TIMELY{
+			private var _intervalId:uint;
+			private var _recovered:Boolean=true;
+			public function recoverDebugDraw():void{
+				if(_recovered)return;
+				clearTimeout(_intervalId);
+				TileDebugger.debugDraw(this,_debugDrawColor);
+				_recovered=true;
+			}
+		};
+		
+		protected var _debugDrawColor:uint=0x000000;
+		public function get debugDrawColor():uint{
+			return _debugDrawColor;
 		}
 	}
 }
