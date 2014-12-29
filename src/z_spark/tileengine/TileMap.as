@@ -10,6 +10,7 @@ package z_spark.tileengine
 	import z_spark.tileengine.tile.TileIterator;
 	import z_spark.tileengine.tile.TileNone;
 	import z_spark.tileengine.tile.TileNormal;
+	import z_spark.tileengine.tile.TileThrough;
 
 	use namespace zspark_tileegine_internal;
 	public class TileMap
@@ -26,6 +27,7 @@ package z_spark.tileengine
 			TYPE_TO_TILE_CLASS[TileType.TYPE_ITERATOR]=TileIterator;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_AMEND]=TileAmend;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_ADJACENT_SIDE]=TileAdjacentSide;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_THROUGH]=TileThrough;
 		}
 		
 

@@ -16,14 +16,24 @@ package z_spark.tileengine.math
 			_y=yy;
 		}
 		
-		public function resetV(vct:Vector2D):void{
+		public function reset(vct:Vector2D):void{
 			_x=vct.x;
 			_y=vct.y;
 		}
 		
-		public function reset(xx:Number,yy:Number):void{
+		public function resetComponent(xx:Number,yy:Number):void{
 			_x=xx;
 			_y=yy;
+		}
+		
+		public function resetComponentScale(xx:Number,yy:Number,scale:Number):void{
+			_x=xx*scale;
+			_y=yy*scale;
+		}
+		
+		public function resetScale(vct:Vector2D,scale:Number):void{
+			_x=vct.x*scale;
+			_y=vct.y*scale;
 		}
 		
 		public function add(vct:Vector2D):void{
@@ -31,10 +41,31 @@ package z_spark.tileengine.math
 			_y+=vct.y;
 		}
 		
+		public function addScale(vct:Vector2D,scale:Number):void{
+			_x+=vct.x*scale;
+			_y+=vct.y*scale;
+		}
+		
+		public function addComponent(x:Number,y:Number):void{
+			_x+=x;
+			_y+=y;
+		}
+		
+		public function addComponentScale(x:Number,y:Number,scale:Number):void{
+			_x+=x*scale;
+			_y+=y*scale;
+		}
+		
 		public function sub(vct:Vector2D):void{
 			_x-=vct.x;
 			_y-=vct.y;
 		}
+		
+		public function subComponent(x:Number,y:Number):void{
+			_x-=x;
+			_y-=y;
+		}
+		
 		
 		public function mul(value:Number):void{
 			_x*=value;

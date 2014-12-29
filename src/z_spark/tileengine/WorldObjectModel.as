@@ -5,7 +5,6 @@ package z_spark.tileengine
 	import flash.events.EventDispatcher;
 	
 	import z_spark.tileengine.constance.TileHandleStatus;
-	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 	
@@ -57,6 +56,10 @@ package z_spark.tileengine
 		private var _world:TileWorld;
 		zspark_tileegine_internal function set tileWorld(value:TileWorld):void{
 			_world=value;
+		}
+		
+		public function get lastPosVector():Vector2D{
+			return new Vector2D(_posV.x-_spdV.x,_posV.y-_spdV.y);
 		}
 		
 		private var _hitPlaneCount:int=0;

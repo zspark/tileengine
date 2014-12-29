@@ -35,28 +35,22 @@ package z_spark.tileengine.tile
 			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,planeDir);
 			if(dir_spd_projection<0){
 				//计算目标点到平面的距离；
-				var tmp:Vector2D=planeGolbalPos.clone();
-				tmp.sub(targetPos);
-				var dis_half:Number=MathUtil.dotProduct(planeDir,tmp);
+				planeGolbalPos.sub(targetPos);
+				var dis_half:Number=MathUtil.dotProduct(planeDir,planeGolbalPos);
 				if(dis_half>0){
 					//物体已经穿过了斜面；
 					/*计算位置*/
-					tmp.resetV(planeDir);
-					tmp.mul(2*dis_half);
-					targetPos.add(tmp);
+					planeGolbalPos.resetScale(planeDir,2*dis_half);
+					targetPos.add(planeGolbalPos);
 					
 					/*计算速度*/
-					tmp.resetV(planeDir);
-					tmp.mul(-2*dir_spd_projection);
-					targetSpd.add(tmp);
+					planeGolbalPos.resetScale(planeDir,-2*dir_spd_projection);
+					targetSpd.add(planeGolbalPos);
 					
 					/*衰减*/
-					var tmp2:Vector2D=new Vector2D(planeDir.x-targetSpd.x,planeDir.y-targetSpd.y);
-					tmp2.mul(_frictionFactor);
-					tmp.resetV(planeDir);
-					tmp.mul(-_bounceFactor);
-					targetSpd.add(tmp);
-					targetSpd.add(tmp2);
+					planeGolbalPos.resetScale(planeDir,-_bounceFactor);
+					planeGolbalPos.addComponentScale(planeDir.x-targetSpd.x,planeDir.y-targetSpd.y,_frictionFactor);
+					targetSpd.add(planeGolbalPos);
 					
 					CONFIG::DEBUG_DRAW_TIMELY{
 						if(_recovered){
@@ -83,9 +77,11 @@ package z_spark.tileengine.tile
 			}
 		};
 		
-		protected var _debugDrawColor:uint=0x000000;
-		public function get debugDrawColor():uint{
-			return _debugDrawColor;
-		}
+		CONFIG::DEBUG{
+			protected var _debugDrawColor:uint=0x000000;
+			public function get debugDrawColor():uint{
+				return _debugDrawColor;
+			}
+		};
 	}
 }
