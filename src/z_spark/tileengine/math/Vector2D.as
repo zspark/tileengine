@@ -16,6 +16,10 @@ package z_spark.tileengine.math
 			_y=yy;
 		}
 		
+		public function clear():void{
+			_x=_y=0.0;
+		}
+		
 		public function reset(vct:Vector2D):void{
 			_x=vct.x;
 			_y=vct.y;
@@ -65,7 +69,6 @@ package z_spark.tileengine.math
 			_x-=x;
 			_y-=y;
 		}
-		
 		
 		public function mul(value:Number):void{
 			_x*=value;

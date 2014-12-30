@@ -3,7 +3,6 @@ package z_spark.tileengine.primitive
 	import flash.display.Sprite;
 	
 	import z_spark.tileengine.zspark_tileegine_internal;
-	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 	
@@ -17,28 +16,35 @@ package z_spark.tileengine.primitive
 	{
 		private static const MIN_SPD:Number=0.5;
 		private static const MAX_SLEEPING_COUNT:int=30;
-		private var _accV:Vector2D;
-		private var _spdV:Vector2D;
-		private var _posV:Vector2D;
+		private var _acceleration:Vector2D;
+		private var _velocity:Vector2D;
+		private var _position:Vector2D;
 		private var _damping:Number=1;
-		private var _awake:Boolean=true;
+		private var _inverseMass:Number=1.0;
+		private var _forceAccum:Vector2D;
 		private var _obj:Sprite;
 
-		public function get awake():Boolean
+		public function get mass():Number
 		{
-			return _awake;
+			if(_inverseMass==0)return Number.MAX_VALUE;
+			else return 1.0/_inverseMass;
 		}
 
-		public function set awake(value:Boolean):void
+		public function set mass(value:Number):void
 		{
-			_awake = value;
+			_inverseMass=1.0/value;
 		}
 
-		/**
-		 * 每次碰撞发生后的能量衰减，无论方向； 
-		 * @return 
-		 * 
-		 */
+		public function get inverseMass():Number
+		{
+			return _inverseMass;
+		}
+
+		public function set inverseMass(value:Number):void
+		{
+			_inverseMass = value;
+		}
+
 		public function get damping():Number
 		{
 			return _damping;
@@ -47,6 +53,11 @@ package z_spark.tileengine.primitive
 		public function set damping(value:Number):void
 		{
 			_damping = value;
+		}
+		
+		public function get hasFiniteMass():Boolean{
+			//TODO:hwo to understand;
+			return _inverseMass>=0.0;
 		}
 
 		public function get obj():Sprite
@@ -61,75 +72,89 @@ package z_spark.tileengine.primitive
 		
 		public function Particle()
 		{
-			_spdV=new Vector2D();
-			_posV=new Vector2D();
+			_velocity=new Vector2D();
+			_position=new Vector2D();
 		}
 		
-		public function get accV():Vector2D
+		public function get acceleration():Vector2D
 		{
-			return _accV;
+			return _acceleration;
 		}
 		
-		public function set accV(value:Vector2D):void
+		public function set acceleration(value:Vector2D):void
 		{
-			_accV = value;
+			_acceleration.reset(value);
 		}
 
-		public function get spdVector():Vector2D
+		public function get velocity():Vector2D
 		{
-			return _spdV;
+			return _velocity;
 		}
 		
-		public function set spdVector(value:Vector2D):void 
+		public function setacceleration(x:Number,y:Number):void
 		{
-			_spdV=value;
-			_awake=true;
+			_acceleration.resetComponent(x,y);
 		}
 		
-		public function get posVector():Vector2D
+		public function set velocity(value:Vector2D):void 
 		{
-			return _posV;
+			_velocity.reset(value);
+		}
+		
+		public function setVelocity(x:Number,y:Number):void 
+		{
+			_velocity.resetComponent(x,y);
+		}
+		
+		public function get position():Vector2D
+		{
+			return _position;
+		}
+		
+		public function set position(value:Vector2D):void
+		{
+			_position.reset(value);
+		}
+		
+		public function setPosition(x:Number,y:Number):void
+		{
+			_position.resetComponent(x,y);
+		}
+		
+		public function clearAccumulator():void{
+			_forceAccum.clear();
 		}
 		
 		public function get lastPosVector():Vector2D{
-			return new Vector2D(_posV.x-_spdV.x,_posV.y-_spdV.y);
+			return new Vector2D(_position.x-_velocity.x,_position.y-_velocity.y);
+		}
+		
+		public function addForce(value:Vector2D):void{
+			_forceAccum.add(value);
 		}
 		
 		zspark_tileegine_internal function integrate(duration:Number=0.0):void{
-			_spdV.add(_accV);
-			_posV.add(_spdV);
+			if(_inverseMass<=0.0)return;
+			_position.addScale(_velocity,duration);
+			var acc:Vector2D=_acceleration.clone();
+			acc.addScale(_forceAccum,_inverseMass);
+			_velocity.addScale(acc,duration);
+			_velocity.mul(Number.pow(_damping,duration));
+			_forceAccum.clear();
 		}
 		
-		private var _hitPlaneCount:int=0;
-		private var _lastTile:ITile;
 		zspark_tileegine_internal function frameEndCall(tile:ITile,handleStatus:int):void
 		{
-//			if(handleStatus!=TileHandleStatus.ST_PASS){
-////				_spdV.mul(1-_damping);
-//				if(tile===_lastTile){
-//					_hitPlaneCount++;
-//					if(_hitPlaneCount>MAX_SLEEPING_COUNT && _spdV.mag<MIN_SPD)// && MathUtil.dotProduct(_spdV,_world.gravity)<=.002-_world.gravity.magSqare)
-//					{	
-//						_awake=false;
-//						_hitPlaneCount=0;
-//						_lastTile=null;
-//					}
-//				}else {
-//					_hitPlaneCount=0;
-//				}
-//			}
-//			_lastTile=tile;
-			
 			if(_obj){
-				_obj.x=_posV.x;
-				_obj.y=_posV.y;
+				_obj.x=_position.x;
+				_obj.y=_position.y;
 			}
 		}
 		
 		CONFIG::DEBUG{
 			private var _posHistoryCache:Array=[];
 			public function addToHistory():void{
-				_posHistoryCache.push(_posV.clone());
+				_posHistoryCache.push(_position.clone());
 			}
 		};
 	}
