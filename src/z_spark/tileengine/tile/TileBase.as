@@ -9,7 +9,7 @@ package z_spark.tileengine.tile
 		protected var _type:int;
 		protected var _row:int;
 		protected var _col:int;
-		protected var _bounceFactor:Number=.4;
+		protected var _bounceFactor:Number=.5;
 		protected var _frictionFactor:Number=.1;
 		
 		public function TileBase(type:int,row:int,col:int)
@@ -29,7 +29,7 @@ package z_spark.tileengine.tile
 			return _row;
 		}
 		
-		protected function fixTarget(planeDir:Vector2D,planeGlobalPos:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
+		protected function fixTarget(planeDir:Vector2D,gravity:Vector2D,planeGlobalPos:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			//检查targetSpd的速度方向是否与该格子正方向同向；
 			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,planeDir);
@@ -37,7 +37,7 @@ package z_spark.tileengine.tile
 				//计算目标点到平面的距离；
 				planeGlobalPos.sub(targetPos);
 				var dis_half:Number=MathUtil.dotProduct(planeDir,planeGlobalPos);
-				if(dis_half>0){
+				if(dis_half>gravity.mag){
 					//物体已经穿过了斜面；
 					/*计算位置*/
 					planeGlobalPos.resetScale(planeDir,2*dis_half);
@@ -59,9 +59,8 @@ package z_spark.tileengine.tile
 							_recovered=false;
 						}
 					};
-					
-					return TileHandleStatus.ST_FIXED;
 				}
+				return TileHandleStatus.ST_FIXED;
 			}
 			return TileHandleStatus.ST_PASS;
 		}

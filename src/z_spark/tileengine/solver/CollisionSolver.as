@@ -1,18 +1,20 @@
-package z_spark.tileengine
+package z_spark.tileengine.solver
 {
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
-	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.primitive.Particle;
+	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.TileMap;
+	import z_spark.tileengine.zspark_tileegine_internal;
 
 	use namespace zspark_tileegine_internal;
 	/**
-	 * 力作用器； 
+	 * 碰撞解决； 
 	 * 风，雨水等影响整个TileWorld的力；
 	 * @author z_Spark
 	 * 
 	 */
-	final public class ForceImpactor
+	final public class CollisionSolver
 	{
 		/**
 		 * 碰撞检测迭代最大次数，数值越大，越精确，但越耗性能，你懂的； 
@@ -23,28 +25,25 @@ package z_spark.tileengine
 		{
 			return _iteratorMax;
 		}
+		
+		private var _gravity:Vector2D;
+		zspark_tileegine_internal function set gravity(value:Vector2D):void{
+			_gravity=value;
+		}
 
 		zspark_tileegine_internal function set iteratorMax(value:uint):void
 		{
 			_iteratorMax = value;
 		}
 		
-		public function ForceImpactor(){}
+		public function CollisionSolver(){}
 		
-		private var _gravity:Vector2D;
-		zspark_tileegine_internal function set gravity(value:Vector2D):void{
-			_gravity=value;
-		}
-		zspark_tileegine_internal function get gravity():Vector2D{
-			return _gravity;
-		}
-		
-		zspark_tileegine_internal function update(objs:Vector.<Particle>,tilemap:TileMap):void{
-//			for(var i:int=0,m:int=objs.length;i<m;i++){
-//				var obj:WorldObjectModel=objs[i];
-			for each(var obj:Particle in objs){
-				obj.spdVector.add(_gravity);
-				obj.posVector.add(obj.spdVector);
+		zspark_tileegine_internal function update(ptcs:Vector.<Particle>,tilemap:TileMap):void{
+//			for(var i:int=0,m:int=ptcs.length;i<m;i++){
+//				var ptc:WorldObjectModel=ptcs[i];
+			for each(var ptc:Particle in ptcs){
+				if(!ptc.awake)continue;
+				ptc.integrate();
 				
 				var iteratorCount:int=0;
 				var status:int=TileHandleStatus.ST_ITERATOR;
@@ -52,14 +51,15 @@ package z_spark.tileengine
 					iteratorCount++;
 					if(iteratorCount>_iteratorMax)break;
 					else {
-						var tile:ITile=tilemap.getTileByXY(obj.posVector.x,obj.posVector.y);
-						status=tile.testCollision(tilemap.tileSize,obj.posVector,obj.spdVector);
+						var tile:ITile=tilemap.getTileByXY(ptc.posVector.x,ptc.posVector.y);
+						status=tile.testCollision(tilemap.tileSize,_gravity,ptc.posVector,ptc.spdVector);
 					}
 				}
-				obj.frameEndCall(tile,status);
+				
+				ptc.frameEndCall(tile,status);
 				
 				CONFIG::DEBUG{
-//					obj.addToHistory();
+//					ptc.addToHistory();
 				};
 			}
 		}

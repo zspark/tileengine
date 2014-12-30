@@ -22,9 +22,9 @@ package z_spark.tileengine.tile
 			};
 		}
 		
-		override public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
+		override public function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
-			super.testCollision(tilesize,targetPos,targetSpd);
+			super.testCollision(tilesize,gravity,targetPos,targetSpd);
 			return TileHandleStatus.ST_ITERATOR;
 		}
 		

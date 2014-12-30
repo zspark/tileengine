@@ -4,7 +4,7 @@ package z_spark.tileengine.tile
 
 	public interface ITile
 	{
-		function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int;
+		function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int;
 		
 		CONFIG::DEBUG{
 			function toString():String;

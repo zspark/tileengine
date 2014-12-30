@@ -22,7 +22,7 @@ package z_spark.tileengine.tile
 			_dirArray=dirv;
 		}
 		
-		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
+		public function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
 			//获取参与计算的格子方向；
@@ -34,7 +34,7 @@ package z_spark.tileengine.tile
 				right_vct=MathUtil.crossPZmag(tmp,targetSpd)>=0 ? _dirArray[1] : _dirArray[0];
 			}
 			
-			return fixTarget(right_vct,globalPos,targetPos,targetSpd);
+			return fixTarget(right_vct,gravity,globalPos,targetPos,targetSpd);
 		}
 		
 		CONFIG::DEBUG{

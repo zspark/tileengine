@@ -46,9 +46,8 @@ package z_spark.tileengine.tile
 			}
 		}
 		
-		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
+		public function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
-			
 			return 0;
 		}
 		

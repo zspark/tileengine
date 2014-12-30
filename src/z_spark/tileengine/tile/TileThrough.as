@@ -32,7 +32,7 @@ package z_spark.tileengine.tile
 			_dirVct=dirv[0];
 		}
 		
-		public function testCollision(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):int
+		public function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
 			//检查targetSpd的速度方向是否与该格子正方向同向；
