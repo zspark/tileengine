@@ -29,32 +29,32 @@ package z_spark.tileengine.tile
 			return _row;
 		}
 		
-		protected function fixTarget(planeDir:Vector2D,planeGolbalPos:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
+		protected function fixTarget(planeDir:Vector2D,planeGlobalPos:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
 		{
 			//检查targetSpd的速度方向是否与该格子正方向同向；
 			var dir_spd_projection:Number=MathUtil.dotProduct(targetSpd,planeDir);
 			if(dir_spd_projection<0){
 				//计算目标点到平面的距离；
-				planeGolbalPos.sub(targetPos);
-				var dis_half:Number=MathUtil.dotProduct(planeDir,planeGolbalPos);
+				planeGlobalPos.sub(targetPos);
+				var dis_half:Number=MathUtil.dotProduct(planeDir,planeGlobalPos);
 				if(dis_half>0){
 					//物体已经穿过了斜面；
 					/*计算位置*/
-					planeGolbalPos.resetScale(planeDir,2*dis_half);
-					targetPos.add(planeGolbalPos);
+					planeGlobalPos.resetScale(planeDir,2*dis_half);
+					targetPos.add(planeGlobalPos);
 					
 					/*计算速度*/
-					planeGolbalPos.resetScale(planeDir,-2*dir_spd_projection);
-					targetSpd.add(planeGolbalPos);
+					planeGlobalPos.resetScale(planeDir,-2*dir_spd_projection);
+					targetSpd.add(planeGlobalPos);
 					
 					/*衰减*/
-					planeGolbalPos.resetScale(planeDir,-_bounceFactor);
-					planeGolbalPos.addComponentScale(planeDir.x-targetSpd.x,planeDir.y-targetSpd.y,_frictionFactor);
-					targetSpd.add(planeGolbalPos);
+					planeGlobalPos.resetScale(planeDir,-_bounceFactor);
+					planeGlobalPos.addComponentScale(planeDir.x-targetSpd.x,planeDir.y-targetSpd.y,_frictionFactor);
+					targetSpd.add(planeGlobalPos);
 					
 					CONFIG::DEBUG_DRAW_TIMELY{
 						if(_recovered){
-							TileDebugger.debugDraw(this,0xFFFFFF-_debugDrawColor);
+							TileDebugger.debugDraw(this);
 							_intervalId=setTimeout(recoverDebugDraw,200);
 							_recovered=false;
 						}
@@ -72,7 +72,7 @@ package z_spark.tileengine.tile
 			public function recoverDebugDraw():void{
 				if(_recovered)return;
 				clearTimeout(_intervalId);
-				TileDebugger.debugDraw(this,_debugDrawColor);
+				TileDebugger.debugDraw(this);
 				_recovered=true;
 			}
 		};

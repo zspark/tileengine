@@ -106,6 +106,22 @@ package z_spark.tileengine.math
 			_y = value;
 		}
 		
+		public function get rv():Vector2D{
+			return new Vector2D(y,-x);
+		}
+		
+		public function get lv():Vector2D{
+			return new Vector2D(-y,x);
+		}
+		
+		public function getRvDPResult(v:Vector2D):Number{
+			return v.x*y-v.y*x;
+		}
+		
+		public function getLvDPResult(v:Vector2D):Number{
+			return v.y*x-v.x*y;
+		}
+		
 		public function toString():String{
 			return "[x,y]=["+x+","+y+"]";
 		}

@@ -1,4 +1,4 @@
-package z_spark.tileengine
+package z_spark.tileengine.primitive
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -7,6 +7,8 @@ package z_spark.tileengine
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.TileWorld;
+	import z_spark.tileengine.zspark_tileegine_internal;
 	
 	use namespace zspark_tileegine_internal;
 	/**
@@ -14,10 +16,10 @@ package z_spark.tileengine
 	 * @author z_Spark
 	 * 
 	 */
-	public class WorldObjectModel extends EventDispatcher
+	public class Particle extends EventDispatcher
 	{
 		private static const MIN_SPD:Number=0.5;
-		private static const MAX_SLEEPING_COUNT:int=4;
+		private static const MAX_SLEEPING_COUNT:int=30;
 		private var _obj:Sprite;
 		public function get obj():Sprite
 		{
@@ -29,7 +31,7 @@ package z_spark.tileengine
 			_obj = value;
 		}
 		
-		public function WorldObjectModel()
+		public function Particle()
 		{
 			_spdV=new Vector2D();
 			_posV=new Vector2D();

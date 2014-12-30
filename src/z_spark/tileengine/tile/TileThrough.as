@@ -1,7 +1,10 @@
 package z_spark.tileengine.tile
 {
+	import flash.utils.setTimeout;
+	
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.debug.TileDebugger;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	
@@ -57,14 +60,6 @@ package z_spark.tileengine.tile
 					tmp.resetScale(_dirVct,-_bounceFactor);
 					tmp.addComponentScale(_dirVct.x-targetSpd.x,_dirVct.y-targetSpd.y,_frictionFactor);
 					targetSpd.add(tmp);
-					
-					CONFIG::DEBUG_DRAW_TIMELY{
-						if(_recovered){
-							TileDebugger.debugDraw(this,0xFFFFFF-_debugDrawColor);
-							_intervalId=setTimeout(recoverDebugDraw,200);
-							_recovered=false;
-						}
-					};
 					
 					return TileHandleStatus.ST_FIXED;
 				}

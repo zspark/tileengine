@@ -3,6 +3,7 @@ package z_spark.tileengine
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.primitive.Particle;
 
 	use namespace zspark_tileegine_internal;
 	/**
@@ -38,10 +39,10 @@ package z_spark.tileengine
 			return _gravity;
 		}
 		
-		zspark_tileegine_internal function update(objs:Vector.<WorldObjectModel>,tilemap:TileMap):void{
+		zspark_tileegine_internal function update(objs:Vector.<Particle>,tilemap:TileMap):void{
 //			for(var i:int=0,m:int=objs.length;i<m;i++){
 //				var obj:WorldObjectModel=objs[i];
-			for each(var obj:WorldObjectModel in objs){
+			for each(var obj:Particle in objs){
 				obj.spdVector.add(_gravity);
 				obj.posVector.add(obj.spdVector);
 				

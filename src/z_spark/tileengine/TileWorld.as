@@ -4,6 +4,7 @@ package z_spark.tileengine
 	import flash.events.Event;
 	
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.primitive.Particle;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld
@@ -14,8 +15,8 @@ package z_spark.tileengine
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
-			_awakeObjectList=new Vector.<WorldObjectModel>();
-			_sleepingObjectList=new Vector.<WorldObjectModel>();
+			_awakeObjectList=new Vector.<Particle>();
+			_sleepingObjectList=new Vector.<Particle>();
 			_collisionSolver=new ForceImpactor();
 			_tileMap=new TileMap();
 		}
@@ -55,14 +56,14 @@ package z_spark.tileengine
 			_collisionSolver.update(_awakeObjectList,_tileMap);
 		}
 		
-		private var _awakeObjectList:Vector.<WorldObjectModel>;
-		private var _sleepingObjectList:Vector.<WorldObjectModel>;
-		public function addWorldObject(model:WorldObjectModel):void{
+		private var _awakeObjectList:Vector.<Particle>;
+		private var _sleepingObjectList:Vector.<Particle>;
+		public function addWorldObject(model:Particle):void{
 			_awakeObjectList.push(model);
 			model.tileWorld=this;
 		}
 		
-		public function removeWorldObject(model:WorldObjectModel):void{
+		public function removeWorldObject(model:Particle):void{
 			if(_awakeObjectList.indexOf(model)>=0)
 				_awakeObjectList.splice(_awakeObjectList.indexOf(model),1);
 			else if(_sleepingObjectList.indexOf(model)>=0)
@@ -71,12 +72,12 @@ package z_spark.tileengine
 			model.tileWorld=null;
 		}
 		
-		zspark_tileegine_internal function sleep(model:WorldObjectModel):void{
+		zspark_tileegine_internal function sleep(model:Particle):void{
 			_awakeObjectList.splice(_awakeObjectList.indexOf(model),1);
 			_sleepingObjectList.push(model);
 		}
 		
-		zspark_tileegine_internal function wakeup(model:WorldObjectModel):void{
+		zspark_tileegine_internal function wakeup(model:Particle):void{
 			_sleepingObjectList.splice(_awakeObjectList.indexOf(model),1);
 			if(_awakeObjectList.indexOf(model)>=0)return;
 			_awakeObjectList.push(model);
