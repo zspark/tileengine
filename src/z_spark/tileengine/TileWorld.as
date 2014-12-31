@@ -43,7 +43,7 @@ package z_spark.tileengine
 			_gravity=value;
 			_collisionSolver.gravity=value;
 			for each(var ptc:Particle in _awakeObjectList){
-				ptc.accV=value;
+				ptc.acceleration=value;
 			}
 		}
 		
@@ -63,14 +63,14 @@ package z_spark.tileengine
 		
 		private function onEHandler(event:Event):void
 		{
-			_contactSolver.update(_contactList);
 			_collisionSolver.update(_awakeObjectList,_tileMap);
+			_contactSolver.update(_contactList);
 		}
 		
 		private var _awakeObjectList:Vector.<Particle>;
 		public function addWorldObject(ptc:Particle):void{
 			_awakeObjectList.push(ptc);
-			ptc.accV=_gravity;
+			ptc.acceleration=_gravity;
 		}
 		
 		public function removeWorldObject(ptc:Particle):void{

@@ -4,7 +4,6 @@ package z_spark.tileengine.debug
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	
-	import z_spark.as3lib.utils.ColorUtil;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.TileWorldConst;
@@ -97,9 +96,9 @@ package z_spark.tileengine.debug
 					}
 				}
 				
-				
+				const debugColor:uint=0x42621c;
 				if(debugPosArray.length>0){
-					grap.lineStyle(1,ColorUtil.COLOR_BLUE_DARK);
+					grap.lineStyle(1,debugColor);
 					for (var i:int=0;i<debugPosArray.length;i++){
 						if(i==0)grap.moveTo(debugPosArray[i].x,debugPosArray[i].y);
 						else{
@@ -114,7 +113,7 @@ package z_spark.tileengine.debug
 					const downv:Vector2D=new Vector2D(0,1);
 					const leftv:Vector2D=new Vector2D(-1,0);
 					const rightv:Vector2D=new Vector2D(1,0);
-					grap.beginFill(ColorUtil.COLOR_BLUE_DARK,0.5);
+					grap.beginFill(debugColor,0.5);
 					for each(var v:Vector2D in _dirArray){
 						if(MathUtil.dotProduct(v,upv)==1){
 							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y,ltpos.x+sz,ltpos.y]));

@@ -42,7 +42,6 @@ package z_spark.tileengine.solver
 //			for(var i:int=0,m:int=ptcs.length;i<m;i++){
 //				var ptc:WorldObjectModel=ptcs[i];
 			for each(var ptc:Particle in ptcs){
-				if(!ptc.awake)continue;
 				ptc.integrate();
 				
 				var iteratorCount:int=0;
@@ -51,8 +50,8 @@ package z_spark.tileengine.solver
 					iteratorCount++;
 					if(iteratorCount>_iteratorMax)break;
 					else {
-						var tile:ITile=tilemap.getTileByXY(ptc.posVector.x,ptc.posVector.y);
-						status=tile.testCollision(tilemap.tileSize,_gravity,ptc.posVector,ptc.spdVector);
+						var tile:ITile=tilemap.getTileByXY(ptc.position.x,ptc.position.y);
+						status=tile.testCollision(tilemap.tileSize,_gravity,ptc.position,ptc.velocity);
 					}
 				}
 				

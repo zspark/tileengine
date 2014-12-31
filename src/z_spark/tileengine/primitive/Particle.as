@@ -74,6 +74,7 @@ package z_spark.tileengine.primitive
 		{
 			_velocity=new Vector2D();
 			_position=new Vector2D();
+			_acceleration=new Vector2D();
 		}
 		
 		public function get acceleration():Vector2D
@@ -134,13 +135,16 @@ package z_spark.tileengine.primitive
 		}
 		
 		zspark_tileegine_internal function integrate(duration:Number=0.0):void{
-			if(_inverseMass<=0.0)return;
-			_position.addScale(_velocity,duration);
-			var acc:Vector2D=_acceleration.clone();
-			acc.addScale(_forceAccum,_inverseMass);
-			_velocity.addScale(acc,duration);
-			_velocity.mul(Number.pow(_damping,duration));
-			_forceAccum.clear();
+//			if(_inverseMass<=0.0)return;
+//			_position.addScale(_velocity,duration);
+//			var acc:Vector2D=_acceleration.clone();
+//			acc.addScale(_forceAccum,_inverseMass);
+//			_velocity.addScale(acc,duration);
+//			_velocity.mul(Number.pow(_damping,duration));
+//			_forceAccum.clear();
+			
+			_velocity.add(_acceleration);
+			_position.add(_velocity);
 		}
 		
 		zspark_tileegine_internal function frameEndCall(tile:ITile,handleStatus:int):void

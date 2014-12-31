@@ -15,8 +15,8 @@ package z_spark.tileengine.contact
 		}
 		
 		override zspark_tileegine_internal function update():void{
-			var tmp:Vector2D=_b.posVector.clone();
-			tmp.sub(_a.posVector);
+			var tmp:Vector2D=_b.position.clone();
+			tmp.sub(_a.position);
 			var overLength:Number=tmp.mag-_maxLength;
 			if(overLength>0){
 				//>pos..
@@ -26,22 +26,22 @@ package z_spark.tileengine.contact
 				tmp.mul(overLength);
 				
 				//>a;
-				_a.posVector.addScale(tmp,.6);
+				_a.position.addScale(tmp,.6);
 				//>b;
-				_b.posVector.addScale(tmp,-.5);
+				_b.position.addScale(tmp,-.5);
 				
 				//>spd..
-				ac.mul(MathUtil.dotProduct(ac,_a.spdVector));
-				_a.spdVector.sub(ac);
-				bc.mul(MathUtil.dotProduct(bc,_b.spdVector));
-				_b.spdVector.sub(bc);
+				ac.mul(MathUtil.dotProduct(ac,_a.velocity));
+				_a.velocity.sub(ac);
+				bc.mul(MathUtil.dotProduct(bc,_b.velocity));
+				_b.velocity.sub(bc);
 				
 				var sumv:Vector2D=ac.clone();
 				sumv.add(bc);
 				sumv.mul(.5);
 				
-				_a.spdVector.add(sumv);
-				_b.spdVector.add(sumv);
+				_a.velocity.add(sumv);
+				_b.velocity.add(sumv);
 			}
 		}
 	}
