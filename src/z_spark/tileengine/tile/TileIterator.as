@@ -4,6 +4,7 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.primitive.IElement;
 
 
 	/**
@@ -22,9 +23,9 @@ package z_spark.tileengine.tile
 			};
 		}
 		
-		override public function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int
+		override public function testCollision(tilesize:uint,gravity:Vector2D, elem:IElement):int
 		{
-			super.testCollision(tilesize,gravity,targetPos,targetSpd);
+			super.testCollision(tilesize,gravity,elem);
 			return TileHandleStatus.ST_ITERATOR;
 		}
 		

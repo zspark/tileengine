@@ -5,6 +5,7 @@ package z_spark.tileengine
 	
 	import z_spark.tileengine.contact.Contact;
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.primitive.IElement;
 	import z_spark.tileengine.primitive.Particle;
 	import z_spark.tileengine.solver.CollisionSolver;
 	import z_spark.tileengine.solver.ContactSolver;
@@ -19,7 +20,7 @@ package z_spark.tileengine
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
-			_awakeObjectList=new Vector.<Particle>();
+			_awakeObjectList=new Vector.<IElement>();
 			_contactList=new Vector.<Contact>();
 			_collisionSolver=new CollisionSolver();
 			_contactSolver=new ContactSolver();
@@ -42,8 +43,8 @@ package z_spark.tileengine
 		public function set gravity(value:Vector2D):void{
 			_gravity=value;
 			_collisionSolver.gravity=value;
-			for each(var ptc:Particle in _awakeObjectList){
-				ptc.acceleration=value;
+			for each(var elem:Particle in _awakeObjectList){
+				elem.acceleration=value;
 			}
 		}
 		
@@ -67,15 +68,15 @@ package z_spark.tileengine
 			_contactSolver.update(_contactList);
 		}
 		
-		private var _awakeObjectList:Vector.<Particle>;
-		public function addWorldObject(ptc:Particle):void{
-			_awakeObjectList.push(ptc);
-			ptc.acceleration=_gravity;
+		private var _awakeObjectList:Vector.<IElement>;
+		public function addWorldObject(elem:IElement):void{
+			_awakeObjectList.push(elem);
+			elem.acceleration=_gravity;
 		}
 		
-		public function removeWorldObject(ptc:Particle):void{
-			if(_awakeObjectList.indexOf(ptc)>=0)
-				_awakeObjectList.splice(_awakeObjectList.indexOf(ptc),1);
+		public function removeWorldObject(elem:IElement):void{
+			if(_awakeObjectList.indexOf(elem)>=0)
+				_awakeObjectList.splice(_awakeObjectList.indexOf(elem),1);
 		}
 		
 		private var _contactList:Vector.<Contact>;

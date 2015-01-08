@@ -8,57 +8,16 @@ package z_spark.tileengine.primitive
 	
 	use namespace zspark_tileegine_internal;
 	/**
-	 * 格子世界物体模型； 
+	 * 粒子； 
 	 * @author z_Spark
 	 * 
 	 */
-	public class Particle
+	public class Particle implements IElement
 	{
-		private static const MIN_SPD:Number=0.5;
-		private static const MAX_SLEEPING_COUNT:int=30;
 		private var _acceleration:Vector2D;
 		private var _velocity:Vector2D;
 		private var _position:Vector2D;
-		private var _damping:Number=1;
-		private var _inverseMass:Number=1.0;
-		private var _forceAccum:Vector2D;
 		private var _obj:Sprite;
-
-		public function get mass():Number
-		{
-			if(_inverseMass==0)return Number.MAX_VALUE;
-			else return 1.0/_inverseMass;
-		}
-
-		public function set mass(value:Number):void
-		{
-			_inverseMass=1.0/value;
-		}
-
-		public function get inverseMass():Number
-		{
-			return _inverseMass;
-		}
-
-		public function set inverseMass(value:Number):void
-		{
-			_inverseMass = value;
-		}
-
-		public function get damping():Number
-		{
-			return _damping;
-		}
-
-		public function set damping(value:Number):void
-		{
-			_damping = value;
-		}
-		
-		public function get hasFiniteMass():Boolean{
-			//TODO:hwo to understand;
-			return _inverseMass>=0.0;
-		}
 
 		public function get obj():Sprite
 		{
@@ -122,32 +81,16 @@ package z_spark.tileengine.primitive
 			_position.resetComponent(x,y);
 		}
 		
-		public function clearAccumulator():void{
-			_forceAccum.clear();
-		}
-		
-		public function get lastPosVector():Vector2D{
+		public function get lastPosition():Vector2D{
 			return new Vector2D(_position.x-_velocity.x,_position.y-_velocity.y);
 		}
 		
-		public function addForce(value:Vector2D):void{
-			_forceAccum.add(value);
+		public function integrate(duration:Number=1.0):void{
+			_velocity.addScale(_acceleration,duration);
+			_position.addScale(_velocity,duration);
 		}
 		
-		zspark_tileegine_internal function integrate(duration:Number=0.0):void{
-//			if(_inverseMass<=0.0)return;
-//			_position.addScale(_velocity,duration);
-//			var acc:Vector2D=_acceleration.clone();
-//			acc.addScale(_forceAccum,_inverseMass);
-//			_velocity.addScale(acc,duration);
-//			_velocity.mul(Number.pow(_damping,duration));
-//			_forceAccum.clear();
-			
-			_velocity.add(_acceleration);
-			_position.add(_velocity);
-		}
-		
-		zspark_tileegine_internal function frameEndCall(tile:ITile,handleStatus:int):void
+		public function frameEndCall(tile:ITile,handleStatus:int):void
 		{
 			if(_obj){
 				_obj.x=_position.x;

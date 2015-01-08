@@ -1,10 +1,11 @@
 package z_spark.tileengine.tile
 {
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.primitive.IElement;
 
 	public interface ITile
 	{
-		function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D,targetSpd:Vector2D):int;
+		function testCollision(tilesize:uint,gravity:Vector2D, elem:IElement):int;
 		
 		CONFIG::DEBUG{
 			function toString():String;
@@ -26,6 +27,6 @@ package z_spark.tileengine.tile
 //		
 		function get row():int;
 //		
-//		function get type():int;
+		function get type():int;
 	}
 }

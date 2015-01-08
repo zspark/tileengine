@@ -1,11 +1,11 @@
 package z_spark.tileengine.solver
 {
-	import z_spark.tileengine.constance.TileHandleStatus;
-	import z_spark.tileengine.math.Vector2D;
-	import z_spark.tileengine.primitive.Particle;
-	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.primitive.IElement;
+	import z_spark.tileengine.tile.ITile;
 
 	use namespace zspark_tileegine_internal;
 	/**
@@ -38,11 +38,11 @@ package z_spark.tileengine.solver
 		
 		public function CollisionSolver(){}
 		
-		zspark_tileegine_internal function update(ptcs:Vector.<Particle>,tilemap:TileMap):void{
-//			for(var i:int=0,m:int=ptcs.length;i<m;i++){
-//				var ptc:WorldObjectModel=ptcs[i];
-			for each(var ptc:Particle in ptcs){
-				ptc.integrate();
+		zspark_tileegine_internal function update(elems:Vector.<IElement>,tilemap:TileMap):void{
+//			for(var i:int=0,m:int=elems.length;i<m;i++){
+//				var elem:WorldObjectModel=elems[i];
+			for each(var elem:IElement in elems){
+				elem.integrate();
 				
 				var iteratorCount:int=0;
 				var status:int=TileHandleStatus.ST_ITERATOR;
@@ -50,15 +50,15 @@ package z_spark.tileengine.solver
 					iteratorCount++;
 					if(iteratorCount>_iteratorMax)break;
 					else {
-						var tile:ITile=tilemap.getTileByXY(ptc.position.x,ptc.position.y);
-						status=tile.testCollision(tilemap.tileSize,_gravity,ptc.position,ptc.velocity);
+						var tile:ITile=tilemap.getTileByXY(elem.position.x,elem.position.y);
+						status=tile.testCollision(tilemap.tileSize,_gravity,elem);
 					}
 				}
 				
-				ptc.frameEndCall(tile,status);
+				elem.frameEndCall(tile,status);
 				
 				CONFIG::DEBUG{
-//					ptc.addToHistory();
+//					elem.addToHistory();
 				};
 			}
 		}

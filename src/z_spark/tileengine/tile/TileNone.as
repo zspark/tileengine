@@ -3,6 +3,7 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.primitive.IElement;
 
 	public class TileNone extends TileBase implements ITile
 	{
@@ -12,7 +13,7 @@ package z_spark.tileengine.tile
 			_type=TileType.TYPE_NONE;
 		}
 		
-		public function testCollision(tilesize:uint,gravity:Vector2D, targetPos:Vector2D, targetSpd:Vector2D):int
+		public function testCollision(tilesize:uint,gravity:Vector2D, elem:IElement):int
 		{
 			return TileHandleStatus.ST_PASS;
 		}
