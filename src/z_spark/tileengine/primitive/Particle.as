@@ -3,6 +3,7 @@ package z_spark.tileengine.primitive
 	import flash.display.Sprite;
 	
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 	
@@ -85,11 +86,6 @@ package z_spark.tileengine.primitive
 			return new Vector2D(_position.x-_velocity.x,_position.y-_velocity.y);
 		}
 		
-		public function integrate(duration:Number=1.0):void{
-			_velocity.addScale(_acceleration,duration);
-			_position.addScale(_velocity,duration);
-		}
-		
 		public function frameEndCall(tile:ITile,handleStatus:int):void
 		{
 			if(_obj){
@@ -104,5 +100,20 @@ package z_spark.tileengine.primitive
 				_posHistoryCache.push(_position.clone());
 			}
 		};
+		
+		private var _status:uint=ElementStatus.STAY;
+		public function get status():uint
+		{
+			return _status;
+		}
+		
+		public function addStatus(stat:uint):void{
+			_status|=stat;
+		}
+		
+		public function removeStatus(stat:uint):void{
+			_status&=~stat;
+		}
+		
 	}
 }

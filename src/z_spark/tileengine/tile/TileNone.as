@@ -28,5 +28,10 @@ package z_spark.tileengine.tile
 			}
 		};
 		
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		{
+			return TileHandleStatus.ST_PASS;
+		}
+		
 	}
 }

@@ -2,10 +2,12 @@ package z_spark.tileengine.solver
 {
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.tile.TileNone;
 
 	use namespace zspark_tileegine_internal;
 	/**
@@ -42,17 +44,29 @@ package z_spark.tileengine.solver
 //			for(var i:int=0,m:int=elems.length;i<m;i++){
 //				var elem:WorldObjectModel=elems[i];
 			for each(var elem:IElement in elems){
-				elem.integrate();
 				
-				var iteratorCount:int=0;
-				var status:int=TileHandleStatus.ST_ITERATOR;
-				while(status==TileHandleStatus.ST_ITERATOR){
-					iteratorCount++;
-					if(iteratorCount>_iteratorMax)break;
-					else {
-						var tile:ITile=tilemap.getTileByXY(elem.position.x,elem.position.y);
-						status=tile.testCollision(tilemap.tileSize,_gravity,elem);
+				if((elem.status & ElementStatus.JUMP)!=0){
+					elem.velocity.add(elem.acceleration);
+					elem.position.add(elem.velocity);
+					
+					var iteratorCount:int=0;
+					var status:int=TileHandleStatus.ST_ITERATOR;
+					while(status==TileHandleStatus.ST_ITERATOR){
+						iteratorCount++;
+						if(iteratorCount>_iteratorMax)break;
+						else {
+							var tile:ITile=tilemap.getTileByXY(elem.position.x,elem.position.y);
+							status=tile.testCollision(tilemap.tileSize,_gravity,elem);
+						}
 					}
+				}else{
+					elem.position.add(elem.velocity);
+					tile=tilemap.getTileByXY(elem.position.x,elem.position.y);
+					status=tile.handleTileMove(tilemap.tileSize,_gravity,elem);
+					
+					tile=tilemap.getTileByXY(elem.position.x+elem.acceleration.x
+						,elem.position.y+elem.acceleration.y);
+					if(tile is TileNone)elem.addStatus(ElementStatus.JUMP);
 				}
 				
 				elem.frameEndCall(tile,status);

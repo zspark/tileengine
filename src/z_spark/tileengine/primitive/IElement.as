@@ -5,8 +5,6 @@ package z_spark.tileengine.primitive
 
 	public interface IElement
 	{
-		function integrate(duration:Number=1.0):void;
-		
 		function get acceleration():Vector2D;
 		
 		function set acceleration(value:Vector2D):void;
@@ -26,6 +24,12 @@ package z_spark.tileengine.primitive
 		function setPosition(x:Number,y:Number):void;
 		
 		function get lastPosition():Vector2D;
+		
+		function get status():uint;
+		
+		function addStatus(stat:uint):void;
+		
+		function removeStatus(stat:uint):void;
 		
 		function frameEndCall(tile:ITile,handleStatus:int):void;
 	}

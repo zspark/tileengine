@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.MathUtil;
@@ -51,6 +52,11 @@ package z_spark.tileengine.tile
 		public function testCollision(tilesize:uint,gravity:Vector2D, elem:IElement):int
 		{
 			return TileHandleStatus.ST_FIXED;
+		}
+		
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		{
+			return TileHandleStatus.ST_PASS;
 		}
 		
 		CONFIG::DEBUG{

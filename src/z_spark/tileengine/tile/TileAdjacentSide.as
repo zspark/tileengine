@@ -1,6 +1,8 @@
 package z_spark.tileengine.tile
 {
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.ElementStatus;
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
@@ -37,6 +39,11 @@ package z_spark.tileengine.tile
 			}
 			
 			return fixTarget(right_vct,gravity,11,elem);
+		}
+		
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		{
+			return TileHandleStatus.ST_PASS;
 		}
 		
 		CONFIG::DEBUG{

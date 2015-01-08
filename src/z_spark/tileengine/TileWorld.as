@@ -3,27 +3,22 @@ package z_spark.tileengine
 	import flash.display.Stage;
 	import flash.events.Event;
 	
-	import z_spark.tileengine.contact.Contact;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
 	import z_spark.tileengine.primitive.Particle;
 	import z_spark.tileengine.solver.CollisionSolver;
-	import z_spark.tileengine.solver.ContactSolver;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld
 	{
 		private var _collisionSolver:CollisionSolver;
-		private var _contactSolver:ContactSolver;
 		private var _tileMap:TileMap;
 		private var _stage:Stage;
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
 			_awakeObjectList=new Vector.<IElement>();
-			_contactList=new Vector.<Contact>();
 			_collisionSolver=new CollisionSolver();
-			_contactSolver=new ContactSolver();
 			_tileMap=new TileMap();
 		}
 		
@@ -65,7 +60,6 @@ package z_spark.tileengine
 		private function onEHandler(event:Event):void
 		{
 			_collisionSolver.update(_awakeObjectList,_tileMap);
-			_contactSolver.update(_contactList);
 		}
 		
 		private var _awakeObjectList:Vector.<IElement>;
@@ -77,11 +71,6 @@ package z_spark.tileengine
 		public function removeWorldObject(elem:IElement):void{
 			if(_awakeObjectList.indexOf(elem)>=0)
 				_awakeObjectList.splice(_awakeObjectList.indexOf(elem),1);
-		}
-		
-		private var _contactList:Vector.<Contact>;
-		public function addContact(contact:Contact):void{
-			_contactList.push(contact);
 		}
 		
 	}

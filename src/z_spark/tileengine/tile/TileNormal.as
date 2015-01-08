@@ -1,6 +1,7 @@
 package z_spark.tileengine.tile
 {
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
@@ -38,13 +39,59 @@ package z_spark.tileengine.tile
 			tmp.sub(elem.position);
 			var dis_half:Number=MathUtil.dotProduct(_positiveVct,tmp);
 			if(dis_half>0 ){
-				tmp.reset(globalPos);
-				tmp.sub(elem.lastPosition);
-				dis_half=MathUtil.dotProduct(_positiveVct,tmp);
-				if(dis_half<=0){
-					return fixTarget(_positiveVct,gravity,dis_half,elem);
-				}
+//				tmp.reset(globalPos);
+//				tmp.sub(elem.lastPosition);
+//				dis_half=MathUtil.dotProduct(_positiveVct,tmp);
+//				if(dis_half<=0){
+					var targetSpd:Vector2D=elem.velocity;
+					//计算目标点到平面的距离；
+					//物体已经穿过了斜面；
+					/*计算位置*/
+					tmp.resetScale(_positiveVct,2*dis_half);
+					elem.position.addScale(tmp,1.01);
+					
+					/*计算速度*/
+					tmp.resetScale(_positiveVct,-2*MathUtil.dotProduct(targetSpd,_positiveVct));
+					targetSpd.add(tmp);
+					
+					/*衰减*/
+					tmp.resetScale(_positiveVct,-_bounceFactor);
+					tmp.addComponentScale(_positiveVct.x-targetSpd.x,_positiveVct.y-targetSpd.y,_frictionFactor);
+					targetSpd.add(tmp);
+					
+					var mag:Number=gravity.mag;
+					if(dis_half<=mag && targetSpd.mag<mag+.01){
+						elem.removeStatus(ElementStatus.JUMP);
+						elem.addStatus(ElementStatus.STAY);
+					}
+					
+					CONFIG::DEBUG_DRAW_TIMELY{
+						if(_recovered){
+							TileDebugger.debugDraw(this);
+							_intervalId=setTimeout(recoverDebugDraw,200);
+							_recovered=false;
+						}
+					};
+					
+					return TileHandleStatus.ST_FIXED;
+//				}
 			}
+			return TileHandleStatus.ST_PASS;
+		}
+		
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		{
+			//计算移动的速度在该格子平面上的切向投影；
+			//该投影就是在斜面上的切向速度；
+			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
+			var tmp:Vector2D=globalPos.clone();
+			tmp.sub(elem.position);
+			var dis_half:Number=MathUtil.dotProduct(_positiveVct,tmp);
+			if(dis_half>0){
+				//穿进来了；
+				elem.position.addScale(_positiveVct,dis_half+.01);
+			}
+			
 			return TileHandleStatus.ST_PASS;
 		}
 		

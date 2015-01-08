@@ -6,7 +6,7 @@ package z_spark.tileengine.tile
 	public interface ITile
 	{
 		function testCollision(tilesize:uint,gravity:Vector2D, elem:IElement):int;
-		
+		function handleTileMove(tilesize:uint,gravity:Vector2D, elem:IElement):int;
 		CONFIG::DEBUG{
 			function toString():String;
 			function get dirArray():Array;
