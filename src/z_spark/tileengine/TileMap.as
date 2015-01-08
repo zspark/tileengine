@@ -100,7 +100,7 @@ package z_spark.tileengine
 					var cls:Class=TYPE_TO_TILE_CLASS[type] as Class;
 					if(cls){
 						var dir:int=mapRawInfo[i][j].dir;
-						var tile:ITile=new cls(type,i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
+						var tile:ITile=new cls(this,type,i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
 					}else{
 						throw Error("格子原始数据错误，有不能被识别或不支持的格子编号！(i,j)=("+i+','+j+"),tileType="+mapRawInfo[i][j].type);
 					}

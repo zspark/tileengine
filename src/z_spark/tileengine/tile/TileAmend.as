@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
@@ -18,9 +19,9 @@ package z_spark.tileengine.tile
 		private var _amendDirArray:Array;
 		private var _amendPos:Vector2D;
 		
-		public function TileAmend(type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileAmend(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
 		{
-			super(type,row,col);
+			super(tilemap,type,row,col);
 			_amendPos=pos;
 			_amendDirArray=dirv;
 			_type=TileType.TYPE_AMEND;

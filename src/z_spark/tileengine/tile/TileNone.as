@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.math.Vector2D;
@@ -7,9 +8,9 @@ package z_spark.tileengine.tile
 
 	public class TileNone extends TileBase implements ITile
 	{
-		public function TileNone(type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileNone(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
 		{
-			super(type,row,col);
+			super(tilemap,type,row,col);
 			_type=TileType.TYPE_NONE;
 		}
 		

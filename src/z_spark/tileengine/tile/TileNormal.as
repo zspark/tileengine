@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
@@ -21,9 +22,9 @@ package z_spark.tileengine.tile
 		};
 		protected var _positiveVct:Vector2D;//referance
 		
-		public function TileNormal(type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileNormal(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
 		{
-			super(type,row,col);
+			super(tilemap,type,row,col);
 			_localPos=pos;
 			CONFIG::DEBUG{
 				_dirArray=dirv;
@@ -46,23 +47,21 @@ package z_spark.tileengine.tile
 					var targetSpd:Vector2D=elem.velocity;
 					//计算目标点到平面的距离；
 					//物体已经穿过了斜面；
-					/*计算位置*/
-					tmp.resetScale(_positiveVct,2*dis_half);
-					elem.position.addScale(tmp,1.01);
+					/*位置*/
+					tmp.resetScale(_positiveVct,1.00001*dis_half);
+					elem.position.add(tmp);
 					
-					/*计算速度*/
-					tmp.resetScale(_positiveVct,-2*MathUtil.dotProduct(targetSpd,_positiveVct));
-					targetSpd.add(tmp);
-					
-					/*衰减*/
-					tmp.resetScale(_positiveVct,-_bounceFactor);
-					tmp.addComponentScale(_positiveVct.x-targetSpd.x,_positiveVct.y-targetSpd.y,_frictionFactor);
-					targetSpd.add(tmp);
+					/*速度与衰减、切向与法向；*/
+					var n:Vector2D=_positiveVct.clone();
+					n.mul(MathUtil.dotProduct(targetSpd,_positiveVct));
+					var t:Vector2D=n.clone();
+					t.sub(targetSpd);
+					targetSpd.addScale(n,-(2-_bounceFactor));
+					targetSpd.addScale(t,_frictionFactor);
 					
 					var mag:Number=gravity.mag;
-					if(dis_half<=mag && targetSpd.mag<mag+.01){
+					if(dis_half<=mag && targetSpd.mag<mag){
 						elem.removeStatus(ElementStatus.JUMP);
-						elem.addStatus(ElementStatus.STAY);
 					}
 					
 					CONFIG::DEBUG_DRAW_TIMELY{

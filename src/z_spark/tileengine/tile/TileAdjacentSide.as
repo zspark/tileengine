@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
@@ -18,9 +19,9 @@ package z_spark.tileengine.tile
 		protected var _localPos:Vector2D;//referance;
 		protected var _dirArray:Array;//referance
 		
-		public function TileAdjacentSide(type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileAdjacentSide(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
 		{
-			super(type,row,col);
+			super(tilemap,type,row,col);
 			_localPos=pos;
 			_dirArray=dirv;
 		}

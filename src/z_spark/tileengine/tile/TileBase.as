@@ -1,5 +1,6 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
@@ -7,14 +8,16 @@ package z_spark.tileengine.tile
 
 	public class TileBase
 	{
+		protected var _tilemap:TileMap;
 		protected var _type:int;
 		protected var _row:int;
 		protected var _col:int;
-		protected var _bounceFactor:Number=.45;
-		protected var _frictionFactor:Number=.1;
+		protected var _bounceFactor:Number=.7;
+		protected var _frictionFactor:Number=.5;
 		
-		public function TileBase(type:int,row:int,col:int)
+		public function TileBase(tilemap:TileMap,type:int,row:int,col:int)
 		{
+			_tilemap=tilemap;
 			_type=type;
 			_row=row;
 			_col=col;

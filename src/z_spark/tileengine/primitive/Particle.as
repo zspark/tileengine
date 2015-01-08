@@ -115,5 +115,9 @@ package z_spark.tileengine.primitive
 			_status&=~stat;
 		}
 		
+		public function statusExist(stat:uint):Boolean{
+			return (_status & stat)==stat;
+		}
+		
 	}
 }
