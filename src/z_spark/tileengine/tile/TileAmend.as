@@ -26,7 +26,7 @@ package z_spark.tileengine.tile
 			_amendDirArray=dirv;
 			_type=TileType.TYPE_AMEND;
 		}
-
+		
 		private function refreshAmendInfo(tilesize:uint, targetPos:Vector2D,targetSpd:Vector2D):void{
 			var _curAmendDir:Vector2D;
 			//方向相同者抛弃；
@@ -55,7 +55,7 @@ package z_spark.tileengine.tile
 			return TileHandleStatus.ST_FIXED;
 		}
 		
-		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement,testPos:Vector2D=null):int
 		{
 			return TileHandleStatus.ST_PASS;
 		}

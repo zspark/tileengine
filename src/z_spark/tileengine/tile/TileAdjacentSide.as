@@ -42,7 +42,7 @@ package z_spark.tileengine.tile
 			return fixTarget(right_vct,gravity,11,elem);
 		}
 		
-		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement,testPos:Vector2D=null):int
 		{
 			return TileHandleStatus.ST_PASS;
 		}

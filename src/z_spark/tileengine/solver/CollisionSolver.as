@@ -64,9 +64,6 @@ package z_spark.tileengine.solver
 					tile=tilemap.getTileByXY(elem.position.x,elem.position.y);
 					status=tile.handleTileMove(tilemap.tileSize,_gravity,elem);
 					
-					tile=tilemap.getTileByXY(elem.position.x+elem.acceleration.x
-						,elem.position.y+elem.acceleration.y);
-					if(tile is TileNone)elem.addStatus(ElementStatus.JUMP);
 				}
 				
 				elem.frameEndCall(tile,status);

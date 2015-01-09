@@ -4,6 +4,7 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
@@ -51,7 +52,7 @@ package z_spark.tileengine.tile
 					tmp.resetScale(_positiveVct,1.00001*dis_half);
 					elem.position.add(tmp);
 					
-					/*速度与衰减、切向与法向；*/
+					/*速度衰减,切向与法向；*/
 					var n:Vector2D=_positiveVct.clone();
 					n.mul(MathUtil.dotProduct(targetSpd,_positiveVct));
 					var t:Vector2D=n.clone();
@@ -78,18 +79,17 @@ package z_spark.tileengine.tile
 			return TileHandleStatus.ST_PASS;
 		}
 		
-		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement):int
+		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement,testPos:Vector2D=null):int
 		{
-			//计算移动的速度在该格子平面上的切向投影；
-			//该投影就是在斜面上的切向速度；
-			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
-			var tmp:Vector2D=globalPos.clone();
-			tmp.sub(elem.position);
-			var dis_half:Number=MathUtil.dotProduct(_positiveVct,tmp);
-			if(dis_half>0){
-				//穿进来了；
-				elem.position.addScale(_positiveVct,dis_half+.01);
+			if(testPos == null){
+				//计算移动的速度在该格子平面上的切向投影；
+				//该投影就是在斜面上的切向速度；
+				testPos=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
 			}
+			testPos.sub(elem.position);
+			
+			var dis_half:Number=MathUtil.dotProduct(_positiveVct,testPos);
+			elem.position.addScale(_positiveVct,dis_half*TileWorldConst.MIN_NUMBER_BIGGER_THAN_ONE);
 			
 			return TileHandleStatus.ST_PASS;
 		}

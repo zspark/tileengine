@@ -20,5 +20,7 @@ package z_spark.tileengine.constance
 		public static const DIRVECTOR_LEFT_AND_TOP:Array=[new Vector2D(0,-1),new Vector2D(-1,0)];
 		public static const DIRVECTOR_RIGHT_AND_TOP:Array=[new Vector2D(1,0),new Vector2D(0,-1)];
 		
+		public static const MIN_NUMBER:Number=.000001;
+		public static const MIN_NUMBER_BIGGER_THAN_ONE:Number=1+MIN_NUMBER;
 	}
 }

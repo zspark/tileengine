@@ -10,7 +10,7 @@ package z_spark.tileengine.tile
 	{
 		protected var _tilemap:TileMap;
 		protected var _type:int;
-		protected var _row:int;
+		protected var _row:int;	
 		protected var _col:int;
 		protected var _bounceFactor:Number=.7;
 		protected var _frictionFactor:Number=.5;
