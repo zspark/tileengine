@@ -86,6 +86,10 @@ package z_spark.tileengine.primitive
 			return new Vector2D(_position.x-_velocity.x,_position.y-_velocity.y);
 		}
 		
+		public function get futurePosition():Vector2D{
+			return new Vector2D(_position.x+_velocity.x,_position.y+_velocity.y);
+		}
+		
 		public function frameEndCall(tile:ITile,handleStatus:int):void
 		{
 			if(_obj){

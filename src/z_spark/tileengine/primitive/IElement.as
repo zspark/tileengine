@@ -25,6 +25,8 @@ package z_spark.tileengine.primitive
 		
 		function get lastPosition():Vector2D;
 		
+		function get futurePosition():Vector2D;
+		
 		function get status():uint;
 		
 		function addStatus(stat:uint):void;
