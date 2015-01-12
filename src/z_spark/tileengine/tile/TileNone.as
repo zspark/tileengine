@@ -4,7 +4,6 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
 
@@ -33,12 +32,6 @@ package z_spark.tileengine.tile
 		
 		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement,testPos:Vector2D=null):int
 		{
-//			var tmp:Vector2D=new Vector2D();
-//			tmp.reset(elem.acceleration);
-//			tmp.normalize();
-//			tmp.mul(tilesize);
-//			var x:Number=elem.position.x+tmp.x
-//			var y:Number=elem.position.y+tmp.y;
 			var x:Number=elem.position.x;
 			var y:Number=elem.position.y;
 			do{

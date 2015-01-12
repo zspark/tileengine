@@ -11,40 +11,44 @@ package z_spark.tileengine.tile
 	
 	use namespace zspark_tileegine_internal;
 	/**
-	 * 相邻边的格子；
+	 * 普通格子；包括矩形与三角形的；
 	 * @author z_Spark
 	 * 
 	 */
-	public class TileAdjacentSide extends TileBase implements ITile
+	public class TileOneSide extends TileBase implements ITile
 	{
 		protected var _localPos:Vector2D;//referance;
-		protected var _dirArray:Array;//referance
+		protected var _positiveVct:Vector2D;//referance
 		
-		public function TileAdjacentSide(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileOneSide(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
 		{
 			super(tilemap,type,row,col);
 			_localPos=pos;
-			if(dirv.length!=2)throw new Error("方向必须是2个。");
-			_dirArray=dirv;
+			CONFIG::DEBUG{
+				_dirArray=dirv;
+			};
+			_positiveVct=dirv[0];
 		}
 		
 		public function testCollision(tilesize:uint,gravity:Vector2D, elem:IElement):int
 		{
 			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
-			//获取参与计算的格子方向；
+			//计算目标点到平面的距离；
 			var tmp:Vector2D=globalPos.clone();
-			tmp.sub(elem.lastPosition);
-			//这里做了粗略处理，将==0的差积处理使用了_dirArray[1]的方向向量；
-			var _positiveVct:Vector2D=MathUtil.crossPZmag(tmp,elem.velocity)>=0 ? _dirArray[1] : _dirArray[0];
-			tmp=globalPos.clone();
 			tmp.sub(elem.position);
 			var dis_half:Number=MathUtil.dotProduct(_positiveVct,tmp);
 			if(dis_half>0 ){
+				if(_fixTeleport){
+					tmp.reset(globalPos);
+					tmp.sub(elem.lastPosition);
+					var dis_half2:Number=MathUtil.dotProduct(_positiveVct,tmp);
+					if(dis_half2>=0)return TileHandleStatus.ST_PASS;
+				}
 				var targetSpd:Vector2D=elem.velocity;
 				//计算目标点到平面的距离；
 				//物体已经穿过了斜面；
 				/*位置*/
-				tmp.resetScale(_positiveVct,TileWorldConst.MIN_NUMBER_BIGGER_THAN_ONE*dis_half);
+				tmp.resetScale(_positiveVct,TileWorldConst.MIN_NUMBER+dis_half);
 				elem.position.add(tmp);
 				
 				/*速度衰减,切向与法向；*/
@@ -75,15 +79,22 @@ package z_spark.tileengine.tile
 		
 		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:IElement,testPos:Vector2D=null):int
 		{
+			//计算移动的速度在该格子平面上的切向投影；
+			//该投影就是在斜面上的切向速度；
+			var globalPos:Vector2D=new Vector2D(_localPos.x+_col*tilesize,_localPos.y+_row*tilesize);
+			globalPos.sub(elem.position);
+			
+			elem.position.addScale(_positiveVct,MathUtil.dotProduct(_positiveVct,globalPos)+TileWorldConst.MIN_NUMBER);
+			
 			return TileHandleStatus.ST_PASS;
 		}
 		
 		CONFIG::DEBUG{
 			public function toString():String{
-				var s:String=_dirArray[0].toString()+" , "+_dirArray[1].toString();
-				return "[ type:"+_type+",col:"+_col+",row:"+_row+",dirArray:"+s+" ]";
+				return "[ type:"+_type+",col:"+_col+",row:"+_row+",dirVct:"+_positiveVct.toString()+" ]";
 			}
 			
+			private var _dirArray:Array;//referance
 			public function get dirArray():Array{
 				return _dirArray;
 			}

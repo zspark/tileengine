@@ -18,6 +18,20 @@ package z_spark.tileengine.debug
 		public function TileDebugger()
 		{
 		}
+		public static function redraw():void{
+			CONFIG::DEBUG{
+				_canvas.graphics.clear();
+				var mapInfo:Array=_tileMap.debugMapInfo;
+				for (var i:int=0;i<mapInfo.length;i++){
+					for (var j:int=0;j<mapInfo[i].length;j++){
+						var tile:ITile=mapInfo[i][j] as ITile;
+						if(tile is TileNone)continue;
+						debugDraw(tile);
+					}
+				}
+			};
+		}
+		
 		public static function initAndDraw(tileMap:TileMap,canvas:Sprite):void{
 			CONFIG::DEBUG{
 				trace('Draw debug frame line');

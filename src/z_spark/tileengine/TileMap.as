@@ -4,12 +4,14 @@ package z_spark.tileengine
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.math.Vector2D;
+	import z_spark.tileengine.tile.IDynamic;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileAdjacentSide;
 	import z_spark.tileengine.tile.TileAmend;
+	import z_spark.tileengine.tile.TileElevator;
 	import z_spark.tileengine.tile.TileIterator;
 	import z_spark.tileengine.tile.TileNone;
-	import z_spark.tileengine.tile.TileNormal;
+	import z_spark.tileengine.tile.TileOneSide;
 
 	use namespace zspark_tileegine_internal;
 	public class TileMap
@@ -21,11 +23,12 @@ package z_spark.tileengine
 		private var _tileSize:uint;
 		
 		public function TileMap(){
-			TYPE_TO_TILE_CLASS[TileType.TYPE_NORMAL]=TileNormal;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_ONE_SIDE]=TileOneSide;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_ITERATOR]=TileIterator;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_AMEND]=TileAmend;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_ADJACENT_SIDE]=TileAdjacentSide;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_ELEVATOR]=TileElevator;
 		}
 		
 
@@ -101,11 +104,27 @@ package z_spark.tileengine
 					if(cls){
 						var dir:int=mapRawInfo[i][j].dir;
 						var tile:ITile=new cls(this,type,i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
+						if(tile is IDynamic){
+							_dynamicTiles.push(tile);
+						}
 					}else{
 						throw Error("格子原始数据错误，有不能被识别或不支持的格子编号！(i,j)=("+i+','+j+"),tileType="+mapRawInfo[i][j].type);
 					}
 					_mapInfo[i][j]=tile;
 				}
+			}
+		}
+		
+		private var _dynamicTiles:Array=[];
+		/**
+		 * 更新格子数据，更新场景状态；
+		 * 比如电梯格子，需要上下走动；
+		 * 场景的更新在元素更新之前； 
+		 * 
+		 */
+		zspark_tileegine_internal function updateTiles():void{
+			for each(var dyn:IDynamic in _dynamicTiles){
+				dyn.update(_tileSize);
 			}
 		}
 		
@@ -136,6 +155,56 @@ package z_spark.tileengine
 		 */
 		public function getTileByXY(xx:int,yy:int):ITile{
 			return _mapInfo[int(yy/_tileSize)][int(xx/_tileSize)];
+		}
+		
+		public function switchTileByXY(aTile:ITile,targetTilex:int,targetTiley:int):void{
+			
+			var r:int=int(targetTiley/_tileSize);
+			var c:int=int(targetTilex/_tileSize);
+			var bTile:ITile=_mapInfo[r][c];
+			if(bTile==null)return;
+			_mapInfo[bTile.row][bTile.col]=aTile;
+			_mapInfo[aTile.row][aTile.col]=bTile;
+			
+			var aTileRow:int=aTile.row;
+			var aTileCol:int=aTile.col;
+			aTile.row=bTile.row;
+			aTile.col=bTile.col;
+			bTile.row=aTileRow;
+			bTile.col=aTileCol;
+		}
+		
+		public function switchTileByDir(aTile:ITile,dir:int):void{
+			var bTile:ITile;
+			switch(dir)
+			{
+				case TileDir.DIR_DOWN:
+				{
+					bTile=_mapInfo[aTile.row+1][aTile.col];
+					break;
+				}
+				case TileDir.DIR_TOP:
+				{
+					bTile=_mapInfo[aTile.row-1][aTile.col];
+					break;
+				}
+					
+				default:
+				{
+					break;
+				}
+			}
+			
+			if(bTile==null)return;
+			_mapInfo[bTile.row][bTile.col]=aTile;
+			_mapInfo[aTile.row][aTile.col]=bTile;
+			
+			var aTileRow:int=aTile.row;
+			var aTileCol:int=aTile.col;
+			aTile.row=bTile.row;
+			aTile.col=bTile.col;
+			bTile.row=aTileRow;
+			bTile.col=aTileCol;
 		}
 	}
 }

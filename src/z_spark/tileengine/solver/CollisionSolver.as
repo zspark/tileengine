@@ -60,6 +60,7 @@ package z_spark.tileengine.solver
 						}
 					}
 				}else{
+
 					elem.position.add(elem.velocity);
 					tile=tilemap.getTileByXY(elem.position.x,elem.position.y);
 					status=tile.handleTileMove(tilemap.tileSize,_gravity,elem);

@@ -59,6 +59,7 @@ package z_spark.tileengine
 		
 		private function onEHandler(event:Event):void
 		{
+			_tileMap.updateTiles();
 			_collisionSolver.update(_awakeObjectList,_tileMap);
 		}
 		

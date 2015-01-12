@@ -13,7 +13,7 @@ package z_spark.tileengine.tile
 	 * @author z_Spark
 	 * 
 	 */
-	final public class TileIterator extends TileNormal implements ITile
+	final public class TileIterator extends TileOneSide implements ITile
 	{
 		public function TileIterator(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
 		{
