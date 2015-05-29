@@ -1,6 +1,6 @@
 package z_spark.tileengine.constance
 {
-	import z_spark.tileengine.math.Vector2D;
+	import z_spark.linearalgebra.Vector2D;
 
 	public class TileWorldConst
 	{

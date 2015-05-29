@@ -1,10 +1,10 @@
 package z_spark.tileengine.solver
 {
+	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
-	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
 	import z_spark.tileengine.tile.ITile;
 
@@ -63,7 +63,6 @@ package z_spark.tileengine.solver
 					elem.position.add(elem.velocity);
 					tile=tilemap.getTileByXY(elem.position.x,elem.position.y);
 					status=tile.handleTileMove(tilemap.tileSize,_gravity,elem);
-					
 				}
 				
 				elem.frameEndCall(tile,status);

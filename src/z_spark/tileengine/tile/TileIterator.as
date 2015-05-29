@@ -1,10 +1,10 @@
 package z_spark.tileengine.tile
 {
-	import z_spark.as3lib.utils.ColorUtil;
+	import z_spark.core.utils.ColorUtil;
+	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
 
 

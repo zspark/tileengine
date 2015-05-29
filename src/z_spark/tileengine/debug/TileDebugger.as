@@ -4,11 +4,11 @@ package z_spark.tileengine.debug
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	
+	import z_spark.linearalgebra.MathUtil;
+	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.TileWorldConst;
-	import z_spark.tileengine.math.MathUtil;
-	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileNone;
 

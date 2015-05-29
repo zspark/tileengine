@@ -1,6 +1,6 @@
 package z_spark.tileengine.dyn
 {
-import z_spark.tileengine.math.Vector2D;
+import z_spark.linearalgebra.Vector2D;
 import z_spark.tileengine.tile.IDynamic;
 
 public class Segment implements IDynamic

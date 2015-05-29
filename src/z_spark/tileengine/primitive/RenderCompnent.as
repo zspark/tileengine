@@ -1,36 +1,18 @@
 package z_spark.tileengine.primitive
 {
-	import flash.display.Sprite;
-	
+	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.ElementStatus;
-	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.tile.ITile;
 	
 	use namespace zspark_tileegine_internal;
-	/**
-	 * 粒子； 
-	 * @author z_Spark
-	 * 
-	 */
-	public class Particle implements IElement
+	public class RenderCompnent implements IElement
 	{
-		private var _acceleration:Vector2D;
-		private var _velocity:Vector2D;
-		private var _position:Vector2D;
-		private var _obj:Sprite;
-
-		public function get obj():Sprite
-		{
-			return _obj;
-		}
+		zspark_tileegine_internal var _acceleration:Vector2D;
+		zspark_tileegine_internal var _velocity:Vector2D;
+		zspark_tileegine_internal var _position:Vector2D;
 		
-		public function set obj(value:Sprite):void
-		{
-			_obj = value;
-		}
-		
-		public function Particle()
+		public function RenderCompnent()
 		{
 			_velocity=new Vector2D();
 			_position=new Vector2D();
@@ -90,13 +72,7 @@ package z_spark.tileengine.primitive
 			return new Vector2D(_position.x+_velocity.x,_position.y+_velocity.y);
 		}
 		
-		public function frameEndCall(tile:ITile,handleStatus:int):void
-		{
-			if(_obj){
-				_obj.x=_position.x;
-				_obj.y=_position.y;
-			}
-		}
+		public function frameEndCall(tile:ITile,handleStatus:int):void{}
 		
 		CONFIG::DEBUG{
 			private var _posHistoryCache:Array=[];

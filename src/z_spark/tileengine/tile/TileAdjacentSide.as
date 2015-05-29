@@ -1,12 +1,12 @@
 package z_spark.tileengine.tile
 {
+	import z_spark.linearalgebra.MathUtil;
+	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.ElementStatus;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileWorldConst;
-	import z_spark.tileengine.math.MathUtil;
-	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
 	
 	use namespace zspark_tileegine_internal;
