@@ -1,4 +1,4 @@
-package z_spark.tileengine.tile
+package z_spark.tileengine.dyn
 {
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.ElementStatus;
@@ -8,13 +8,14 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.math.MathUtil;
 	import z_spark.tileengine.math.Vector2D;
 	import z_spark.tileengine.primitive.IElement;
+	import z_spark.tileengine.tile.IDynamic;
 	
-	public class TileElevator extends TileBase implements ITile,IDynamic
+	public class Elevator implements IDynamic
 	{
 		private var _localPos:Vector2D;
 		private var _positiveVct:Vector2D;//referance
 		
-		public function TileElevator(tilemap:TileMap, type:int, row:int, col:int,pos:Vector2D,dirv:Array)
+		public function Elevator(tilemap:TileMap, type:int, row:int, col:int,pos:Vector2D,dirv:Array)
 		{
 			super(tilemap, type, row, col);
 			_localPos=pos.clone();

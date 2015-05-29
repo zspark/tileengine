@@ -8,7 +8,7 @@ package z_spark.tileengine
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileAdjacentSide;
 	import z_spark.tileengine.tile.TileAmend;
-	import z_spark.tileengine.tile.TileElevator;
+	import z_spark.tileengine.dynamic.TileElevator;
 	import z_spark.tileengine.tile.TileIterator;
 	import z_spark.tileengine.tile.TileNone;
 	import z_spark.tileengine.tile.TileOneSide;

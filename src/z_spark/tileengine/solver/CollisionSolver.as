@@ -50,7 +50,7 @@ package z_spark.tileengine.solver
 					
 					var iteratorCount:int=0;
 					var status:int=TileHandleStatus.ST_ITERATOR;
-					while(status==TileHandleStatus.ST_ITERATOR){
+					while(status==TileHandleStatus.ST_ITERATOR){ 
 						iteratorCount++;
 						if(iteratorCount>_iteratorMax)break;
 						else {
