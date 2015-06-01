@@ -4,21 +4,21 @@ package z_spark.tileengine
 	import flash.events.Event;
 	
 	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.primitive.IElement;
-	import z_spark.tileengine.primitive.CaculateCompnent;
-	import z_spark.tileengine.solver.CollisionSolver;
+	import z_spark.tileengine.node.CollisionNode;
+	import z_spark.tileengine.primitive.IEntity;
+	import z_spark.tileengine.solver.CollisionSystem;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld
 	{
-		private var _collisionSolver:CollisionSolver;
+		private var _collisionSystem:CollisionSystem;
 		private var _tileMap:TileMap;
 		private var _stage:Stage;
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
-			_awakeObjectList=new Vector.<IElement>();
-			_collisionSolver=new CollisionSolver();
+			_entityList=new Vector.<IEntity>();
+			_collisionSystem=new CollisionSystem();
 			_tileMap=new TileMap();
 		}
 		
@@ -37,10 +37,10 @@ package z_spark.tileengine
 		private var _gravity:Vector2D;
 		public function set gravity(value:Vector2D):void{
 			_gravity=value;
-			_collisionSolver.gravity=value;
-			for each(var elem:CaculateCompnent in _awakeObjectList){
+		/*	_collisionSystem.gravity=value;
+			for each(var elem:MovementComponent in _entityList){
 				elem.acceleration=value;
-			}
+			}*/
 		}
 		
 		public function get gravity():Vector2D
@@ -60,18 +60,27 @@ package z_spark.tileengine
 		private function onEHandler(event:Event):void
 		{
 			_tileMap.updateTiles();
-			_collisionSolver.update(_awakeObjectList,_tileMap);
+			
+			var cn:CollisionNode=new CollisionNode();
+			for each(var entity:IEntity in _entityList){
+				cn.movementCmp=entity.mc;
+				cn.statusCmp=entity.sc;
+				_collisionSystem.update(cn,_tileMap,_gravity);
+				
+				var pos:Vector2D=cn.movementCmp.centerPos;
+				entity.rc.setGlobalCenterPos(pos.x,pos.y);
+				entity.rc.setNativeMethod();
+			}
 		}
 		
-		private var _awakeObjectList:Vector.<IElement>;
-		public function addWorldObject(elem:IElement):void{
-			_awakeObjectList.push(elem);
-			elem.acceleration=_gravity;
+		private var _entityList:Vector.<IEntity>;
+		public function addWorldObject(elem:IEntity):void{
+			_entityList.push(elem);
 		}
 		
-		public function removeWorldObject(elem:IElement):void{
-			if(_awakeObjectList.indexOf(elem)>=0)
-				_awakeObjectList.splice(_awakeObjectList.indexOf(elem),1);
+		public function removeWorldObject(elem:IEntity):void{
+			if(_entityList.indexOf(elem)>=0)
+				_entityList.splice(_entityList.indexOf(elem),1);
 		}
 		
 	}

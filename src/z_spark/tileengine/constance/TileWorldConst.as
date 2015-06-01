@@ -25,5 +25,6 @@ package z_spark.tileengine.constance
 		 */
 		public static const MIN_NUMBER:Number=.000001;
 		public static const MIN_NUMBER_BIGGER_THAN_ONE:Number=1+MIN_NUMBER;
+		
 	}
 }

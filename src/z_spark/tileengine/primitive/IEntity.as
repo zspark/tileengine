@@ -1,11 +1,10 @@
 package z_spark.tileengine.primitive
 {
-	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.tile.ITile;
+	
 
-	public interface IElement
+	public interface IEntity
 	{
-		function get acceleration():Vector2D;
+		/*function get acceleration():Vector2D;
 		
 		function set acceleration(value:Vector2D):void;
 		
@@ -33,6 +32,18 @@ package z_spark.tileengine.primitive
 		
 		function removeStatus(stat:uint):void;
 		
-		function frameEndCall(tile:ITile,handleStatus:int):void;
+		function frameEndCall(tile:ITile,handleStatus:int):void;*/
+		
+		function get mc():MovementComponent;
+		
+		function set mc(value:MovementComponent):void;
+		
+		function get sc():StatusComponent;
+		
+		function set sc(value:StatusComponent):void;
+		
+		function get rc():RenderCompnent;
+		
+		function set rc(value:RenderCompnent):void;
 	}
 }
