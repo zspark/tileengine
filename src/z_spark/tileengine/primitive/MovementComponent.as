@@ -13,6 +13,8 @@ package z_spark.tileengine.primitive
 		public function MovementComponent()
 		{
 			_particleVct=new Vector.<Particle>();
+			_velocity=new Vector2D();
+			_acceleration=new Vector2D();
 		}
 		
 		public function addParticle(ptc:Particle):void{
@@ -45,7 +47,7 @@ package z_spark.tileengine.primitive
 		
 		public function set acceleration(value:Vector2D):void
 		{
-			_acceleration=value;
+			_acceleration.reset(value);
 		}
 		
 		public function get velocity():Vector2D
@@ -53,11 +55,23 @@ package z_spark.tileengine.primitive
 			return _velocity;
 		}
 		
+		/**
+		 * 只是将参数中的x，y分量保存进自己的成员变量_velocity里面，不会引用参数； 
+		 * @param value
+		 * 
+		 */
 		public function set velocity(value:Vector2D):void
 		{
-			_velocity=value;
+			_velocity.reset(value);
 			for each(var pct:Particle in _particleVct){
 				pct.velocity.reset(value);
+			}
+		}
+		
+		public function setVelocity(vx:Number,vy:Number):void{
+			_velocity.resetComponent(vx,vy);
+			for each(var pct:Particle in _particleVct){
+				pct.velocity.resetComponent(vx,vy);
 			}
 		}
 		

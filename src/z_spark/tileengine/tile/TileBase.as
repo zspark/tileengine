@@ -31,21 +31,57 @@ package z_spark.tileengine.tile
 		public function set row(value:int):void{_row=value;}
 		public function get type():int{return _type;}
 		
+		/**
+		 * 判断从哪个方向进入格子；
+		 * 进入的方向只有4个，上下左右；
+		 * @param tilesize
+		 * @param fpos
+		 * @return 
+		 * 
+		 */		
 		protected function getEnterDir(tilesize:int,fpos:Vector2D):String{
-			//判断从哪个方向进入墙；
-			//进入的方向只有4个，上下左右；
 			var yOverlapDis:Number=fpos.y-tilesize*_row;
 			var xOverlapDis:Number=fpos.x-tilesize*_col;
+			var oyOverlapDis:Number=tilesize-yOverlapDis;
+			var oxOverlapDis:Number=tilesize-xOverlapDis;
 			
-			if(yOverlapDis>xOverlapDis){
-				if(tilesize-yOverlapDis>xOverlapDis){
-					return TileBase.X_MINUS;
-				}else return TileBase.Y_PLUS;
-			}else{
-				if(yOverlapDis>tilesize-xOverlapDis){
-					return TileBase.X_PLUS;
-				}else return TileBase.Y_MINUS;
+			var result:String='';
+			var tile:ITile;
+			var minDis:Number=tilesize+1;
+			
+			if(yOverlapDis<minDis){
+				tile=_tilemap.getTileByRC(row-1,col);
+				if(tile is TileNone){
+					minDis=yOverlapDis;
+					result=TileBase.Y_MINUS;
+				}
 			}
+			
+			if(xOverlapDis<minDis){
+				tile=_tilemap.getTileByRC(row,col-1);
+				if(tile is TileNone){
+					minDis=xOverlapDis;
+					result=TileBase.X_MINUS;
+				}
+			}
+			
+			if(oyOverlapDis<minDis){
+				tile=_tilemap.getTileByRC(row+1,col);
+				if(tile is TileNone){
+					minDis=oyOverlapDis;
+					result=TileBase.Y_PLUS;
+				}
+			}
+			
+			if(oxOverlapDis<minDis){
+				tile=_tilemap.getTileByRC(row,col+1);
+				if(tile is TileNone){
+					minDis=oxOverlapDis;
+					result=TileBase.X_PLUS;
+				}
+			}
+			
+			return result;
 		}
 		
 		CONFIG::DEBUG_DRAW_TIMELY{
