@@ -4,7 +4,7 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.primitive.Particle;
+	import z_spark.tileengine.Particle;
 
 	public class TileBase
 	{

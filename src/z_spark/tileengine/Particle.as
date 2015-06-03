@@ -1,4 +1,4 @@
-package z_spark.tileengine.primitive
+package z_spark.tileengine
 {
 	import z_spark.linearalgebra.Vector2D;
 
@@ -12,6 +12,11 @@ package z_spark.tileengine.primitive
 		private var _velocity:Vector2D;
 		private var _position:Vector2D;
 		private var _status:String=NO_CHECK;
+		/**
+		 * 粒子不受重力的影响
+		 * 亦即粒子没有重力的概念； 
+		 * 
+		 */
 		public function Particle()
 		{
 			_velocity=new Vector2D();
@@ -29,6 +34,12 @@ package z_spark.tileengine.primitive
 			_status = value;
 		}
 
+		/**
+		 * 返回一个全新的2D向量，表征该粒子下一帧可能的位置；（全局坐标系）； 
+		 * 是目前位置与速度的计算结果，加速度在计算结束后才作用于速度；
+		 * @return 
+		 * 
+		 */
 		public function get futurePosition():Vector2D
 		{
 			return new Vector2D(_position.x+_velocity.x,_position.y+_velocity.y);
@@ -49,6 +60,10 @@ package z_spark.tileengine.primitive
 			_acceleration.resetComponent(x,y);
 		}
 		
+		public function accelerationShare(value:Vector2D):void{
+			_acceleration=value;
+		}
+		
 		public function get velocity():Vector2D
 		{
 			return _velocity;
@@ -57,6 +72,10 @@ package z_spark.tileengine.primitive
 		public function set velocity(value:Vector2D):void 
 		{
 			_velocity.reset(value);
+		}
+		
+		public function velocityShare(value:Vector2D):void{
+			_velocity=value;
 		}
 		
 		public function setVelocity(x:Number,y:Number):void 

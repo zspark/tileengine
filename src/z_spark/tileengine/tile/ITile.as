@@ -2,8 +2,8 @@ package z_spark.tileengine.tile
 {
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.node.CollisionNode;
-	import z_spark.tileengine.primitive.MovementComponent;
-	import z_spark.tileengine.primitive.Particle;
+	import z_spark.tileengine.component.MovementComponent;
+	import z_spark.tileengine.Particle;
 
 	public interface ITile
 	{

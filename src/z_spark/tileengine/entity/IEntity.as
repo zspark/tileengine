@@ -1,5 +1,8 @@
-package z_spark.tileengine.primitive
+package z_spark.tileengine.entity
 {
+	import z_spark.tileengine.component.MovementComponent;
+	import z_spark.tileengine.component.RenderCompnent;
+	import z_spark.tileengine.component.StatusComponent;
 	
 
 	public interface IEntity
@@ -33,6 +36,8 @@ package z_spark.tileengine.primitive
 		function removeStatus(stat:uint):void;
 		
 		function frameEndCall(tile:ITile,handleStatus:int):void;*/
+		
+		function update():void;
 		
 		function get mc():MovementComponent;
 		

@@ -1,13 +1,13 @@
-package z_spark.tileengine.solver
+package z_spark.tileengine.system
 {
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.node.CollisionNode;
-	import z_spark.tileengine.primitive.MovementComponent;
-	import z_spark.tileengine.primitive.Particle;
-	import z_spark.tileengine.primitive.StatusComponent;
+	import z_spark.tileengine.component.MovementComponent;
+	import z_spark.tileengine.Particle;
+	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.tile.ITile;
 
 	use namespace zspark_tileegine_internal;
@@ -19,21 +19,6 @@ package z_spark.tileengine.solver
 	 */
 	final public class CollisionSystem
 	{
-		/**
-		 * 碰撞检测迭代最大次数，数值越大，越精确，但越耗性能，你懂的； 
-		 * 不懂碰撞原理的客户端程序不要随意变动该值；
-		 */
-		private var _iteratorMax:uint=2;
-		zspark_tileegine_internal function get iteratorMax():uint
-		{
-			return _iteratorMax;
-		}
-		
-		zspark_tileegine_internal function set iteratorMax(value:uint):void
-		{
-			_iteratorMax = value;
-		}
-		
 		public function CollisionSystem(){}
 		
 		zspark_tileegine_internal function update(cn:CollisionNode,tilemap:TileMap,gravity:Vector2D):void{
@@ -88,21 +73,16 @@ package z_spark.tileengine.solver
 						pct.status=Particle.NO_CHECK;
 					}
 					
+					delayHandleArr.length=0;
+					
 					
 					break;
 				}
 				case StatusComponent.STATUS_STAY:
-				{
-					break;
-				}
 				default:
 				{
 					break;
 				}
-				
-				CONFIG::DEBUG{
-//					cn.addToHistory();
-				};
 			}
 		}
 		

@@ -5,14 +5,17 @@ package z_spark.tileengine
 	
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.node.CollisionNode;
-	import z_spark.tileengine.primitive.IEntity;
-	import z_spark.tileengine.solver.CollisionSystem;
+	import z_spark.tileengine.node.RenderNode;
+	import z_spark.tileengine.entity.IEntity;
+	import z_spark.tileengine.system.CollisionSystem;
+	import z_spark.tileengine.system.RenderSystem;
 	import z_spark.tileengine.tile.TileGlobal;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld
 	{
 		private var _collisionSystem:CollisionSystem;
+		private var _renderSystem:RenderSystem;
 		private var _tileMap:TileMap;
 		private var _stage:Stage;
 		public function TileWorld(stage:Stage)
@@ -20,6 +23,7 @@ package z_spark.tileengine
 			_stage=stage;
 			_entityList=new Vector.<IEntity>();
 			_collisionSystem=new CollisionSystem();
+			_renderSystem=new RenderSystem();
 			_tileMap=new TileMap();
 		}
 		
@@ -60,14 +64,17 @@ package z_spark.tileengine
 			_tileMap.updateTiles();
 			
 			var cn:CollisionNode=new CollisionNode();
+			var rn:RenderNode=new RenderNode();
 			for each(var entity:IEntity in _entityList){
 				cn.movementCmp=entity.mc;
 				cn.statusCmp=entity.sc;
 				_collisionSystem.update(cn,_tileMap,_gravity);
 				
-				var pos:Vector2D=cn.movementCmp.centerPos;
-				entity.rc.setGlobalCenterPos(pos.x,pos.y);
-				entity.rc.setNativeMethod();
+				rn.movementCmp=entity.mc;
+				rn.renderCmp=entity.rc;
+				_renderSystem.render(rn);
+				
+				entity.update();
 			}
 		}
 		

@@ -1,4 +1,4 @@
-package z_spark.tileengine.primitive
+package z_spark.tileengine.component
 {
 	
 
@@ -9,7 +9,7 @@ package z_spark.tileengine.primitive
 		public static const STATUS_STAY:int=4;
 		public static const STATUS_CLIMB:int=8;
 		
-		private var _status:uint=STATUS_STAY;
+		private var _status:uint=STATUS_JUMP;
 		public function StatusComponent(){}
 		
 		public function get status():uint

@@ -1,7 +1,7 @@
 package z_spark.tileengine.node
 {
-	import z_spark.tileengine.primitive.MovementComponent;
-	import z_spark.tileengine.primitive.StatusComponent;
+	import z_spark.tileengine.component.MovementComponent;
+	import z_spark.tileengine.component.StatusComponent;
 
 	public class CollisionNode
 	{

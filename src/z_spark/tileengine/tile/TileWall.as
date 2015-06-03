@@ -7,8 +7,8 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.node.CollisionNode;
-	import z_spark.tileengine.primitive.MovementComponent;
-	import z_spark.tileengine.primitive.Particle;
+	import z_spark.tileengine.component.MovementComponent;
+	import z_spark.tileengine.Particle;
 	
 	use namespace zspark_tileegine_internal;
 	/**
