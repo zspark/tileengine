@@ -7,6 +7,7 @@ package z_spark.tileengine
 	import z_spark.tileengine.node.CollisionNode;
 	import z_spark.tileengine.primitive.IEntity;
 	import z_spark.tileengine.solver.CollisionSystem;
+	import z_spark.tileengine.tile.TileGlobal;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld
@@ -26,12 +27,9 @@ package z_spark.tileengine
 			return _tileMap;
 		}
 		
-		public function set tileSize(value:uint):void{
-			_tileMap.tileSize=value;
-		}
-		
-		public function get tileSize():uint{
-			return _tileMap.tileSize;
+		public function tileSize(w:int,h:int):void{
+			TileGlobal.TILE_W=w;
+			TileGlobal.TILE_H=h;
 		}
 		
 		private var _gravity:Vector2D;

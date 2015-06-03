@@ -3,7 +3,9 @@ package z_spark.tileengine.tile
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.node.CollisionNode;
 	import z_spark.tileengine.primitive.MovementComponent;
 	import z_spark.tileengine.primitive.Particle;
@@ -16,17 +18,9 @@ package z_spark.tileengine.tile
 	 */
 	public class TileWall extends TileBase implements ITile
 	{
-		protected var _localPos:Vector2D;//referance;
-		protected var _positiveVct:Vector2D;//referance
-		
-		public function TileWall(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileWall(tilemap:TileMap,type:int,row:int,col:int)
 		{
 			super(tilemap,type,row,col);
-			_localPos=pos;
-			CONFIG::DEBUG{
-				_dirArray=dirv;
-			};
-			_positiveVct=dirv[0];
 		}
 		
 		public function testCollision(tilesize:uint,gravity:Vector2D, cn:CollisionNode):int
@@ -72,40 +66,43 @@ package z_spark.tileengine.tile
 			return TileHandleStatus.ST_PASS;
 		}
 		
-		public function handleTileMove(tilesize:uint, gravity:Vector2D, mc:MovementComponent,pct:Particle,fpos:Vector2D=null):int
+		public function handleTileMove( gravity:Vector2D, mc:MovementComponent,pct:Particle,fpos:Vector2D=null):int
 		{
 			var result:Number;
 			var tmp:Number;
-			switch(getEnterDir(tilesize,fpos))
+			
+			if(checkAmbigulty(pct))return TileHandleStatus.ST_DELAY;
+			
+			switch(getEnterDir(fpos))
 			{
-				case TileBase.X_MINUS:
+				case TileDir.DIR_LEFT:
 				{
-					tmp=_col*tilesize;
+					tmp=_col*TileGlobal.TILE_W-TileWorldConst.MIN_NUMBER;
 					result=fpos.x-tmp;
 					fpos.x=tmp;
 					mc.fixPos(-result,0);
 					break;
 				}
-				case TileBase.X_PLUS:
+				case TileDir.DIR_RIGHT:
 				{
-					tmp=(_col+1)*tilesize;
+					tmp=(_col+1)*TileGlobal.TILE_W;
 					result=fpos.x-tmp;
 					fpos.x=tmp;
 					mc.fixPos(-result,0);
 					
 					break;
 				}
-				case TileBase.Y_MINUS:
+				case TileDir.DIR_TOP:
 				{
-					tmp=_row*tilesize;
+					tmp=_row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
 					result=fpos.y-tmp;
 					fpos.y=tmp;
 					mc.fixPos(0,-result);
 					break;
 				}
-				case TileBase.Y_PLUS:
+				case TileDir.DIR_DOWN:
 				{
-					tmp=(_row+1)*tilesize;
+					tmp=(_row+1)*TileGlobal.TILE_H;
 					result=fpos.y-tmp;
 					fpos.y=tmp;
 					mc.fixPos(0,-result);
@@ -124,9 +121,6 @@ package z_spark.tileengine.tile
 		}
 		
 		CONFIG::DEBUG{
-			public function toString():String{
-				return "[ type:"+_type+",col:"+_col+",row:"+_row+",dirVct:"+_positiveVct.toString()+" ]";
-			}
 			
 			private var _dirArray:Array;//referance
 			public function get dirArray():Array{

@@ -3,6 +3,7 @@ package z_spark.tileengine.solver
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.node.CollisionNode;
 	import z_spark.tileengine.primitive.MovementComponent;
 	import z_spark.tileengine.primitive.Particle;
@@ -38,6 +39,7 @@ package z_spark.tileengine.solver
 		zspark_tileegine_internal function update(cn:CollisionNode,tilemap:TileMap,gravity:Vector2D):void{
 			var mc:MovementComponent;
 			var tile:ITile;
+			var delayHandleArr:Array=[];
 			switch(cn.statusCmp.status)
 			{
 				case StatusComponent.STATUS_CLIMB:
@@ -66,11 +68,27 @@ package z_spark.tileengine.solver
 				case StatusComponent.STATUS_MOVE:
 				{
 					mc=cn.movementCmp;
+					var st:int;
 					for each(var pct:Particle in mc._particleVct){
 						var fpos:Vector2D=pct.futurePosition;
 						tile=tilemap.getTileByXY(fpos.x,fpos.y);
-						tile.handleTileMove(tilemap.tileSize,gravity,mc,pct,fpos);
+						
+						st=tile.handleTileMove(gravity,mc,pct,fpos);
+						if(st==TileHandleStatus.ST_DELAY)delayHandleArr.push(pct);
+						else{
+							pct.status=Particle.NO_CHECK;
+						}
 					}
+					
+					for each( pct in delayHandleArr){
+						fpos=pct.futurePosition;
+						tile=tilemap.getTileByXY(fpos.x,fpos.y);
+						
+						tile.handleTileMove(gravity,mc,pct,fpos);
+						pct.status=Particle.NO_CHECK;
+					}
+					
+					
 					break;
 				}
 				case StatusComponent.STATUS_STAY:

@@ -10,7 +10,7 @@ package z_spark.tileengine.tile
 
 	public class TileNone extends TileBase implements ITile
 	{
-		public function TileNone(tilemap:TileMap,type:int,row:int,col:int,pos:Vector2D,dirv:Array)
+		public function TileNone(tilemap:TileMap,type:int,row:int,col:int)
 		{
 			super(tilemap,type,row,col);
 			_type=TileType.TYPE_NONE;
@@ -21,20 +21,18 @@ package z_spark.tileengine.tile
 			return TileHandleStatus.ST_PASS;
 		}
 		
+
 		CONFIG::DEBUG{
-			public function toString():String{
-				return "";
-			}
 			
 			public function get dirArray():Array{
 				return null;
 			}
 		};
 		
-		public function handleTileMove(tilesize:uint, gravity:Vector2D, elem:MovementComponent,pct:Particle,fpos:Vector2D=null):int
+		public function handleTileMove( gravity:Vector2D, elem:MovementComponent,pct:Particle,fpos:Vector2D=null):int
 		{
 			pct.position.reset(fpos);
-			return 1;
+			return TileHandleStatus.ST_PASS;
 			
 		}
 		

@@ -10,6 +10,7 @@ package z_spark.tileengine.debug
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.tile.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
 
 	use namespace zspark_tileegine_internal;
@@ -40,6 +41,9 @@ package z_spark.tileengine.debug
 				_canvas=canvas;
 				canvas.graphics.clear();
 				var mapInfo:Array=tileMap.debugMapInfo;
+				
+				const debugColor:uint=0x42621c;
+				canvas.graphics.beginFill(debugColor,.5);
 				for (var i:int=0;i<mapInfo.length;i++){
 					for (var j:int=0;j<mapInfo[i].length;j++){
 						var tile:ITile=mapInfo[i][j] as ITile;
@@ -47,19 +51,28 @@ package z_spark.tileengine.debug
 						debugDraw(tile);
 					}
 				}
+				canvas.graphics.endFill();
 			};
 		}
 		CONFIG::DEBUG{
 			private static var _canvas:Sprite;
 			private static var _tileMap:TileMap;
-			
 			public static function debugDraw(tile:ITile):void{
 				var grap:Graphics=_canvas.graphics;
-				var sz:int=_tileMap.tileSize;
+				var szw:int=TileGlobal.TILE_W;
+				var szh:int=TileGlobal.TILE_H;
+				grap.drawRect(tile.left,tile.top,szw,szh);
+			}
+			
+			
+			public static function debugDraw_(tile:ITile):void{
+				var grap:Graphics=_canvas.graphics;
+				var szw:int=TileGlobal.TILE_W;
+				var szh:int=TileGlobal.TILE_H;
 				var _col:int=tile.col;
 				var _row:int=tile.row;
 				var _dirArray:Array=tile.dirArray;
-				const ltpos:Point=new Point(_col*sz,_row*sz);
+				const ltpos:Point=new Point(_col*szw,_row*szw);
 				var debugPosArray:Array=[];
 				
 				switch(_dirArray)
@@ -71,37 +84,37 @@ package z_spark.tileengine.debug
 					case TileWorldConst.DIRVECTOR_LEFT_AND_TOP:
 					case TileWorldConst.DIRVECTOR_RIGHT_AND_TOP:
 					{
-						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x+sz,ltpos.y+sz),new Point(ltpos.x,ltpos.y+sz)];
+						debugPosArray=[ltpos,new Point(ltpos.x+szw,ltpos.y),new Point(ltpos.x+szw,ltpos.y+szh),new Point(ltpos.x,ltpos.y+szh)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_LEFT_DOWN:
 					{
-						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x+sz,ltpos.y+sz)];
+						debugPosArray=[ltpos,new Point(ltpos.x+szw,ltpos.y),new Point(ltpos.x+szw,ltpos.y+szh)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_LEFT_TOP:
 					{
-						debugPosArray=[new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x+sz,ltpos.y+sz),new Point(ltpos.x,ltpos.y+sz)];
+						debugPosArray=[new Point(ltpos.x+szw,ltpos.y),new Point(ltpos.x+szw,ltpos.y+szh),new Point(ltpos.x,ltpos.y+szh)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_RIGHT_DOWN:
 					{
-						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x,ltpos.y+sz)];
+						debugPosArray=[ltpos,new Point(ltpos.x+szw,ltpos.y),new Point(ltpos.x,ltpos.y+szh)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_RIGHT_TOP:
 					{
-						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y+sz),new Point(ltpos.x,ltpos.y+sz)];
+						debugPosArray=[ltpos,new Point(ltpos.x+szw,ltpos.y+szh),new Point(ltpos.x,ltpos.y+szh)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_LEFT_TOP_OUTER:
 					{
-						debugPosArray=[ltpos,new Point(ltpos.x+sz,ltpos.y+sz)];
+						debugPosArray=[ltpos,new Point(ltpos.x+szw,ltpos.y+szh)];
 						break;
 					}
 					case TileWorldConst.DIRVECTOR_RIGHT_TOP_OUTER:
 					{
-						debugPosArray=[new Point(ltpos.x+sz,ltpos.y),new Point(ltpos.x,ltpos.y+sz)];
+						debugPosArray=[new Point(ltpos.x+szw,ltpos.y),new Point(ltpos.x,ltpos.y+szh)];
 						break;
 					}
 					default:
@@ -122,7 +135,7 @@ package z_spark.tileengine.debug
 					grap.lineTo(debugPosArray[0].x,debugPosArray[0].y);
 					
 					//画方向；
-					const centerPos:Point=new Point(ltpos.x+sz*.5,ltpos.y+sz*.5);
+					const centerPos:Point=new Point(ltpos.x+szw*.5,ltpos.y+szh*.5);
 					const upv:Vector2D=new Vector2D(0,-1);
 					const downv:Vector2D=new Vector2D(0,1);
 					const leftv:Vector2D=new Vector2D(-1,0);
@@ -130,13 +143,13 @@ package z_spark.tileengine.debug
 					grap.beginFill(debugColor,0.5);
 					for each(var v:Vector2D in _dirArray){
 						if(MathUtil.dotProduct(v,upv)==1){
-							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y,ltpos.x+sz,ltpos.y]));
+							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y,ltpos.x+szw,ltpos.y]));
 						}else if(MathUtil.dotProduct(v,downv)==1){
-							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y+sz,ltpos.x+sz,ltpos.y+sz]));
+							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y+szh,ltpos.x+szw,ltpos.y+szh]));
 						}else if(MathUtil.dotProduct(v,leftv)==1){
-							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y,ltpos.x,ltpos.y+sz]));
+							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x,ltpos.y,ltpos.x,ltpos.y+szh]));
 						}else if(MathUtil.dotProduct(v,rightv)==1){
-							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x+sz,ltpos.y,ltpos.x+sz,ltpos.y+sz]));
+							grap.drawTriangles(Vector.<Number>([centerPos.x,centerPos.y,ltpos.x+szw,ltpos.y,ltpos.x+szw,ltpos.y+szh]));
 						}
 					}
 					grap.endFill();

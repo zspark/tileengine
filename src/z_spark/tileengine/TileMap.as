@@ -1,11 +1,10 @@
 package z_spark.tileengine
 {
-	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.tile.IDynamic;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.tile.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
 	import z_spark.tileengine.tile.TileWall;
 
@@ -13,57 +12,10 @@ package z_spark.tileengine
 	public class TileMap
 	{
 		private static const TYPE_TO_TILE_CLASS:Array=[];
-		private static const DIR_TO_LOCALPOS:Array=[];
-		private static const DIR_TO_DIRVECTOR:Array=[];
-		
-		private var _tileSize:uint;
 		
 		public function TileMap(){
-			TYPE_TO_TILE_CLASS[TileType.TYPE_ONE_SIDE]=TileWall;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_WALL]=TileWall;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
-//			TYPE_TO_TILE_CLASS[TileType.TYPE_ITERATOR]=TileIterator;
-//			TYPE_TO_TILE_CLASS[TileType.TYPE_AMEND]=TileAmend;
-//			TYPE_TO_TILE_CLASS[TileType.TYPE_ADJACENT_SIDE]=TileAdjacentSide;
-//			TYPE_TO_TILE_CLASS[TileType.TYPE_ELEVATOR]=TileElevator;
-		}
-		
-
-		zspark_tileegine_internal function get tileSize():uint
-		{
-			return _tileSize;
-		}
-
-		zspark_tileegine_internal function set tileSize(value:uint):void
-		{
-			_tileSize = value;
-			DIR_TO_LOCALPOS[TileDir.DIR_LEFT_TOP_OUTER]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_LEFT_TOP]=new Vector2D(_tileSize,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_TOP]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_TOP_OUTER]=new Vector2D(_tileSize,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_TOP]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_LEFT]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_MIDDLE]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT]=new Vector2D(_tileSize,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_LEFT_DOWN]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_DOWN]=new Vector2D(0,_tileSize);
-			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_DOWN]=new Vector2D(_tileSize,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_LEFT_AND_TOP]=new Vector2D(0,0);
-			DIR_TO_LOCALPOS[TileDir.DIR_RIGHT_AND_TOP]=new Vector2D(_tileSize,0);
-			
-			const F:Number=Math.SQRT2*.5;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP_OUTER]=TileWorldConst.DIRVECTOR_LEFT_TOP_OUTER;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_TOP]=TileWorldConst.DIRVECTOR_LEFT_TOP;
-			DIR_TO_DIRVECTOR[TileDir.DIR_TOP]=TileWorldConst.DIRVECTOR_TOP;
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP_OUTER]=TileWorldConst.DIRVECTOR_RIGHT_TOP_OUTER;
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_TOP]=TileWorldConst.DIRVECTOR_RIGHT_TOP;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT]=TileWorldConst.DIRVECTOR_LEFT;
-			DIR_TO_DIRVECTOR[TileDir.DIR_MIDDLE]=TileWorldConst.DIRVECTOR_MIDDLE;
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT]=TileWorldConst.DIRVECTOR_RIGHT;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_DOWN]=TileWorldConst.DIRVECTOR_LEFT_DOWN;
-			DIR_TO_DIRVECTOR[TileDir.DIR_DOWN]=TileWorldConst.DIRVECTOR_DOWN;
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_DOWN]=TileWorldConst.DIRVECTOR_RIGHT_DOWN;
-			DIR_TO_DIRVECTOR[TileDir.DIR_LEFT_AND_TOP]=TileWorldConst.DIRVECTOR_LEFT_AND_TOP;
-			DIR_TO_DIRVECTOR[TileDir.DIR_RIGHT_AND_TOP]=TileWorldConst.DIRVECTOR_RIGHT_AND_TOP;
 		}
 
 //		TODO:waiting..
@@ -87,7 +39,7 @@ package z_spark.tileengine
 		 * 
 		 */
 		public function set tileMapRawInfo(mapRawInfo:Array):void{
-			if(_tileSize==0)throw Error("格子尺寸尚未设置，不能参与引擎计算。");
+			if(TileGlobal.TILE_H*TileGlobal.TILE_W==0)throw Error("格子尺寸尚未设置或参数不合法。");
 			if(_mapInfo)_mapInfo.length=0;
 			else _mapInfo=[];
 			//row
@@ -99,7 +51,7 @@ package z_spark.tileengine
 					var cls:Class=TYPE_TO_TILE_CLASS[type] as Class;
 					if(cls){
 						var dir:int=mapRawInfo[i][j].dir;
-						var tile:ITile=new cls(this,type,i,j,DIR_TO_LOCALPOS[dir],DIR_TO_DIRVECTOR[dir]);
+						var tile:ITile=new cls(this,type,i,j);
 						if(tile is IDynamic){
 							_dynamicTiles.push(tile);
 						}
@@ -119,9 +71,9 @@ package z_spark.tileengine
 		 * 
 		 */
 		zspark_tileegine_internal function updateTiles():void{
-			for each(var dyn:IDynamic in _dynamicTiles){
-				dyn.update(_tileSize);
-			}
+			/*for each(var dyn:IDynamic in _dynamicTiles){
+				dyn.update();
+			}*/
 		}
 		
 		CONFIG::DEBUG{
@@ -150,13 +102,13 @@ package z_spark.tileengine
 		 * 
 		 */
 		public function getTileByXY(xx:int,yy:int):ITile{
-			return _mapInfo[int(yy/_tileSize)][int(xx/_tileSize)];
+			return _mapInfo[int(yy/TileGlobal.TILE_H)][int(xx/TileGlobal.TILE_W)];
 		}
 		
 		public function switchTileByXY(aTile:ITile,targetTilex:int,targetTiley:int):void{
 			
-			var r:int=int(targetTiley/_tileSize);
-			var c:int=int(targetTilex/_tileSize);
+			var r:int=int(targetTiley/TileGlobal.TILE_H);
+			var c:int=int(targetTilex/TileGlobal.TILE_W);
 			var bTile:ITile=_mapInfo[r][c];
 			if(bTile==null)return;
 			_mapInfo[bTile.row][bTile.col]=aTile;

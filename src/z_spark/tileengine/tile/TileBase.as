@@ -2,14 +2,12 @@ package z_spark.tileengine.tile
 {
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
+	import z_spark.tileengine.constance.TileDir;
+	import z_spark.tileengine.constance.TileType;
+	import z_spark.tileengine.primitive.Particle;
 
 	public class TileBase
 	{
-		public static const X_MINUS:String="x-";
-		public static const X_PLUS:String="x+";
-		public static const Y_MINUS:String="y-";
-		public static const Y_PLUS:String="y+";
-		
 		protected var _tilemap:TileMap;
 		protected var _type:int;
 		protected var _row:int;	
@@ -31,6 +29,19 @@ package z_spark.tileengine.tile
 		public function set row(value:int):void{_row=value;}
 		public function get type():int{return _type;}
 		
+		public function get top():int{
+			return _row*TileGlobal.TILE_H;
+		}
+		public function get bottom():int{
+			return (_row+1)*TileGlobal.TILE_H;
+		}
+		public function get left():int{
+			return _col*TileGlobal.TILE_W;
+		}
+		public function get right():int{
+			return (_col+1)*TileGlobal.TILE_W;
+		}
+		
 		/**
 		 * 判断从哪个方向进入格子；
 		 * 进入的方向只有4个，上下左右；
@@ -39,49 +50,87 @@ package z_spark.tileengine.tile
 		 * @return 
 		 * 
 		 */		
-		protected function getEnterDir(tilesize:int,fpos:Vector2D):String{
-			var yOverlapDis:Number=fpos.y-tilesize*_row;
-			var xOverlapDis:Number=fpos.x-tilesize*_col;
-			var oyOverlapDis:Number=tilesize-yOverlapDis;
-			var oxOverlapDis:Number=tilesize-xOverlapDis;
+//		protected function getEnterDir(tilesize:int,fpos:Vector2D,mc:MovementComponent):String{
+//			/*
+//			 * 新的算法采用判断‘之前位置’在墙的方向而决定点的来向；
+//			 * */
+//			
+//			
+//			
+//		}
+		/*
+		*old version
+		*有个问题就是有可能‘未来点’处在对角线上，此时哪个方向谁先判断
+		*最后的方向就是哪边，导致对象在墙的边缘一直不能继续前进；*/
+		protected function getEnterDir(fpos:Vector2D):int{
+			var yOverlapDis:Number=fpos.y-TileGlobal.TILE_H*_row;
+			var xOverlapDis:Number=fpos.x-TileGlobal.TILE_W*_col;
+			var oyOverlapDis:Number=TileGlobal.TILE_H-yOverlapDis;
+			var oxOverlapDis:Number=TileGlobal.TILE_W-xOverlapDis;
 			
-			var result:String='';
+			var result:int;
 			var tile:ITile;
-			var minDis:Number=tilesize+1;
+			var minDis:Number=Number.MAX_VALUE;
 			
 			if(yOverlapDis<minDis){
 				tile=_tilemap.getTileByRC(row-1,col);
-				if(tile is TileNone){
+				if(tile.type==TileType.TYPE_NONE){
 					minDis=yOverlapDis;
-					result=TileBase.Y_MINUS;
+					result=TileDir.DIR_TOP;
 				}
 			}
 			
 			if(xOverlapDis<minDis){
 				tile=_tilemap.getTileByRC(row,col-1);
-				if(tile is TileNone){
+				if(tile.type==TileType.TYPE_NONE){
 					minDis=xOverlapDis;
-					result=TileBase.X_MINUS;
+					result=TileDir.DIR_LEFT;
 				}
 			}
 			
 			if(oyOverlapDis<minDis){
 				tile=_tilemap.getTileByRC(row+1,col);
-				if(tile is TileNone){
+				if(tile.type==TileType.TYPE_NONE){
 					minDis=oyOverlapDis;
-					result=TileBase.Y_PLUS;
+					result=TileDir.DIR_DOWN;
 				}
 			}
 			
 			if(oxOverlapDis<minDis){
 				tile=_tilemap.getTileByRC(row,col+1);
-				if(tile is TileNone){
+				if(tile.type==TileType.TYPE_NONE){
 					minDis=oxOverlapDis;
-					result=TileBase.X_PLUS;
+					result=TileDir.DIR_RIGHT;
 				}
 			}
 			
 			return result;
+		}
+		
+		/**
+		 * true 意思就是有二义性，不明确，需要延迟处理的粒子； 
+		 * @param pct
+		 * @return 
+		 * 
+		 */
+		protected function checkAmbigulty(pct:Particle):Boolean{
+			var result:Boolean=false;
+			if(pct.status==Particle.NO_CHECK){
+				if(pct.position.x<=left){
+					if(pct.position.y<=top || pct.position.y>=bottom)result=true;
+					else result=false;
+				}else if(pct.position.x>=right){
+					if(pct.position.y<=top || pct.position.y>=bottom)result=true;
+					else result=false;
+				}
+				
+				pct.status=result?Particle.AMBIGUOUS:Particle.ABSOLUTE;
+			}
+			return result;
+		}
+		
+		public function toString():String{
+			return "[ type:"+_type+",col:"+_col+",row:"+_row+" ]";
 		}
 		
 		CONFIG::DEBUG_DRAW_TIMELY{

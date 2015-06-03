@@ -4,9 +4,14 @@ package z_spark.tileengine.primitive
 
 	public class Particle
 	{
+		public static const AMBIGUOUS:String="ambiguous";
+		public static const ABSOLUTE:String="absolute";
+		public static const NO_CHECK:String="none_check";
+		
 		private var _acceleration:Vector2D;
 		private var _velocity:Vector2D;
 		private var _position:Vector2D;
+		private var _status:String=NO_CHECK;
 		public function Particle()
 		{
 			_velocity=new Vector2D();
@@ -14,6 +19,16 @@ package z_spark.tileengine.primitive
 			_acceleration=new Vector2D();
 		}
 		
+		public function get status():String
+		{
+			return _status;
+		}
+
+		public function set status(value:String):void
+		{
+			_status = value;
+		}
+
 		public function get futurePosition():Vector2D
 		{
 			return new Vector2D(_position.x+_velocity.x,_position.y+_velocity.y);

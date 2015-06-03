@@ -8,7 +8,7 @@ package z_spark.tileengine.tile
 	public interface ITile
 	{
 		function testCollision(tilesize:uint,gravity:Vector2D, elem:CollisionNode):int;
-		function handleTileMove(tilesize:uint,gravity:Vector2D, elem:MovementComponent,pct:Particle,fpos:Vector2D=null):int;
+		function handleTileMove(gravity:Vector2D, elem:MovementComponent,pct:Particle,fpos:Vector2D=null):int;
 		function toString():String;
 		CONFIG::DEBUG{
 			function get dirArray():Array;
@@ -20,5 +20,11 @@ package z_spark.tileengine.tile
 		function get row():int;
 		function set row(value:int):void;
 		function get type():int;
+		
+		function get top():int;
+		function get bottom():int;
+		function get left():int;
+		function get right():int;
+		
 	}
 }
