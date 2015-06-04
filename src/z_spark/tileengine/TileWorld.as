@@ -2,6 +2,7 @@ package z_spark.tileengine
 {
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.utils.getTimer;
 	
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.entity.IEntity;
@@ -21,6 +22,7 @@ package z_spark.tileengine
 		private var _cn:CollisionNode;
 		private var _rn:RenderNode;
 		private var _gravity:Vector2D;
+		private var _lastGettimer:uint;
 		private var _entityList:Vector.<IEntity>;
 		
 		public function TileWorld(stage:Stage)
@@ -62,26 +64,50 @@ package z_spark.tileengine
 		}
 		
 		public function engineStart():void{
+			_lastGettimer=getTimer();
 			_stage.addEventListener(Event.ENTER_FRAME,onEHandler);
+			_stage.addEventListener(Event.ACTIVATE,onActiveHandler);
+			_stage.addEventListener(Event.DEACTIVATE,onDeactiveHandler);
+		}
+		
+		protected function onActiveHandler(event:Event):void
+		{
+			if(!_stage.hasEventListener(Event.ENTER_FRAME)){
+				_stage.addEventListener(Event.ENTER_FRAME,onEHandler);
+				_lastGettimer=getTimer();
+			}
+		}
+		
+		protected function onDeactiveHandler(event:Event):void
+		{
+			if(_stage.hasEventListener(Event.ENTER_FRAME))
+			_stage.removeEventListener(Event.ENTER_FRAME,onEHandler);
 		}
 		
 		public function engineStop():void{
 			_stage.removeEventListener(Event.ENTER_FRAME,onEHandler);
+			_stage.removeEventListener(Event.ACTIVATE,onActiveHandler);
+			_stage.removeEventListener(Event.DEACTIVATE,onDeactiveHandler);
 		}
 		
 		private function onEHandler(event:Event):void
 		{
+			
+			var tm:uint=getTimer();
+			var delta_ms:uint=tm-_lastGettimer;
 			_tileMap.updateTiles();
 			
 			for each(var entity:IEntity in _entityList){
 				_cn.movementCmp=entity.mc;
 				_cn.statusCmp=entity.sc;
-				_collisionSystem.update(_cn,_tileMap,_gravity);
+				_collisionSystem.update(_cn,_tileMap,_gravity,delta_ms);
 				
 				_rn.movementCmp=entity.mc;
 				_rn.renderCmp=entity.rc;
 				_renderSystem.render(_rn);
+				
 			}
+			_lastGettimer=tm;
 		}
 		
 		public function addWorldObject(elem:IEntity):void{

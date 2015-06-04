@@ -53,6 +53,11 @@ package z_spark.tileengine
 			_acceleration=value;
 		}
 		
+		/**
+		 * 单位：像素每秒（pps）；
+		 * @return 
+		 * 
+		 */
 		public function get velocity():Vector2D
 		{
 			return _velocity;
