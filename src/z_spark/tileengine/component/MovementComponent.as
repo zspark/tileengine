@@ -1,8 +1,8 @@
 package z_spark.tileengine.component
 {
 	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.Particle;
+	import z_spark.tileengine.zspark_tileegine_internal;
 	
 	use namespace zspark_tileegine_internal;
 	public class MovementComponent
@@ -10,14 +10,32 @@ package z_spark.tileengine.component
 		zspark_tileegine_internal var _particleVct:Vector.<Particle>;
 		private var _velocity:Vector2D;
 		private var _acceleration:Vector2D;
+		private var _fixSpeedFlag:Boolean=false;
+		private var _fixSpeed:Vector2D;
 		
 		public function MovementComponent()
 		{
 			_particleVct=new Vector.<Particle>();
 			_velocity=new Vector2D();
 			_acceleration=new Vector2D();
+			_fixSpeed=new Vector2D();
 		}
 		
+		public function get fixSpeed():Vector2D
+		{
+			return _fixSpeed;
+		}
+
+		public function get fixSpeedFlag():Boolean
+		{
+			return _fixSpeedFlag;
+		}
+
+		public function set fixSpeedFlag(value:Boolean):void
+		{
+			_fixSpeedFlag = value;
+		}
+
 		public function set pivotParticle(pct:Particle):void{
 			_particleVct[0]=pct;
 			pct.velocityShare(_velocity);

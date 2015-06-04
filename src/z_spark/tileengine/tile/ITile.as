@@ -1,19 +1,13 @@
 package z_spark.tileengine.tile
 {
 	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.node.CollisionNode;
-	import z_spark.tileengine.component.MovementComponent;
 	import z_spark.tileengine.Particle;
+	import z_spark.tileengine.node.CollisionNode;
 
 	public interface ITile
 	{
-		function testCollision(tilesize:uint,gravity:Vector2D, elem:CollisionNode):int;
-		function handleTileMove(gravity:Vector2D, elem:MovementComponent,pct:Particle,fpos:Vector2D=null):int;
+		function update(gravity:Vector2D, cn:CollisionNode,pct:Particle,fpos:Vector2D):int;
 		function toString():String;
-		CONFIG::DEBUG{
-			function get dirArray():Array;
-			function get debugDrawColor():uint;
-		};
 		
 		function get col():int;
 		function set col(value:int):void;
@@ -26,5 +20,9 @@ package z_spark.tileengine.tile
 		function get left():int;
 		function get right():int;
 		
+		
+		CONFIG::DEBUG{
+			function get debugDrawColor():uint;
+		};
 	}
 }

@@ -4,9 +4,9 @@ package z_spark.tileengine
 	import flash.events.Event;
 	
 	import z_spark.linearalgebra.Vector2D;
+	import z_spark.tileengine.entity.IEntity;
 	import z_spark.tileengine.node.CollisionNode;
 	import z_spark.tileengine.node.RenderNode;
-	import z_spark.tileengine.entity.IEntity;
 	import z_spark.tileengine.system.CollisionSystem;
 	import z_spark.tileengine.system.RenderSystem;
 	import z_spark.tileengine.tile.TileGlobal;
@@ -18,6 +18,11 @@ package z_spark.tileengine
 		private var _renderSystem:RenderSystem;
 		private var _tileMap:TileMap;
 		private var _stage:Stage;
+		private var _cn:CollisionNode;
+		private var _rn:RenderNode;
+		private var _gravity:Vector2D;
+		private var _entityList:Vector.<IEntity>;
+		
 		public function TileWorld(stage:Stage)
 		{
 			_stage=stage;
@@ -25,6 +30,13 @@ package z_spark.tileengine
 			_collisionSystem=new CollisionSystem();
 			_renderSystem=new RenderSystem();
 			_tileMap=new TileMap();
+			
+			_cn=new CollisionNode();
+			_rn=new RenderNode();
+		}
+		
+		public function setMaxVelocity(value:Number):void{
+			TileGlobal.MAX_VELOCITY=value;
 		}
 		
 		public function get tileMap():TileMap{
@@ -36,7 +48,6 @@ package z_spark.tileengine
 			TileGlobal.TILE_H=h;
 		}
 		
-		private var _gravity:Vector2D;
 		public function set gravity(value:Vector2D):void{
 			_gravity=value;
 		/*	_collisionSystem.gravity=value;
@@ -50,7 +61,6 @@ package z_spark.tileengine
 			return _gravity;
 		}
 		
-		
 		public function engineStart():void{
 			_stage.addEventListener(Event.ENTER_FRAME,onEHandler);
 		}
@@ -63,22 +73,17 @@ package z_spark.tileengine
 		{
 			_tileMap.updateTiles();
 			
-			var cn:CollisionNode=new CollisionNode();
-			var rn:RenderNode=new RenderNode();
 			for each(var entity:IEntity in _entityList){
-				cn.movementCmp=entity.mc;
-				cn.statusCmp=entity.sc;
-				_collisionSystem.update(cn,_tileMap,_gravity);
+				_cn.movementCmp=entity.mc;
+				_cn.statusCmp=entity.sc;
+				_collisionSystem.update(_cn,_tileMap,_gravity);
 				
-				rn.movementCmp=entity.mc;
-				rn.renderCmp=entity.rc;
-				_renderSystem.render(rn);
-				
-				entity.update();
+				_rn.movementCmp=entity.mc;
+				_rn.renderCmp=entity.rc;
+				_renderSystem.render(_rn);
 			}
 		}
 		
-		private var _entityList:Vector.<IEntity>;
 		public function addWorldObject(elem:IEntity):void{
 			_entityList.push(elem);
 		}

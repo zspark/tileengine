@@ -1,14 +1,15 @@
 package z_spark.tileengine.system
 {
 	import z_spark.linearalgebra.Vector2D;
+	import z_spark.tileengine.Particle;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.component.MovementComponent;
+	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.node.CollisionNode;
-	import z_spark.tileengine.component.MovementComponent;
-	import z_spark.tileengine.Particle;
-	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.tile.TileGlobal;
 
 	use namespace zspark_tileegine_internal;
 	/**
@@ -19,62 +20,34 @@ package z_spark.tileengine.system
 	 */
 	final public class CollisionSystem
 	{
+		private var _delayHandleArray:Array=[];
+		private var _futurePosition:Vector2D=new Vector2D();
 		public function CollisionSystem(){}
 		
 		zspark_tileegine_internal function update(cn:CollisionNode,tilemap:TileMap,gravity:Vector2D):void{
-			var mc:MovementComponent;
-			var tile:ITile;
-			var delayHandleArr:Array=[];
+			var mc:MovementComponent=cn.movementCmp;
 			switch(cn.statusCmp.status)
 			{
-				case StatusComponent.STATUS_CLIMB:
-				{
-					break;
-				}
 				case StatusComponent.STATUS_JUMP:
 				{
-					/*mc=cn.movementCmp;
-					mc.position.add(mc.velocity);
-					
-					var iteratorCount:int=0;
-					var status:int=TileHandleStatus.ST_ITERATOR;
-					while(status==TileHandleStatus.ST_ITERATOR){ 
-						iteratorCount++;
-						if(iteratorCount>_iteratorMax)break;
-						else {
-							tile=tilemap.getTileByXY(mc.position.x,mc.position.y);
-							status=tile.testCollision(tilemap.tileSize,gravity,cn);
-						}
+					update_internal(tilemap,cn,gravity);
+					if(mc.fixSpeedFlag){
+						mc.velocity.reset(mc.fixSpeed);
+						mc.fixSpeedFlag=false;
 					}
+					mc.velocity.add(mc.acceleration);
+					mc.velocity.add(gravity);
 					
-					mc.velocity.add(mc.acceleration);*/
+					//不能超过最大速度；
+					if(mc.velocity.mag>TileGlobal.MAX_VELOCITY){
+						mc.velocity.setMagTo(TileGlobal.MAX_VELOCITY);
+					}
 					break;
 				}
 				case StatusComponent.STATUS_MOVE:
 				{
-					mc=cn.movementCmp;
-					var st:int;
-					for each(var pct:Particle in mc._particleVct){
-						var fpos:Vector2D=pct.futurePosition;
-						tile=tilemap.getTileByXY(fpos.x,fpos.y);
-						
-						st=tile.handleTileMove(gravity,mc,pct,fpos);
-						if(st==TileHandleStatus.ST_DELAY)delayHandleArr.push(pct);
-						else{
-							pct.status=Particle.NO_CHECK;
-						}
-					}
-					
-					for each( pct in delayHandleArr){
-						fpos=pct.futurePosition;
-						tile=tilemap.getTileByXY(fpos.x,fpos.y);
-						
-						tile.handleTileMove(gravity,mc,pct,fpos);
-						pct.status=Particle.NO_CHECK;
-					}
-					
-					delayHandleArr.length=0;
-					
+					update_internal(tilemap,cn,gravity);
+					mc.velocity.add(mc.acceleration);
 					
 					break;
 				}
@@ -84,6 +57,34 @@ package z_spark.tileengine.system
 					break;
 				}
 			}
+		}
+		
+		private function update_internal(tilemap:TileMap,cn:CollisionNode,gravity:Vector2D):void{
+			var mc:MovementComponent=cn.movementCmp;
+			var pct:Particle;
+			var tile:ITile;
+			var st:int;
+			_delayHandleArray.length=0;
+			
+			for each(pct in mc._particleVct){
+				_futurePosition.resetComponent(pct.position.x+pct.velocity.x,pct.position.y+pct.velocity.y);
+				tile=tilemap.getTileByXY(_futurePosition.x,_futurePosition.y);
+				
+				st=tile.update(gravity,cn,pct,_futurePosition);
+				if(st==TileHandleStatus.ST_DELAY)_delayHandleArray.push(pct);
+				else{
+					pct.status=Particle.NO_CHECK;
+				}
+			}
+			
+			for each( pct in _delayHandleArray){
+				_futurePosition.resetComponent(pct.position.x+pct.velocity.x,pct.position.y+pct.velocity.y);
+				tile=tilemap.getTileByXY(_futurePosition.x,_futurePosition.y);
+				
+				tile.update(gravity,cn,pct,_futurePosition);
+				pct.status=Particle.NO_CHECK;
+			}
+			
 		}
 		
 	}

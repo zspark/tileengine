@@ -7,7 +7,6 @@ package z_spark.tileengine.component
 		public static const STATUS_JUMP:int=1;
 		public static const STATUS_MOVE:int=2;
 		public static const STATUS_STAY:int=4;
-		public static const STATUS_CLIMB:int=8;
 		
 		private var _status:uint=STATUS_JUMP;
 		public function StatusComponent(){}

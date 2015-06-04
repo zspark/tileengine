@@ -34,17 +34,6 @@ package z_spark.tileengine
 			_status = value;
 		}
 
-		/**
-		 * 返回一个全新的2D向量，表征该粒子下一帧可能的位置；（全局坐标系）； 
-		 * 是目前位置与速度的计算结果，加速度在计算结束后才作用于速度；
-		 * @return 
-		 * 
-		 */
-		public function get futurePosition():Vector2D
-		{
-			return new Vector2D(_position.x+_velocity.x,_position.y+_velocity.y);
-		}
-
 		public function get acceleration():Vector2D
 		{
 			return _acceleration;

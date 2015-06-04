@@ -34,10 +34,7 @@ package z_spark.tileengine.entity
 		function addStatus(stat:uint):void;
 		
 		function removeStatus(stat:uint):void;
-		
-		function frameEndCall(tile:ITile,handleStatus:int):void;*/
-		
-		function update():void;
+		*/
 		
 		function get mc():MovementComponent;
 		

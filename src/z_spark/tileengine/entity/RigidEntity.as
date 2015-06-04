@@ -52,8 +52,5 @@ package z_spark.tileengine.entity
 			_sc=new StatusComponent();
 		}
 		
-		public function update():void{
-			_mc.velocity.add(_mc.acceleration);
-		}
 	}
 }

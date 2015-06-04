@@ -50,11 +50,10 @@ package z_spark.tileengine
 					var type:int=mapRawInfo[i][j].type;
 					var cls:Class=TYPE_TO_TILE_CLASS[type] as Class;
 					if(cls){
-						var dir:int=mapRawInfo[i][j].dir;
-						var tile:ITile=new cls(this,type,i,j);
-						if(tile is IDynamic){
+						var tile:ITile=new cls(this,i,j);
+						/*if(tile is IDynamic){
 							_dynamicTiles.push(tile);
-						}
+						}*/
 					}else{
 						throw Error("格子原始数据错误，有不能被识别或不支持的格子编号！(i,j)=("+i+','+j+"),tileType="+mapRawInfo[i][j].type);
 					}
@@ -75,12 +74,6 @@ package z_spark.tileengine
 				dyn.update();
 			}*/
 		}
-		
-		CONFIG::DEBUG{
-			public function get debugMapInfo():Array{
-				return _mapInfo;
-			}
-		};
 		
 		public function get mapRowNum():uint{
 			return _mapInfo[0].length;
@@ -154,37 +147,15 @@ package z_spark.tileengine
 			bTile.row=aTileRow;
 			bTile.col=aTileCol;
 		}
+		
+		public function toString():String{
+			return "[TileMap] col="+mapColNum+" row="+mapRowNum;
+		}
+		
+		CONFIG::DEBUG
+		public function get debugMapInfo():Array{
+			return _mapInfo;
+		}
+		
 	}
 }
-
-
-
-/**
- * switch(mapRawInfo[i][j].dir)
-						{
-							case TileDir.DIR_TOP:
-							{
-								tile.rightDirection.set(0,-1);
-								break;
-							}
-							case TileDir.DIR_LEFT:
-							{
-								tile.rightDirection.set(-1,0);
-								break;
-							}
-							case TileDir.DIR_RIGHT:
-							{
-								tile.rightDirection.set(1,0);
-								break;
-							}
-							case TileDir.DIR_DOWN:
-							{
-								tile.rightDirection.set(0,1);
-								break;
-							}
-							default:
-							{
-								break;
-							}
-						}
- */

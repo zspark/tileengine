@@ -10,8 +10,15 @@ package z_spark.tileengine.system
 		public function RenderSystem(){}
 		
 		zspark_tileegine_internal function render(rn:RenderNode):void{
+			
 			var fpos:Vector2D=rn.movementCmp.pivotParticle.position;
 			rn.renderCmp.render(fpos);
+			return ;
+			
+			CONFIG::DEBUG{
+				rn.renderCmp.debugRender(rn.movementCmp._particleVct);
+				return;
+			}
 		}
 		
 	}

@@ -2,13 +2,9 @@ package z_spark.tileengine.debug
 {
 	import flash.display.Graphics;
 	import flash.display.Sprite;
-	import flash.geom.Point;
 	
-	import z_spark.linearalgebra.MathUtil;
-	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
-	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
@@ -16,56 +12,45 @@ package z_spark.tileengine.debug
 	use namespace zspark_tileegine_internal;
 	public class TileDebugger
 	{
-		public function TileDebugger()
-		{
-		}
-		public static function redraw():void{
-			CONFIG::DEBUG{
-				_canvas.graphics.clear();
-				var mapInfo:Array=_tileMap.debugMapInfo;
-				for (var i:int=0;i<mapInfo.length;i++){
-					for (var j:int=0;j<mapInfo[i].length;j++){
-						var tile:ITile=mapInfo[i][j] as ITile;
-						if(tile is TileNone)continue;
-						debugDraw(tile);
-					}
+		public function TileDebugger(){}
+		
+		CONFIG::DEBUG
+		public static function initAndDraw(tileMap:TileMap,canvas:Sprite):void{
+			trace('Draw debug frame line');
+			
+			_tileMap=tileMap;
+			_canvas=canvas;
+			canvas.graphics.clear();
+			var mapInfo:Array=tileMap.debugMapInfo;
+			
+			var szw:int=TileGlobal.TILE_W;
+			var szh:int=TileGlobal.TILE_H;
+			var grap:Graphics=_canvas.graphics;
+			for (var i:int=0;i<mapInfo.length;i++){
+				for (var j:int=0;j<mapInfo[i].length;j++){
+					var tile:ITile=mapInfo[i][j] as ITile;
+					if(tile is TileNone)continue;
+					grap.beginFill(tile.debugDrawColor,.5);
+					grap.drawRect(tile.left,tile.top,szw,szh);
+					grap.endFill();
+					
+					grap.lineStyle(1,tile.debugDrawColor,1);
+					grap.moveTo(tile.left,tile.top);
+					grap.lineTo(tile.right,tile.top);
+					grap.lineTo(tile.right,tile.bottom);
+					grap.lineTo(tile.left,tile.bottom);
+					grap.endFill();
 				}
-			};
+			}
 		}
 		
-		public static function initAndDraw(tileMap:TileMap,canvas:Sprite):void{
-			CONFIG::DEBUG{
-				trace('Draw debug frame line');
-				
-				_tileMap=tileMap;
-				_canvas=canvas;
-				canvas.graphics.clear();
-				var mapInfo:Array=tileMap.debugMapInfo;
-				
-				const debugColor:uint=0x42621c;
-				canvas.graphics.beginFill(debugColor,.5);
-				for (var i:int=0;i<mapInfo.length;i++){
-					for (var j:int=0;j<mapInfo[i].length;j++){
-						var tile:ITile=mapInfo[i][j] as ITile;
-						if(tile is TileNone)continue;
-						debugDraw(tile);
-					}
-				}
-				canvas.graphics.endFill();
-			};
-		}
 		CONFIG::DEBUG{
 			private static var _canvas:Sprite;
 			private static var _tileMap:TileMap;
-			public static function debugDraw(tile:ITile):void{
-				var grap:Graphics=_canvas.graphics;
-				var szw:int=TileGlobal.TILE_W;
-				var szh:int=TileGlobal.TILE_H;
-				grap.drawRect(tile.left,tile.top,szw,szh);
-			}
+		};
+		
 			
-			
-			public static function debugDraw_(tile:ITile):void{
+			/*public static function debugDraw_(tile:ITile):void{
 				var grap:Graphics=_canvas.graphics;
 				var szw:int=TileGlobal.TILE_W;
 				var szh:int=TileGlobal.TILE_H;
@@ -154,8 +139,6 @@ package z_spark.tileengine.debug
 					}
 					grap.endFill();
 				}
-			}
-		};
-		
+			}*/
 	}
 }
