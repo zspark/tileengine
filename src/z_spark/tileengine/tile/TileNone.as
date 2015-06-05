@@ -14,6 +14,9 @@ package z_spark.tileengine.tile
 			_type=TileType.TYPE_NONE;
 			_bounceDecrease=0;
 			_frictionDecrease=0;
+			CONFIG::DEBUG{
+				_debugDrawColor=0xFFFFFF;
+			};
 		}
 		
 		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void

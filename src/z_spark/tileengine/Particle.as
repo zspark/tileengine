@@ -9,7 +9,7 @@ package z_spark.tileengine
 		public static const NO_CHECK:String="none_check";
 		
 		private var _acceleration:Vector2D;
-		private var _velocity:Vector2D;
+		private var _speed:Vector2D;
 		private var _position:Vector2D;
 		private var _status:String=NO_CHECK;
 		
@@ -20,7 +20,7 @@ package z_spark.tileengine
 		 */
 		public function Particle(posX:Number=0.0,posY:Number=0.0)
 		{
-			_velocity=new Vector2D();
+			_speed=new Vector2D();
 			_position=new Vector2D(posX,posY);
 			_acceleration=new Vector2D();
 		}
@@ -59,23 +59,23 @@ package z_spark.tileengine
 		 * @return 
 		 * 
 		 */
-		public function get velocity():Vector2D
+		public function get speed():Vector2D
 		{
-			return _velocity;
+			return _speed;
 		}
 		
-		public function set velocity(value:Vector2D):void 
+		public function set speed(value:Vector2D):void 
 		{
-			_velocity.reset(value);
+			_speed.reset(value);
 		}
 		
 		public function velocityShare(value:Vector2D):void{
-			_velocity=value;
+			_speed=value;
 		}
 		
 		public function setVelocity(x:Number,y:Number):void 
 		{
-			_velocity.resetComponent(x,y);
+			_speed.resetComponent(x,y);
 		}
 		
 		public function get position():Vector2D

@@ -32,6 +32,7 @@ package z_spark.tileengine
 			_collisionSystem=new CollisionSystem();
 			_renderSystem=new RenderSystem();
 			_tileMap=new TileMap();
+			_gravity=new Vector2D();
 			
 			_cn=new CollisionNode();
 			_rn=new RenderNode();
@@ -51,11 +52,7 @@ package z_spark.tileengine
 		}
 		
 		public function set gravity(value:Vector2D):void{
-			_gravity=value;
-		/*	_collisionSystem.gravity=value;
-			for each(var elem:MovementComponent in _entityList){
-				elem.acceleration=value;
-			}*/
+			_gravity.reset(value);
 		}
 		
 		public function get gravity():Vector2D

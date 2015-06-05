@@ -25,6 +25,9 @@ package z_spark.tileengine.tile
 		{
 			super(tilemap,row,col);
 			_type=TileType.TYPE_WALL;
+			CONFIG::DEBUG{
+				_debugDrawColor=0x000000;
+			};
 		}
 		
 		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void
@@ -82,7 +85,7 @@ package z_spark.tileengine.tile
 			if(tileHandleInput.cn.statusCmp.status==StatusComponent.STATUS_JUMP){
 				tileHandleOutput.fixSpeedFlag=true;
 				var spdVct:Vector2D=tileHandleOutput.fixSpeed
-				spdVct.reset(tileHandleInput.cn.movementCmp.velocity);
+				spdVct.reset(tileHandleInput.cn.movementCmp.speed);
 				switch(dir)
 				{
 					case TileDir.DIR_LEFT:

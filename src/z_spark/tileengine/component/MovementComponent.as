@@ -8,13 +8,13 @@ package z_spark.tileengine.component
 	public class MovementComponent
 	{
 		zspark_tileegine_internal var _particleVct:Vector.<Particle>;
-		private var _velocity:Vector2D;
+		private var _speed:Vector2D;
 		private var _acceleration:Vector2D;
 		
 		public function MovementComponent()
 		{
 			_particleVct=new Vector.<Particle>();
-			_velocity=new Vector2D();
+			_speed=new Vector2D();
 			_acceleration=new Vector2D();
 		}
 		
@@ -26,7 +26,7 @@ package z_spark.tileengine.component
 		
 		public function set pivotParticle(pct:Particle):void{
 			_particleVct[0]=pct;
-			pct.velocityShare(_velocity);
+			pct.velocityShare(_speed);
 			pct.accelerationShare(_acceleration);
 		}
 		
@@ -39,7 +39,7 @@ package z_spark.tileengine.component
 			var pvotPos:Vector2D=_particleVct[0].position;
 			var pct:Particle=new Particle();
 			pct.position.resetComponent(pvotPos.x+offx,pvotPos.y+offy);
-			pct.velocityShare(_velocity);
+			pct.velocityShare(_speed);
 			pct.accelerationShare(_acceleration);
 			_particleVct.push(pct);
 		}
@@ -71,9 +71,9 @@ package z_spark.tileengine.component
 			_acceleration.reset(value);
 		}
 		
-		public function get velocity():Vector2D
+		public function get speed():Vector2D
 		{
-			return _velocity;
+			return _speed;
 		}
 		
 		/**
@@ -81,13 +81,13 @@ package z_spark.tileengine.component
 		 * @param value
 		 * 
 		 */
-		public function set velocity(value:Vector2D):void
+		public function set speed(value:Vector2D):void
 		{
-			_velocity.reset(value);
+			_speed.reset(value);
 		}
 		
-		public function setVelocity(vx:Number,vy:Number):void{
-			_velocity.resetComponent(vx,vy);
+		public function setSpeed(vx:Number,vy:Number):void{
+			_speed.resetComponent(vx,vy);
 		}
 		
 	}

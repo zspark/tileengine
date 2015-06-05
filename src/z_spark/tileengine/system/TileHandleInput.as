@@ -15,7 +15,7 @@ package z_spark.tileengine.system
 		 */
 		public var gravity:Vector2D;
 		
-		public var velocity:Vector2D=new Vector2D();
+		public var speed:Vector2D=new Vector2D();
 		/**
 		 * 未来粒子可能出现的位置，独立向量； 
 		 */
@@ -25,7 +25,7 @@ package z_spark.tileengine.system
 		public function clear():void{
 			cn=null;
 			gravity=null;
-			velocity.clear();
+			speed.clear();
 			futurePosition.clear();
 			pct=null;
 			sensor=null;

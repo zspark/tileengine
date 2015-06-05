@@ -34,7 +34,7 @@ package z_spark.tileengine.system
 			_tileHandleInput.cn=cn;
 			_tileHandleInput.gravity=gravity;
 			_tileHandleInput.sensor=sensor;
-			_tileHandleInput.velocity.reset(mc.velocity);
+			_tileHandleInput.speed.reset(mc.speed);
 			switch(cn.statusCmp.status)
 			{
 				case StatusComponent.STATUS_JUMP:
@@ -43,10 +43,10 @@ package z_spark.tileengine.system
 					
 					if(_tileHandleOutput.skipLastAllSettings)break;
 					if(_tileHandleOutput.fixSpeedFlag){
-						mc.velocity.reset(_tileHandleOutput.fixSpeed);
+						mc.speed.reset(_tileHandleOutput.fixSpeed);
 					}
-					mc.velocity.addScale(mc.acceleration,delta_s);
-					mc.velocity.addScale(gravity,delta_s);
+					mc.speed.addScale(mc.acceleration,delta_s);
+					mc.speed.addScale(gravity,delta_s);
 					limitSpeed(mc);
 					break;
 				}
@@ -56,7 +56,7 @@ package z_spark.tileengine.system
 					
 					if(_tileHandleOutput.skipLastAllSettings)break;
 					
-					mc.velocity.addScale(mc.acceleration,delta_s);
+					mc.speed.addScale(mc.acceleration,delta_s);
 					
 					if(sensor){
 						var tmpV:Vector2D=_tileHandleInput.futurePosition;
@@ -84,8 +84,8 @@ package z_spark.tileengine.system
 		
 		private function limitSpeed(mc:MovementComponent):void{
 			//不能超过最大速度；
-			if(mc.velocity.mag>TileGlobal.MAX_VELOCITY){
-				mc.velocity.setMagTo(TileGlobal.MAX_VELOCITY);
+			if(mc.speed.mag>TileGlobal.MAX_VELOCITY){
+				mc.speed.setMagTo(TileGlobal.MAX_VELOCITY);
 			}
 		}
 		
@@ -99,7 +99,7 @@ package z_spark.tileengine.system
 			for each(pct in mc._particleVct){
 				_tileHandleInput.pct=pct;
 				_tileHandleInput.futurePosition.reset(pct.position);
-				_tileHandleInput.futurePosition.addScale(_tileHandleInput.velocity,delta_s);
+				_tileHandleInput.futurePosition.addScale(_tileHandleInput.speed,delta_s);
 				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
 				tile.handle(_tileHandleInput,_tileHandleOutput);
 				if(_tileHandleOutput.handleStatus==TileHandleStatus.ST_PASS)pct.status=Particle.NO_CHECK;
@@ -108,7 +108,7 @@ package z_spark.tileengine.system
 			for each( pct in _tileHandleOutput.delayHandleArray){
 				_tileHandleInput.pct=pct;
 				_tileHandleInput.futurePosition.reset(pct.position);
-				_tileHandleInput.futurePosition.addScale(_tileHandleInput.velocity,delta_s);
+				_tileHandleInput.futurePosition.addScale(_tileHandleInput.speed,delta_s);
 				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
 				tile.handle(_tileHandleInput,_tileHandleOutput);
 				pct.status=Particle.NO_CHECK;

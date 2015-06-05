@@ -2,7 +2,6 @@ package z_spark.tileengine
 {
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.constance.TileDir;
-	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileGlobal;
 
@@ -12,11 +11,11 @@ package z_spark.tileengine
 		zspark_tileegine_internal static function isAmbigulty(pct:Particle,adjTile:ITile):Boolean{
 			var result:Boolean=false;
 			if(pct.status==Particle.NO_CHECK){
-				if(pct.position.x<=adjTile.left){
-					if(pct.position.y<=adjTile.top || pct.position.y>=adjTile.bottom)result=true;
+				if(pct.position.x<adjTile.left){
+					if(pct.position.y<adjTile.top || pct.position.y>=adjTile.bottom)result=true;
 					else result=false;
 				}else if(pct.position.x>=adjTile.right){
-					if(pct.position.y<=adjTile.top || pct.position.y>=adjTile.bottom)result=true;
+					if(pct.position.y<adjTile.top || pct.position.y>=adjTile.bottom)result=true;
 					else result=false;
 				}
 				
