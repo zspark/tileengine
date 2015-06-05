@@ -98,12 +98,12 @@ package z_spark.tileengine
 			_tileMap.updateTiles();
 			
 			for each(var entity:IEntity in _entityList){
-				_cn.movementCmp=entity.mc;
-				_cn.statusCmp=entity.sc;
-				_collisionSystem.update(_cn,_tileMap,_gravity,delta_ms);
+				_cn.movementCmp=entity.movementComponent;
+				_cn.statusCmp=entity.statusComponent;
+				_collisionSystem.update(_cn,_tileMap,_gravity,delta_ms,entity.sensor);
 				
-				_rn.movementCmp=entity.mc;
-				_rn.renderCmp=entity.rc;
+				_rn.movementCmp=entity.movementComponent;
+				_rn.renderCmp=entity.renderComponent;
 				_renderSystem.render(_rn);
 				
 			}

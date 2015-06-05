@@ -25,10 +25,13 @@ package z_spark.tileengine
 			return result;
 		}
 		
-		/*
+		/**
 		*有个问题就是有可能‘未来点’处在对角线上，此时哪个方向谁先判断
-		*最后的方向就是哪边，导致对象在墙的边缘一直不能继续前进；*/
-		zspark_tileegine_internal static function getEnterDir(fpos:Vector2D,tile:ITile,tilemap:TileMap):int{
+		*最后的方向就是哪边，导致对象在墙的边缘一直不能继续前进；
+		*修复这个问题的办法就是将该粒子最后处理，即先处理其他粒子，他们可能会对坐标进行修正，从而再次判断该粒子的时候
+		 * 情况发生变化；如果其他粒子没有进行坐标修正，此时哪个方向都可行；
+		*/
+		/*zspark_tileegine_internal static function getEnterDir(fpos:Vector2D,tile:ITile,tilemap:TileMap):int{
 			var yOverlapDis:Number=fpos.y-TileGlobal.TILE_H*tile.row;
 			var xOverlapDis:Number=fpos.x-TileGlobal.TILE_W*tile.col;
 			var oyOverlapDis:Number=TileGlobal.TILE_H-yOverlapDis;
@@ -71,6 +74,17 @@ package z_spark.tileengine
 			}
 			
 			return result;
+		}*/
+		
+		
+		zspark_tileegine_internal static function getEnterDir(fpos:Vector2D,opos:Vector2D):int{
+			if(int(fpos.x/TileGlobal.TILE_W)==int(opos.x/TileGlobal.TILE_W)){
+				//垂直方向相同，肯定是从上下进入的；
+				return int(fpos.y/TileGlobal.TILE_H)>=int(opos.y/TileGlobal.TILE_H)? TileDir.DIR_TOP:TileDir.DIR_DOWN;
+			}else{
+				//水平方向相同，肯定是从左右进入的；
+				return int(fpos.x/TileGlobal.TILE_W)>=int(opos.x/TileGlobal.TILE_W)?TileDir.DIR_LEFT:TileDir.DIR_RIGHT;
+			}
 		}
 	}
 }

@@ -1,11 +1,10 @@
 package z_spark.tileengine.tile
 {
-	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.Particle;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.node.CollisionNode;
+	import z_spark.tileengine.system.TileHandleInput;
+	import z_spark.tileengine.system.TileHandleOutput;
 
 	public class TileNone extends TileBase implements ITile
 	{
@@ -13,12 +12,15 @@ package z_spark.tileengine.tile
 		{
 			super(tilemap,row,col);
 			_type=TileType.TYPE_NONE;
+			_bounceDecrease=0;
+			_frictionDecrease=0;
 		}
 		
-		public function update(gravity:Vector2D, cn:CollisionNode,pct:Particle,fpos:Vector2D):int
+		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void
 		{
-			pct.position.reset(fpos);
-			return TileHandleStatus.ST_PASS;
+			tileHandleInput.pct.position.reset(tileHandleInput.futurePosition);
+			tileHandleOutput.handleStatus=TileHandleStatus.ST_PASS;
+			return;
 		}
 	}
 }

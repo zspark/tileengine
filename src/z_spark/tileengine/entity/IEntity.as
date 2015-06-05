@@ -3,6 +3,7 @@ package z_spark.tileengine.entity
 	import z_spark.tileengine.component.MovementComponent;
 	import z_spark.tileengine.component.RenderCompnent;
 	import z_spark.tileengine.component.StatusComponent;
+	import z_spark.tileengine.sensor.Sensor;
 	
 
 	public interface IEntity
@@ -36,16 +37,20 @@ package z_spark.tileengine.entity
 		function removeStatus(stat:uint):void;
 		*/
 		
-		function get mc():MovementComponent;
+		function get sensor():Sensor;
 		
-		function set mc(value:MovementComponent):void;
+		function set sensor(value:Sensor):void;
 		
-		function get sc():StatusComponent;
+		function get movementComponent():MovementComponent;
 		
-		function set sc(value:StatusComponent):void;
+		function set movementComponent(value:MovementComponent):void;
 		
-		function get rc():RenderCompnent;
+		function get statusComponent():StatusComponent;
 		
-		function set rc(value:RenderCompnent):void;
+		function set statusComponent(value:StatusComponent):void;
+		
+		function get renderComponent():RenderCompnent;
+		
+		function set renderComponent(value:RenderCompnent):void;
 	}
 }

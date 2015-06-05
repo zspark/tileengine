@@ -31,7 +31,7 @@ package z_spark.tileengine.component
 		zspark_tileegine_internal function debugRender(vct:Vector.<Particle>):void{
 			if(_sprite==null)return;
 			_sprite.graphics.clear();
-			_sprite.graphics.beginFill(0x000000,.5);
+			_sprite.graphics.beginFill(0xFF0000,.5);
 			for each(var pct:Particle in vct){
 				_sprite.graphics.drawRect(pct.position.x,pct.position.y,1,1);
 			}

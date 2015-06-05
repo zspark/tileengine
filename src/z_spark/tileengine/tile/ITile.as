@@ -1,12 +1,11 @@
 package z_spark.tileengine.tile
 {
-	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.Particle;
-	import z_spark.tileengine.node.CollisionNode;
+	import z_spark.tileengine.system.TileHandleInput;
+	import z_spark.tileengine.system.TileHandleOutput;
 
 	public interface ITile
 	{
-		function update(gravity:Vector2D, cn:CollisionNode,pct:Particle,fpos:Vector2D):int;
+		function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void;
 		function toString():String;
 		
 		function get col():int;

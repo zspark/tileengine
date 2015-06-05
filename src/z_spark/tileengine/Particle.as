@@ -12,15 +12,16 @@ package z_spark.tileengine
 		private var _velocity:Vector2D;
 		private var _position:Vector2D;
 		private var _status:String=NO_CHECK;
+		
 		/**
 		 * 粒子不受重力的影响
 		 * 亦即粒子没有重力的概念； 
 		 * 
 		 */
-		public function Particle()
+		public function Particle(posX:Number=0.0,posY:Number=0.0)
 		{
 			_velocity=new Vector2D();
-			_position=new Vector2D();
+			_position=new Vector2D(posX,posY);
 			_acceleration=new Vector2D();
 		}
 		

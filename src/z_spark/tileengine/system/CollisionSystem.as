@@ -8,13 +8,14 @@ package z_spark.tileengine.system
 	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.node.CollisionNode;
+	import z_spark.tileengine.sensor.Sensor;
+	import z_spark.tileengine.sensor.event.SensorEvent;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileGlobal;
+	import z_spark.tileengine.tile.TileNone;
 
 	use namespace zspark_tileegine_internal;
 	/**
-	 * 碰撞解决； 
-	 * 风，雨水等影响整个TileWorld的力；
 	 * @author z_Spark
 	 * 
 	 */
@@ -22,40 +23,66 @@ package z_spark.tileengine.system
 	{
 		private static const S_TO_MS:uint=1000;
 		private static const MS_TO_S:Number=1/S_TO_MS;
-		private var _delayHandleArray:Array=[];
-		private var _futurePosition:Vector2D=new Vector2D();
+		private var _tileHandleInput:TileHandleInput=new TileHandleInput();
+		private var _tileHandleOutput:TileHandleOutput=new TileHandleOutput();
+		
 		public function CollisionSystem(){}
 		
-		zspark_tileegine_internal function update(cn:CollisionNode,tilemap:TileMap,gravity:Vector2D,delta_ms:uint):void{
+		zspark_tileegine_internal function update(cn:CollisionNode,tilemap:TileMap,gravity:Vector2D,delta_ms:uint,sensor:Sensor=null):void{
 			var mc:MovementComponent=cn.movementCmp;
 			var delta_s:Number=delta_ms*MS_TO_S;
+			_tileHandleInput.cn=cn;
+			_tileHandleInput.gravity=gravity;
+			_tileHandleInput.sensor=sensor;
+			_tileHandleInput.velocity.reset(mc.velocity);
 			switch(cn.statusCmp.status)
 			{
 				case StatusComponent.STATUS_JUMP:
 				{
 					update_internal(tilemap,cn,gravity,delta_s);
-					if(mc.fixSpeedFlag){
-						mc.velocity.reset(mc.fixSpeed);
-						mc.fixSpeedFlag=false;
+					
+					if(_tileHandleOutput.skipLastAllSettings)break;
+					if(_tileHandleOutput.fixSpeedFlag){
+						mc.velocity.reset(_tileHandleOutput.fixSpeed);
 					}
 					mc.velocity.addScale(mc.acceleration,delta_s);
 					mc.velocity.addScale(gravity,delta_s);
-					
+					limitSpeed(mc);
 					break;
 				}
 				case StatusComponent.STATUS_MOVE:
 				{
 					update_internal(tilemap,cn,gravity,delta_s);
+					
+					if(_tileHandleOutput.skipLastAllSettings)break;
+					
 					mc.velocity.addScale(mc.acceleration,delta_s);
 					
+					if(sensor){
+						var tmpV:Vector2D=_tileHandleInput.futurePosition;
+						tmpV.reset(gravity);
+						tmpV.setMagTo(TileGlobal.MAG_OF_TESTING_NONE_TILE);
+						var n:uint=0;
+						for each(var pct:Particle in mc._particleVct){
+							var tile:ITile=tilemap.getTileByXY(pct.position.x+tmpV.x,pct.position.y+tmpV.y);
+							if(tile && tile is TileNone){
+								n++;
+							}
+						}
+						if(n>=mc._particleVct.length)sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
+					}
+					
+					limitSpeed(mc);
 					break;
 				}
 				case StatusComponent.STATUS_STAY:
-				default:
-				{
-					break;
-				}
+				default:break;
 			}
+			
+		}
+		
+		
+		private function limitSpeed(mc:MovementComponent):void{
 			//不能超过最大速度；
 			if(mc.velocity.mag>TileGlobal.MAX_VELOCITY){
 				mc.velocity.setMagTo(TileGlobal.MAX_VELOCITY);
@@ -66,29 +93,29 @@ package z_spark.tileengine.system
 			var mc:MovementComponent=cn.movementCmp;
 			var pct:Particle;
 			var tile:ITile;
-			var st:int;
 			
-			_delayHandleArray.length=0;
+			_tileHandleOutput.reset();
+			
 			for each(pct in mc._particleVct){
-				_futurePosition.resetComponent(pct.position.x+pct.velocity.x*delta_s,pct.position.y+pct.velocity.y*delta_s);
-				tile=tilemap.getTileByXY(_futurePosition.x,_futurePosition.y);
-				
-				st=tile.update(gravity,cn,pct,_futurePosition);
-				if(st==TileHandleStatus.ST_DELAY)_delayHandleArray.push(pct);
-				else{
-					pct.status=Particle.NO_CHECK;
-				}
+				_tileHandleInput.pct=pct;
+				_tileHandleInput.futurePosition.reset(pct.position);
+				_tileHandleInput.futurePosition.addScale(_tileHandleInput.velocity,delta_s);
+				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
+				tile.handle(_tileHandleInput,_tileHandleOutput);
+				if(_tileHandleOutput.handleStatus==TileHandleStatus.ST_PASS)pct.status=Particle.NO_CHECK;
 			}
 			
-			for each( pct in _delayHandleArray){
-				_futurePosition.resetComponent(pct.position.x+pct.velocity.x*delta_s,pct.position.y+pct.velocity.y*delta_s);
-				tile=tilemap.getTileByXY(_futurePosition.x,_futurePosition.y);
-				
-				tile.update(gravity,cn,pct,_futurePosition);
+			for each( pct in _tileHandleOutput.delayHandleArray){
+				_tileHandleInput.pct=pct;
+				_tileHandleInput.futurePosition.reset(pct.position);
+				_tileHandleInput.futurePosition.addScale(_tileHandleInput.velocity,delta_s);
+				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
+				tile.handle(_tileHandleInput,_tileHandleOutput);
 				pct.status=Particle.NO_CHECK;
 			}
 			
 		}
+		
 		
 	}
 }

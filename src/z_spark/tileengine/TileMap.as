@@ -1,8 +1,8 @@
 package z_spark.tileengine
 {
+	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.tile.IDynamic;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
@@ -47,8 +47,8 @@ package z_spark.tileengine
 				_mapInfo[i]=[];
 				//col
 				for (var j:int=0,n:int=mapRawInfo[i].length;j<n;j++){
-					var type:int=mapRawInfo[i][j].type;
-					var cls:Class=TYPE_TO_TILE_CLASS[type] as Class;
+					var obj:Object=mapRawInfo[i][j];
+					var cls:Class=TYPE_TO_TILE_CLASS[obj.type] as Class;
 					if(cls){
 						var tile:ITile=new cls(this,i,j);
 						/*if(tile is IDynamic){
@@ -75,11 +75,11 @@ package z_spark.tileengine
 			}*/
 		}
 		
-		public function get mapRowNum():uint{
+		public function get mapColNum():uint{
 			return _mapInfo[0].length;
 		}
 		
-		public function get mapColNum():uint{
+		public function get mapRowNum():uint{
 			return _mapInfo.length;
 		}
 		
@@ -96,6 +96,10 @@ package z_spark.tileengine
 		 */
 		public function getTileByXY(xx:int,yy:int):ITile{
 			return _mapInfo[int(yy/TileGlobal.TILE_H)][int(xx/TileGlobal.TILE_W)];
+		}
+		
+		public function getTileByVector(vct:Vector2D):ITile{
+			return _mapInfo[int(vct.y/TileGlobal.TILE_H)][int(vct.x/TileGlobal.TILE_W)];
 		}
 		
 		public function switchTileByXY(aTile:ITile,targetTilex:int,targetTiley:int):void{
