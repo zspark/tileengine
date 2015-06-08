@@ -3,6 +3,7 @@ package z_spark.tileengine.system
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	
+	use namespace zspark_tileegine_internal;
 
 	/**
 	 * 每个粒子在格子中处理后的结果输出； 
@@ -11,10 +12,10 @@ package z_spark.tileengine.system
 	 */
 	public final class TileHandleOutput
 	{
+		zspark_tileegine_internal var hit_through_event_dispatched:Boolean=false;
 		public var skipLastAllSettings:Boolean=false;
 		public var row:int;
 		public var col:int;
-		private var _delayHandleArray:Array=[];
 		/**
 		 * 粒子是从哪个方向进入该格子。 
 		 */
@@ -33,17 +34,18 @@ package z_spark.tileengine.system
 		 */
 		public var fixSpeed:Vector2D=new Vector2D();
 		
-		public function TileHandleOutput()
-		{
-			reset();
-		}
+		public function TileHandleOutput(){reset();}
 		
+		private var _delayHandleArray:Array=[];
+		/**
+		 * 延后处理的粒子； 
+		 * @return 
+		 * 
+		 */
 		zspark_tileegine_internal function get delayHandleArray():Array
-		{
-			return _delayHandleArray;
-		}
+		{return _delayHandleArray;	}
 
-		public function reset():void{
+		zspark_tileegine_internal function reset():void{
 			fixSpeedFlag=false;
 			dir=-1;
 			handleStatus=-1;
@@ -52,6 +54,7 @@ package z_spark.tileengine.system
 			col=-1;
 			skipLastAllSettings=false;
 			_delayHandleArray.length=0;
+			hit_through_event_dispatched=false;
 		}
 	}
 }

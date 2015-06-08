@@ -18,10 +18,25 @@ package z_spark.tileengine.component
 			_acceleration=new Vector2D();
 		}
 		
-		zspark_tileegine_internal function fixPosition(xx:Number,yy:Number):void{
+		public function fixPosition(xx:Number,yy:Number):void{
 			for each(var pct:Particle in _particleVct){
 				pct.position.addComponent(xx,yy);
 			}
+		}
+		
+		public function fixPositionByVector(vct:Vector2D):void{
+			for each(var pct:Particle in _particleVct){
+				pct.position.add(vct);
+			}
+		}
+		
+		public function getCenterPosition(vct:Vector2D):void{
+			vct.clear();
+			for each(var pct:Particle in _particleVct){
+				vct.add(pct.position);
+			}
+			
+			vct.mul(1/_particleVct.length);
 		}
 		
 		public function set pivotParticle(pct:Particle):void{
