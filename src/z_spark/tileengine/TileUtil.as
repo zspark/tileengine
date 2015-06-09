@@ -3,7 +3,6 @@ package z_spark.tileengine
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.tile.ITile;
-	import z_spark.tileengine.tile.TileGlobal;
 
 	final public class TileUtil
 	{

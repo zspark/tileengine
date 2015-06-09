@@ -10,7 +10,6 @@ package z_spark.tileengine
 	import z_spark.tileengine.node.RenderNode;
 	import z_spark.tileengine.system.CollisionSystem;
 	import z_spark.tileengine.system.RenderSystem;
-	import z_spark.tileengine.tile.TileGlobal;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileWorld

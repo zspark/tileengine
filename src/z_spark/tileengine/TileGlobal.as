@@ -1,4 +1,4 @@
-package z_spark.tileengine.tile
+package z_spark.tileengine
 {
 	public class TileGlobal
 	{

@@ -10,9 +10,9 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.constance.TileWorldConst;
-	import z_spark.tileengine.sensor.event.SensorEvent;
 	import z_spark.tileengine.system.TileHandleInput;
 	import z_spark.tileengine.system.TileHandleOutput;
+	import z_spark.tileengine.TileGlobal;
 	
 	use namespace zspark_tileegine_internal;
 	/**
@@ -83,21 +83,20 @@ package z_spark.tileengine.tile
 			
 			
 			if(tileHandleInput.cn.statusCmp.status==StatusComponent.STATUS_JUMP){
-				tileHandleOutput.fixSpeedFlag=true;
-				var spdVct:Vector2D=tileHandleOutput.fixSpeed
+				var spdVct:Vector2D=tileHandleOutput.fixSpeed;
 				spdVct.reset(tileHandleInput.cn.movementCmp.speed);
 				switch(dir)
 				{
 					case TileDir.DIR_LEFT:
 					case TileDir.DIR_RIGHT:
 					{
-						spdVct.mulComponent(_bounceDecrease-1,1-_frictionDecrease);
+						spdVct.mulComponent(_bounceDecrease-2,-_frictionDecrease);
 						break;
 					}
 					case TileDir.DIR_TOP:
 					case TileDir.DIR_DOWN:
 					{
-						spdVct.mulComponent(1-_frictionDecrease,_bounceDecrease-1);
+						spdVct.mulComponent(-_frictionDecrease,_bounceDecrease-2);
 						break;
 					}
 					default:
@@ -109,14 +108,8 @@ package z_spark.tileengine.tile
 			
 			tileHandleOutput.dir=dir;
 			tileHandleOutput.handleStatus=TileHandleStatus.ST_PASS;
-			tileHandleOutput.row=_row;
-			tileHandleOutput.col=_col;
+			tileHandleOutput.hitWallParticleCount++;
 			
-			if(tileHandleInput.sensor){
-				tileHandleInput.sensor.dispatch(SensorEvent.SOR_HIT_TILE_WALL,tileHandleOutput);
-			}
-			
-			return;
 		}
 		
 	}

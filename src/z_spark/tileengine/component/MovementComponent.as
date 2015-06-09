@@ -59,18 +59,6 @@ package z_spark.tileengine.component
 			_particleVct.push(pct);
 		}
 		
-		/*zspark_tileegine_internal function get centerPos():Vector2D{
-			var fx:Number=0.0;
-			var fy:Number=0.0;
-			var n:uint=0;
-			for each(var pct:Particle in _particleVct){
-				fx+=pct.position.x;
-				fy+=pct.position.y;
-				n++;
-			}
-			return new Vector2D(fx/n,fy/n);
-		}*/
-		
 		public function get acceleration():Vector2D
 		{
 			return _acceleration;

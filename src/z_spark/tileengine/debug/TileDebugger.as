@@ -6,7 +6,7 @@ package z_spark.tileengine.debug
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.tile.ITile;
-	import z_spark.tileengine.tile.TileGlobal;
+	import z_spark.tileengine.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
 
 	use namespace zspark_tileegine_internal;

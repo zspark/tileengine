@@ -7,11 +7,12 @@ package z_spark.tileengine.system
 	import z_spark.tileengine.component.MovementComponent;
 	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.constance.TileHandleStatus;
+	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.node.CollisionNode;
 	import z_spark.tileengine.sensor.Sensor;
 	import z_spark.tileengine.sensor.event.SensorEvent;
 	import z_spark.tileengine.tile.ITile;
-	import z_spark.tileengine.tile.TileGlobal;
+	import z_spark.tileengine.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
 
 	use namespace zspark_tileegine_internal;
@@ -34,7 +35,8 @@ package z_spark.tileengine.system
 			_tileHandleInput.cn=cn;
 			_tileHandleInput.gravity=gravity;
 			_tileHandleInput.sensor=sensor;
-			_tileHandleInput.speed.reset(mc.speed);
+			_tileHandleInput.tileMap=tilemap;
+			_tileHandleInput.lastSpeed.reset(mc.speed);
 			switch(cn.statusCmp.status)
 			{
 				case StatusComponent.STATUS_JUMP:
@@ -42,12 +44,15 @@ package z_spark.tileengine.system
 					update_internal(tilemap,cn,gravity,delta_s);
 					
 					if(_tileHandleOutput.skipLastAllSettings)break;
-					if(_tileHandleOutput.fixSpeedFlag){
-						mc.speed.reset(_tileHandleOutput.fixSpeed);
-					}
+					mc.speed.add(_tileHandleOutput.fixSpeed);
 					mc.speed.addScale(mc.acceleration,delta_s);
 					mc.speed.addScale(gravity,delta_s);
 					limitSpeed(mc);
+					
+					if(sensor){
+						dispatch_wall();
+						dispatch_through();
+					}
 					break;
 				}
 				case StatusComponent.STATUS_MOVE:
@@ -55,24 +60,14 @@ package z_spark.tileengine.system
 					update_internal(tilemap,cn,gravity,delta_s);
 					
 					if(_tileHandleOutput.skipLastAllSettings)break;
-					
 					mc.speed.addScale(mc.acceleration,delta_s);
+					limitSpeed(mc);
 					
 					if(sensor){
-						var tmpV:Vector2D=_tileHandleInput.futurePosition;
-						tmpV.reset(gravity);
-						tmpV.setMagTo(TileGlobal.MAG_OF_TESTING_NONE_TILE);
-						var n:uint=0;
-						for each(var pct:Particle in mc._particleVct){
-							var tile:ITile=tilemap.getTileByXY(pct.position.x+tmpV.x,pct.position.y+tmpV.y);
-							if(tile && tile is TileNone){
-								n++;
-							}
-						}
-						if(n>=mc._particleVct.length)sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
+						dispatch_wall();
+						dispatch_through();
+						dispatch_inAir();
 					}
-					
-					limitSpeed(mc);
 					break;
 				}
 				case StatusComponent.STATUS_STAY:
@@ -81,6 +76,55 @@ package z_spark.tileengine.system
 			
 		}
 		
+		private function dispatch_inAir():void{
+			var tmpV:Vector2D=_tileHandleInput.futurePosition;
+			tmpV.reset(_tileHandleInput.gravity);
+			tmpV.setMagTo(TileGlobal.MAG_OF_TESTING_NONE_TILE);
+			var mc:MovementComponent=_tileHandleInput.cn.movementCmp;
+			var tilemap:TileMap=_tileHandleInput.tileMap;
+			var n:uint=0;
+			for each(var pct:Particle in mc._particleVct){
+				var tile:ITile=tilemap.getTileByXY(pct.position.x+tmpV.x,pct.position.y+tmpV.y);
+				if(tile && tile is TileNone){
+					n++;
+				}
+			}
+		
+			if(n>=mc._particleVct.length)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
+		}
+		
+		private function dispatch_wall():void{
+			if(_tileHandleOutput.hitWallParticleCount>0){
+				_tileHandleInput.sensor.dispatch(SensorEvent.SOR_HIT_TILE_WALL,_tileHandleOutput);
+			}
+		}
+		
+		private function dispatch_through():void{
+			
+			var pcnt:uint=_tileHandleInput.cn.movementCmp._particleVct.length;
+			var tc:uint=_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT];
+			var ltc:uint=_tileHandleInput.cn.statusCmp.tileCountArray_history[TileType.TYPE_THROUGHT];
+			
+			if(tc==0){
+				if(ltc>0)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_ALL_OUT_TILE_THROUGH,_tileHandleOutput);
+			}else if(tc<pcnt){
+				if(ltc==0)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_IN_TILE_THROUGH,_tileHandleOutput);
+				else if(ltc==pcnt)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_OUT_TILE_THROUGH,_tileHandleOutput);
+			}else if(tc==pcnt){
+				if(ltc<pcnt)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_ALL_IN_TILE_THROUGH,_tileHandleOutput);
+			}
+			
+			//交换数组；
+			var tmp:Array=_tileHandleInput.cn.statusCmp.tileCountArray;
+			if(tmp==_tileHandleInput.cn.statusCmp.particlesTileCountArray1){
+				_tileHandleInput.cn.statusCmp.tileCountArray=_tileHandleInput.cn.statusCmp.particlesTileCountArray2;
+				_tileHandleInput.cn.statusCmp.tileCountArray_history=tmp;
+			}else{
+				_tileHandleInput.cn.statusCmp.tileCountArray=_tileHandleInput.cn.statusCmp.particlesTileCountArray1;
+				_tileHandleInput.cn.statusCmp.tileCountArray_history=tmp;
+			}
+			
+		}
 		
 		private function limitSpeed(mc:MovementComponent):void{
 			//不能超过最大速度；
@@ -99,7 +143,7 @@ package z_spark.tileengine.system
 			for each(pct in mc._particleVct){
 				_tileHandleInput.pct=pct;
 				_tileHandleInput.futurePosition.reset(pct.position);
-				_tileHandleInput.futurePosition.addScale(_tileHandleInput.speed,delta_s);
+				_tileHandleInput.futurePosition.addScale(_tileHandleInput.lastSpeed,delta_s);
 				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
 				tile.handle(_tileHandleInput,_tileHandleOutput);
 				if(_tileHandleOutput.handleStatus==TileHandleStatus.ST_PASS)pct.status=Particle.NO_CHECK;
@@ -108,11 +152,13 @@ package z_spark.tileengine.system
 			for each( pct in _tileHandleOutput.delayHandleArray){
 				_tileHandleInput.pct=pct;
 				_tileHandleInput.futurePosition.reset(pct.position);
-				_tileHandleInput.futurePosition.addScale(_tileHandleInput.speed,delta_s);
+				_tileHandleInput.futurePosition.addScale(_tileHandleInput.lastSpeed,delta_s);
 				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
 				tile.handle(_tileHandleInput,_tileHandleOutput);
 				pct.status=Particle.NO_CHECK;
 			}
+			
+			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT]=_tileHandleOutput.inThroughParticleCount;
 			
 		}
 		

@@ -1,10 +1,10 @@
 package z_spark.tileengine.constance
 {
-	import z_spark.linearalgebra.Vector2D;
+	
 
 	public class TileWorldConst
 	{
-		private static const F:Number=Math.SQRT2*.5;
+		/*private static const F:Number=Math.SQRT2*.5;
 		
 		public static const DIRVECTOR_LEFT_TOP_OUTER:Array=[new Vector2D(-F,-F)];
 		public static const DIRVECTOR_RIGHT_TOP_OUTER:Array=[new Vector2D(F,-F)];
@@ -18,7 +18,7 @@ package z_spark.tileengine.constance
 		public static const DIRVECTOR_DOWN:Array=[new Vector2D(0,1)];
 		public static const DIRVECTOR_RIGHT_DOWN:Array=[new Vector2D(F,F)];
 		public static const DIRVECTOR_LEFT_AND_TOP:Array=[new Vector2D(0,-1),new Vector2D(-1,0)];
-		public static const DIRVECTOR_RIGHT_AND_TOP:Array=[new Vector2D(1,0),new Vector2D(0,-1)];
+		public static const DIRVECTOR_RIGHT_AND_TOP:Array=[new Vector2D(1,0),new Vector2D(0,-1)];*/
 		
 		/**
 		 * 最小的距离=0.000001； 

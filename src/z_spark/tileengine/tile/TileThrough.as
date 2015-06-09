@@ -4,7 +4,6 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.sensor.event.SensorEvent;
 	import z_spark.tileengine.system.TileHandleInput;
 	import z_spark.tileengine.system.TileHandleOutput;
 
@@ -28,13 +27,8 @@ package z_spark.tileengine.tile
 			tileHandleInput.pct.position.reset(tileHandleInput.futurePosition);
 			
 			tileHandleOutput.handleStatus=TileHandleStatus.ST_PASS;
-			tileHandleOutput.row=_row;
-			tileHandleOutput.col=_col;
+			tileHandleOutput.inThroughParticleCount++;
 			
-			if(tileHandleInput.sensor &&!tileHandleOutput.hit_through_event_dispatched){
-				tileHandleOutput.hit_through_event_dispatched=true;
-				tileHandleInput.sensor.dispatch(SensorEvent.SOR_HIT_TILE_THROUGH,tileHandleOutput);
-			}
 			return;
 		}
 	}

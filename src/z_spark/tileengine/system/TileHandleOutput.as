@@ -12,10 +12,9 @@ package z_spark.tileengine.system
 	 */
 	public final class TileHandleOutput
 	{
-		zspark_tileegine_internal var hit_through_event_dispatched:Boolean=false;
 		public var skipLastAllSettings:Boolean=false;
-		public var row:int;
-		public var col:int;
+		zspark_tileegine_internal var hitWallParticleCount:uint=0;
+		zspark_tileegine_internal var inThroughParticleCount:uint=0;
 		/**
 		 * 粒子是从哪个方向进入该格子。 
 		 */
@@ -24,10 +23,6 @@ package z_spark.tileengine.system
 		 * 格子对粒子的处理结果 
 		 */
 		public var handleStatus:int;
-		/**
-		 * 格子是否有对该粒子的速度修正； 
-		 */
-		public var fixSpeedFlag:Boolean=false;
 		/**
 		 * 速度修正的具体向量； 
 		 * 独立2D向量；
@@ -46,15 +41,13 @@ package z_spark.tileengine.system
 		{return _delayHandleArray;	}
 
 		zspark_tileegine_internal function reset():void{
-			fixSpeedFlag=false;
 			dir=-1;
 			handleStatus=-1;
 			fixSpeed.clear();
-			row=-1;
-			col=-1;
 			skipLastAllSettings=false;
 			_delayHandleArray.length=0;
-			hit_through_event_dispatched=false;
+			hitWallParticleCount=0;
+			inThroughParticleCount=0;
 		}
 	}
 }

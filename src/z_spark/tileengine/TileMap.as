@@ -4,7 +4,6 @@ package z_spark.tileengine
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileType;
 	import z_spark.tileengine.tile.ITile;
-	import z_spark.tileengine.tile.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
 	import z_spark.tileengine.tile.TileThrough;
 	import z_spark.tileengine.tile.TileWall;
