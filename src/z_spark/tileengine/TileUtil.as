@@ -1,9 +1,12 @@
 package z_spark.tileengine
 {
 	import z_spark.linearalgebra.Vector2D;
+	import z_spark.tileengine.component.MovementComponent;
 	import z_spark.tileengine.constance.TileDir;
+	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.tile.ITile;
 
+	use namespace zspark_tileegine_internal;
 	final public class TileUtil
 	{
 		
@@ -78,10 +81,53 @@ package z_spark.tileengine
 		zspark_tileegine_internal static function getEnterDir(fpos:Vector2D,opos:Vector2D):int{
 			if(int(fpos.x/TileGlobal.TILE_W)==int(opos.x/TileGlobal.TILE_W)){
 				//垂直方向相同，肯定是从上下进入的；
-				return int(fpos.y/TileGlobal.TILE_H)>=int(opos.y/TileGlobal.TILE_H)? TileDir.DIR_TOP:TileDir.DIR_DOWN;
+				if(int(fpos.y/TileGlobal.TILE_H)>int(opos.y/TileGlobal.TILE_H))return TileDir.DIR_TOP;
+				else if(int(fpos.y/TileGlobal.TILE_H)<int(opos.y/TileGlobal.TILE_H))return TileDir.DIR_DOWN;
+				else return -1;
 			}else{
 				//水平方向相同，肯定是从左右进入的；
-				return int(fpos.x/TileGlobal.TILE_W)>=int(opos.x/TileGlobal.TILE_W)?TileDir.DIR_LEFT:TileDir.DIR_RIGHT;
+				if(int(fpos.x/TileGlobal.TILE_W)>int(opos.x/TileGlobal.TILE_W))return TileDir.DIR_LEFT;
+				else if(int(fpos.x/TileGlobal.TILE_W)<int(opos.x/TileGlobal.TILE_W))return TileDir.DIR_RIGHT;
+				else return -1;
+			}
+		}
+		
+		zspark_tileegine_internal static function fixPosition(row:uint,col:uint,toDir:int,mc:MovementComponent,fpos:Vector2D):void{
+			var tmp:Number;
+			switch(toDir)
+			{
+				case TileDir.DIR_LEFT:
+				{
+					tmp=col*TileGlobal.TILE_W-TileWorldConst.MIN_NUMBER;
+					mc.fixPosition(-(fpos.x-tmp),0);
+					fpos.x=tmp;
+					break;
+				}
+				case TileDir.DIR_RIGHT:
+				{
+					tmp=(col+1)*TileGlobal.TILE_W;
+					mc.fixPosition(-(fpos.x-tmp),0);
+					fpos.x=tmp;
+					break;
+				}
+				case TileDir.DIR_TOP:
+				{
+					tmp=row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
+					mc.fixPosition(0,-(fpos.y-tmp));
+					fpos.y=tmp;
+					break;
+				}
+				case TileDir.DIR_DOWN:
+				{
+					tmp=(row+1)*TileGlobal.TILE_H;
+					mc.fixPosition(0,-(fpos.y-tmp));
+					fpos.y=tmp;
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
 		}
 	}

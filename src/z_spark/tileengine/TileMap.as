@@ -6,6 +6,7 @@ package z_spark.tileengine
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileNone;
 	import z_spark.tileengine.tile.TileThrough;
+	import z_spark.tileengine.tile.TileThroughTop;
 	import z_spark.tileengine.tile.TileWall;
 
 	use namespace zspark_tileegine_internal;
@@ -17,6 +18,7 @@ package z_spark.tileengine
 			TYPE_TO_TILE_CLASS[TileType.TYPE_WALL]=TileWall;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_NONE]=TileNone;
 			TYPE_TO_TILE_CLASS[TileType.TYPE_THROUGHT]=TileThrough;
+			TYPE_TO_TILE_CLASS[TileType.TYPE_THROUGHT_TOP]=TileThroughTop;
 		}
 
 //		TODO:waiting..

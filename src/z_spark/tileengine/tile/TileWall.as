@@ -4,15 +4,12 @@ package z_spark.tileengine.tile
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.TileUtil;
 	import z_spark.tileengine.zspark_tileegine_internal;
-	import z_spark.tileengine.component.MovementComponent;
 	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileHandleStatus;
 	import z_spark.tileengine.constance.TileType;
-	import z_spark.tileengine.constance.TileWorldConst;
 	import z_spark.tileengine.system.TileHandleInput;
 	import z_spark.tileengine.system.TileHandleOutput;
-	import z_spark.tileengine.TileGlobal;
 	
 	use namespace zspark_tileegine_internal;
 	/**
@@ -38,47 +35,10 @@ package z_spark.tileengine.tile
 				return;
 			}
 			
-			var mc:MovementComponent=tileHandleInput.cn.movementCmp;
 			var fpos:Vector2D=tileHandleInput.futurePosition;
-			var tmp:Number;
 //			var dir:int=TileUtil.getEnterDir(fpos,this,_tilemap);
 			var dir:int=TileUtil.getEnterDir(fpos,tileHandleInput.pct.position);
-			switch(dir)
-			{
-				case TileDir.DIR_LEFT:
-				{
-					tmp=_col*TileGlobal.TILE_W-TileWorldConst.MIN_NUMBER;
-					mc.fixPosition(-(fpos.x-tmp),0);
-					fpos.x=tmp;
-					break;
-				}
-				case TileDir.DIR_RIGHT:
-				{
-					tmp=(_col+1)*TileGlobal.TILE_W;
-					mc.fixPosition(-(fpos.x-tmp),0);
-					fpos.x=tmp;
-					break;
-				}
-				case TileDir.DIR_TOP:
-				{
-					tmp=_row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
-					mc.fixPosition(0,-(fpos.y-tmp));
-					fpos.y=tmp;
-					break;
-				}
-				case TileDir.DIR_DOWN:
-				{
-					tmp=(_row+1)*TileGlobal.TILE_H;
-					mc.fixPosition(0,-(fpos.y-tmp));
-					fpos.y=tmp;
-					break;
-				}
-				default:
-				{
-					break;
-				}
-			}
-			
+			TileUtil.fixPosition(_row,_col,dir,tileHandleInput.cn.movementCmp,fpos);
 			tileHandleInput.pct.position.reset(fpos);
 			
 			
@@ -107,7 +67,7 @@ package z_spark.tileengine.tile
 			}
 			
 			tileHandleOutput.dir=dir;
-			tileHandleOutput.handleStatus=TileHandleStatus.ST_PASS;
+			tileHandleOutput.handleStatus=TileHandleStatus.ST_FIXED;
 			tileHandleOutput.hitWallParticleCount++;
 			
 		}

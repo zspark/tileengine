@@ -15,6 +15,7 @@ package z_spark.tileengine.system
 		public var skipLastAllSettings:Boolean=false;
 		zspark_tileegine_internal var hitWallParticleCount:uint=0;
 		zspark_tileegine_internal var inThroughParticleCount:uint=0;
+		zspark_tileegine_internal var inThroughTopParticleCount:uint=0;
 		/**
 		 * 粒子是从哪个方向进入该格子。 
 		 */
@@ -48,6 +49,7 @@ package z_spark.tileengine.system
 			_delayHandleArray.length=0;
 			hitWallParticleCount=0;
 			inThroughParticleCount=0;
+			inThroughTopParticleCount=0;
 		}
 	}
 }

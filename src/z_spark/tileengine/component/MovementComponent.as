@@ -18,13 +18,49 @@ package z_spark.tileengine.component
 			_acceleration=new Vector2D();
 		}
 		
-		public function fixPosition(xx:Number,yy:Number):void{
+		public function get right():Number
+		{
+			var _right:Number=_particleVct[0].position.x;
+			for each(var pct:Particle in _particleVct){
+				if(_right<pct.position.x)_right=pct.position.x;
+			}
+			return _right;
+		}
+
+		public function get left():Number
+		{
+			var _left:Number=_particleVct[0].position.x;
+			for each(var pct:Particle in _particleVct){
+				if(_left>pct.position.x)_left=pct.position.x;
+			}
+			return _left;
+		}
+
+		public function get top():Number
+		{
+			var _top:Number=_particleVct[0].position.y;
+			for each(var pct:Particle in _particleVct){
+				if(_top>pct.position.y)_top=pct.position.y;
+			}
+			return _top;
+		}
+
+		public function get bottom():Number
+		{
+			var _bottom:Number=_particleVct[0].position.y;
+			for each(var pct:Particle in _particleVct){
+				if(_bottom<pct.position.y)_bottom=pct.position.y;
+			}
+			return _bottom;
+		}
+
+		zspark_tileegine_internal function fixPosition(xx:Number,yy:Number):void{
 			for each(var pct:Particle in _particleVct){
 				pct.position.addComponent(xx,yy);
 			}
 		}
 		
-		public function fixPositionByVector(vct:Vector2D):void{
+		zspark_tileegine_internal function fixPositionByVector(vct:Vector2D):void{
 			for each(var pct:Particle in _particleVct){
 				pct.position.add(vct);
 			}
@@ -35,14 +71,21 @@ package z_spark.tileengine.component
 			for each(var pct:Particle in _particleVct){
 				vct.add(pct.position);
 			}
-			
 			vct.mul(1/_particleVct.length);
 		}
 		
 		public function set pivotParticle(pct:Particle):void{
+			if(_particleVct.length>0 && _particleVct.length>0){
+				var pvotPos:Vector2D=_particleVct[0].position;
+				for each(var p:Particle in _particleVct){
+					if(p==_particleVct[0])continue;
+					p.position.resetComponent(pct.position.x+p.position.x-pvotPos.x,pct.position.y+p.position.y-pvotPos.y);
+				}
+			}
 			_particleVct[0]=pct;
 			pct.velocityShare(_speed);
 			pct.accelerationShare(_acceleration);
+			
 		}
 		
 		public function get pivotParticle():Particle{
@@ -50,13 +93,15 @@ package z_spark.tileengine.component
 		}
 		
 		public function addSubParticle(offx:int,offy:int):void{
-			if(_particleVct[0]==null)throw("请先设置锚点粒子");
+			if(_particleVct.length==0)throw("请先设置锚点粒子");
 			var pvotPos:Vector2D=_particleVct[0].position;
 			var pct:Particle=new Particle();
 			pct.position.resetComponent(pvotPos.x+offx,pvotPos.y+offy);
 			pct.velocityShare(_speed);
 			pct.accelerationShare(_acceleration);
 			_particleVct.push(pct);
+			
+			
 		}
 		
 		public function get acceleration():Vector2D
