@@ -3,10 +3,10 @@ package z_spark.tileengine.debug
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	
+	import z_spark.tileengine.TileGlobal;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.tile.ITile;
-	import z_spark.tileengine.TileGlobal;
 	import z_spark.tileengine.tile.TileNone;
 
 	use namespace zspark_tileegine_internal;
@@ -25,21 +25,33 @@ package z_spark.tileengine.debug
 			
 			var szw:int=TileGlobal.TILE_W;
 			var szh:int=TileGlobal.TILE_H;
+			
+			const sw:int=_canvas.stage.stageWidth;
+			const sh:int=_canvas.stage.stageHeight;
+			
 			var grap:Graphics=_canvas.graphics;
-			for (var i:int=0;i<mapInfo.length;i++){
-				for (var j:int=0;j<mapInfo[i].length;j++){
+			const col:uint=0x000000;
+			grap.lineStyle(1,col,.5);
+			for (var i:int=0;i<mapInfo[0].length;i++){
+				grap.moveTo(i*szw,0);
+				grap.lineTo(i*szw,sh);
+				
+			}
+			for (var j:int=0;j<mapInfo.length;j++){
+				grap.moveTo(0,j*szh);
+				grap.lineTo(sw,j*szh);
+			}
+			grap.endFill();
+			
+			
+			for (i=0;i<mapInfo.length;i++){
+				for (j=0;j<mapInfo[i].length;j++){
 					var tile:ITile=mapInfo[i][j] as ITile;
 					if(tile is TileNone)continue;
 					grap.beginFill(tile.debugDrawColor,.5);
 					grap.drawRect(tile.left,tile.top,szw,szh);
 					grap.endFill();
 					
-					grap.lineStyle(1,tile.debugDrawColor,1);
-					grap.moveTo(tile.left,tile.top);
-					grap.lineTo(tile.right,tile.top);
-					grap.lineTo(tile.right,tile.bottom);
-					grap.lineTo(tile.left,tile.bottom);
-					grap.endFill();
 				}
 			}
 		}

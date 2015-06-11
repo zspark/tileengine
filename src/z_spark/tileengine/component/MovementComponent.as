@@ -11,6 +11,11 @@ package z_spark.tileengine.component
 		private var _speed:Vector2D;
 		private var _acceleration:Vector2D;
 		
+		private var _mostLeft_relativeToPovit:Number=0;
+		private var _mostRight_relativeToPovit:Number=0;
+		private var _mostTop_relativeToPovit:Number=0;
+		private var _mostBottom_relativeToPovit:Number=0;
+		
 		public function MovementComponent()
 		{
 			_particleVct=new Vector.<Particle>();
@@ -20,38 +25,30 @@ package z_spark.tileengine.component
 		
 		public function get right():Number
 		{
-			var _right:Number=_particleVct[0].position.x;
-			for each(var pct:Particle in _particleVct){
-				if(_right<pct.position.x)_right=pct.position.x;
-			}
-			return _right;
+			return pivotParticle.position.x+_mostRight_relativeToPovit;
 		}
 
 		public function get left():Number
 		{
-			var _left:Number=_particleVct[0].position.x;
-			for each(var pct:Particle in _particleVct){
-				if(_left>pct.position.x)_left=pct.position.x;
-			}
-			return _left;
+			return pivotParticle.position.x+_mostLeft_relativeToPovit;
 		}
 
 		public function get top():Number
 		{
-			var _top:Number=_particleVct[0].position.y;
-			for each(var pct:Particle in _particleVct){
-				if(_top>pct.position.y)_top=pct.position.y;
-			}
-			return _top;
+			return pivotParticle.position.y+_mostTop_relativeToPovit;
 		}
 
 		public function get bottom():Number
 		{
-			var _bottom:Number=_particleVct[0].position.y;
-			for each(var pct:Particle in _particleVct){
-				if(_bottom<pct.position.y)_bottom=pct.position.y;
-			}
-			return _bottom;
+			return pivotParticle.position.y+_mostBottom_relativeToPovit;
+		}
+		
+		public function get width():Number{
+			return right-left;
+		}
+		
+		public function get height():Number{
+			return bottom-top;
 		}
 
 		zspark_tileegine_internal function fixPosition(xx:Number,yy:Number):void{
@@ -67,11 +64,9 @@ package z_spark.tileengine.component
 		}
 		
 		public function getCenterPosition(vct:Vector2D):void{
-			vct.clear();
-			for each(var pct:Particle in _particleVct){
-				vct.add(pct.position);
-			}
-			vct.mul(1/_particleVct.length);
+			vct.reset(pivotParticle.position);
+			vct.addComponent(_mostLeft_relativeToPovit+_mostRight_relativeToPovit>>1,
+				_mostBottom_relativeToPovit+_mostTop_relativeToPovit>>1);
 		}
 		
 		public function set pivotParticle(pct:Particle):void{
@@ -101,7 +96,10 @@ package z_spark.tileengine.component
 			pct.accelerationShare(_acceleration);
 			_particleVct.push(pct);
 			
-			
+			if(offx>_mostRight_relativeToPovit)_mostRight_relativeToPovit=offx;
+			else if(offx<_mostLeft_relativeToPovit)_mostLeft_relativeToPovit=offx;
+			if(offy>_mostBottom_relativeToPovit)_mostBottom_relativeToPovit=offy;
+			else if(offy<_mostTop_relativeToPovit)_mostTop_relativeToPovit=offy;
 		}
 		
 		public function get acceleration():Vector2D

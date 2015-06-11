@@ -18,7 +18,7 @@ package z_spark.tileengine.tile
 			_bounceDecrease=0;
 			_frictionDecrease=0;
 			CONFIG::DEBUG{
-				_debugDrawColor=0x666666;
+				_debugDrawColor=0x66FF66;
 			};
 		}
 		

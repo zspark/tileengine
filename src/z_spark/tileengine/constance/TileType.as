@@ -6,5 +6,6 @@ package z_spark.tileengine.constance
 		public static const TYPE_WALL:int=1;
 		public static const TYPE_THROUGHT:int=2;
 		public static const TYPE_THROUGHT_TOP:int=3;
+		public static const TYPE_SOFT_WALL:int=4;
 	}
 }

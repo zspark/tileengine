@@ -19,7 +19,6 @@ package z_spark.tileengine.tile
 		function get left():int;
 		function get right():int;
 		
-		
 		CONFIG::DEBUG{
 			function get debugDrawColor():uint;
 		};

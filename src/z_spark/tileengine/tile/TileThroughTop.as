@@ -24,7 +24,7 @@ package z_spark.tileengine.tile
 			_type=TileType.TYPE_THROUGHT_TOP;
 			_tmpVct=new Vector2D();
 			CONFIG::DEBUG{
-				_debugDrawColor=0x888888;
+				_debugDrawColor=0xFF8888;
 			};
 		}
 		

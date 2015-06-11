@@ -96,12 +96,14 @@ package z_spark.tileengine.system
 				if(tile){
 					if(tile.type==TileType.TYPE_THROUGHT_TOP){
 						flag=true;
-						trace("flag true");
 						break;
 					}
 				}
 			}
-			if(flag)TileUtil.fixPosition(tile.row,tile.col,TileDir.DIR_TOP,mc,pct.position);
+			if(flag){
+				TileUtil.fixPosition(tile.row,tile.col,TileDir.DIR_TOP,mc,pct.position);
+//				_tileHandleInput.cn.statusCmp.status=StatusComponent.STATUS_MOVE;
+			}
 		}
 		
 		private function dispatch_inAir():void{
@@ -110,17 +112,26 @@ package z_spark.tileengine.system
 			tmpV.setMagTo(TileGlobal.MAG_OF_TESTING_NONE_TILE);
 			var mc:MovementComponent=_tileHandleInput.cn.movementCmp;
 			var tilemap:TileMap=_tileHandleInput.tileMap;
-			var n:uint=0;
-			for each(var pct:Particle in mc._particleVct){
-				var tile:ITile=tilemap.getTileByXY(pct.position.x+tmpV.x,pct.position.y+tmpV.y);
-				if(tile){
-					if(tile.type==TileType.TYPE_NONE){
-						n++;
-					}
+			var tile:ITile;
+			
+			//未来最低点如果是空格子，肯定是要下落的；
+			tile=tilemap.getTileByXY(mc.left+tmpV.x,mc.bottom+tmpV.y);
+			if(tile.type==TileType.TYPE_NONE){
+				tile=tilemap.getTileByXY(mc.right+tmpV.x,mc.bottom+tmpV.y);
+				if(tile.type==TileType.TYPE_NONE){
+					_tileHandleInput.sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
+					return;
 				}
 			}
-		
-			if(n>=mc._particleVct.length)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
+			
+			//现在的最低点是软墙的话，也是要下落的；
+			tile=tilemap.getTileByXY(mc.left,mc.bottom);
+			if(tile.type==TileType.TYPE_SOFT_WALL){
+				tile=tilemap.getTileByXY(mc.right,mc.bottom);
+				if(tile.type==TileType.TYPE_SOFT_WALL){
+					_tileHandleInput.sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
+				}
+			}
 		}
 		
 		private function dispatch_wall():void{
@@ -179,7 +190,7 @@ package z_spark.tileengine.system
 				_tileHandleInput.futurePosition.reset(pct.position);
 				_tileHandleInput.futurePosition.addScale(_tileHandleInput.lastSpeed,delta_s);
 				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
-				tile.handle(_tileHandleInput,_tileHandleOutput);
+				if(tile!=null)tile.handle(_tileHandleInput,_tileHandleOutput);
 				if(_tileHandleOutput.handleStatus==TileHandleStatus.ST_FIXED)pct.status=Particle.NO_CHECK;
 			}
 			
@@ -188,7 +199,7 @@ package z_spark.tileengine.system
 				_tileHandleInput.futurePosition.reset(pct.position);
 				_tileHandleInput.futurePosition.addScale(_tileHandleInput.lastSpeed,delta_s);
 				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
-				tile.handle(_tileHandleInput,_tileHandleOutput);
+				if(tile!=null)tile.handle(_tileHandleInput,_tileHandleOutput);
 				pct.status=Particle.NO_CHECK;
 			}
 			

@@ -9,8 +9,8 @@ package z_spark.tileengine.tile
 		protected var _type:int;
 		protected var _row:int;	
 		protected var _col:int;
-		protected var _bounceDecrease:Number=.7;
-		protected var _frictionDecrease:Number=0.3//.5;
+		protected var _bounceDecrease:Number=.8;
+		protected var _frictionDecrease:Number=.5;
 		
 		public function TileBase(tilemap:TileMap,row:int,col:int)
 		{
