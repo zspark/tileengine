@@ -1,8 +1,10 @@
 package z_spark.tileengine
 {
 	import flash.events.Event;
+	import flash.utils.getTimer;
 	
 	import z_spark.core.utils.KeyboardConst;
+	import z_spark.linearalgebra.LAMath;
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.constance.TileDir;
@@ -25,6 +27,8 @@ package z_spark.tileengine
 		private var _body:RigidEntity;
 		private var _tilemap:TileMap;
 		private var _sensor:Sensor;
+		private var _recentDisInfo:Array=[];
+		private var _recentTimeInfo:Array=[];
 		private var _keyStatus:Array;
 		
 		public function EntityController(){}
@@ -120,10 +124,19 @@ package z_spark.tileengine
 			_isBodyInTileThrough=true;
 		}
 		
-		protected function onInTheAir(event:Event):void
+		protected function onInTheAir(event:SensorEvent):void
 		{
 			trace("in air");
 			_body.statusComponent.status=StatusComponent.STATUS_JUMP;
+			//计算水平速度，这个时候的速度不能用原来的移动速度模拟，不然不真实；
+			//想象这样一种情况：角色慢慢走在边上，最后再点击一下移动，掉下去了，此时的水平速度不能用其正常移动时的速度；
+			//相反，如果角色从距离边很远的地方就以正常的速度往边上走，那么掉下去后，其速度应该与正常移动速度一样。
+			var dis:Number=Math.abs(_recentDisInfo[0]-_recentDisInfo[_recentDisInfo.length-1]);
+			var time:Number=getTimer()-_recentTimeInfo[0];
+			var velocity:Number=dis*1000/time;//pps;
+			
+			trace(dis,time,velocity);
+			_body.movementComponent.speed.x=_vx*velocity/Math.abs(_vx);
 		}
 		
 		
@@ -143,6 +156,8 @@ package z_spark.tileengine
 		
 		public function onE(event:Event):void
 		{
+			saveInfo();
+			
 			_vx=_vy=0;
 			checkClimbLadder();
 			if(_body.statusComponent.status!=StatusComponent.STATUS_JUMP){
@@ -166,6 +181,15 @@ package z_spark.tileengine
 				else _body.statusComponent.status=StatusComponent.STATUS_MOVE;
 				_body.movementComponent.speed.resetComponent(_vx,_vy);
 			}
+		}
+		
+		private function saveInfo():void
+		{
+			_recentDisInfo.push(_body.movementComponent.zspark_tileegine_internal::_lastPivotPos.x);
+			if(_recentDisInfo.length>TileGlobal.RECENT_STEP_COUNT)_recentDisInfo.shift();
+			
+			_recentTimeInfo.push(_body.movementComponent.zspark_tileegine_internal::_lastRecordTime);
+			if(_recentTimeInfo.length>TileGlobal.RECENT_STEP_COUNT)_recentTimeInfo.shift();
 		}
 		
 		private function checkClimbLadder():void

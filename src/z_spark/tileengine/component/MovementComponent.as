@@ -8,8 +8,13 @@ package z_spark.tileengine.component
 	public class MovementComponent
 	{
 		zspark_tileegine_internal var _particleVct:Vector.<Particle>;
+		zspark_tileegine_internal var _lastPivotPos:Vector2D;
+		zspark_tileegine_internal var _lastRecordTime:uint;
+		
 		private var _speed:Vector2D;
 		private var _acceleration:Vector2D;
+		private var _startUpTime:uint=200;//ms;启动时间，就是物体从静止到满速的时间间隔;
+		private var _passedTime:uint=0;//ms;
 		
 		private var _mostLeft_relativeToPovit:Number=0;
 		private var _mostRight_relativeToPovit:Number=0;
@@ -21,6 +26,7 @@ package z_spark.tileengine.component
 			_particleVct=new Vector.<Particle>();
 			_speed=new Vector2D();
 			_acceleration=new Vector2D();
+			_lastPivotPos=new Vector2D();
 		}
 		
 		public function get right():Number
@@ -57,12 +63,6 @@ package z_spark.tileengine.component
 			}
 		}
 		
-		zspark_tileegine_internal function fixPositionByVector(vct:Vector2D):void{
-			for each(var pct:Particle in _particleVct){
-				pct.position.add(vct);
-			}
-		}
-		
 		public function getCenterPosition(vct:Vector2D):void{
 			vct.reset(pivotParticle.position);
 			vct.addComponent(_mostLeft_relativeToPovit+_mostRight_relativeToPovit>>1,
@@ -81,6 +81,7 @@ package z_spark.tileengine.component
 			pct.velocityShare(_speed);
 			pct.accelerationShare(_acceleration);
 			
+			_lastPivotPos.reset(pct.position);
 		}
 		
 		public function get pivotParticle():Particle{
@@ -131,10 +132,5 @@ package z_spark.tileengine.component
 		{
 			_speed.reset(value);
 		}
-		
-		public function setSpeed(vx:Number,vy:Number):void{
-			_speed.resetComponent(vx,vy);
-		}
-		
 	}
 }

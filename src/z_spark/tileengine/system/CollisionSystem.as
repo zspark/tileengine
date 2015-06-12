@@ -1,5 +1,7 @@
 package z_spark.tileengine.system
 {
+	import flash.utils.getTimer;
+	
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.Particle;
 	import z_spark.tileengine.TileGlobal;
@@ -55,7 +57,7 @@ package z_spark.tileengine.system
 						dispatch_through();
 					}
 					
-					swapArray();
+					swapAndSaveInfo();
 					break;
 				}
 				case StatusComponent.STATUS_MOVE:
@@ -72,7 +74,7 @@ package z_spark.tileengine.system
 						dispatch_inAir();
 					}
 					
-					swapArray();
+					swapAndSaveInfo();
 					break;
 				}
 				case StatusComponent.STATUS_STAY:
@@ -159,7 +161,7 @@ package z_spark.tileengine.system
 			}
 		}
 		
-		private function swapArray():void{
+		private function swapAndSaveInfo():void{
 			//交换数组；
 			var tmp:Array=_tileHandleInput.cn.statusCmp.tileCountArray;
 			if(tmp==_tileHandleInput.cn.statusCmp.particlesTileCountArray1){
@@ -169,6 +171,9 @@ package z_spark.tileengine.system
 				_tileHandleInput.cn.statusCmp.tileCountArray=_tileHandleInput.cn.statusCmp.particlesTileCountArray1;
 				_tileHandleInput.cn.statusCmp.tileCountArray_history=tmp;
 			}
+			
+			_tileHandleInput.cn.movementCmp._lastPivotPos.reset(_tileHandleInput.cn.movementCmp.pivotParticle.position);
+			_tileHandleInput.cn.movementCmp._lastRecordTime=getTimer();
 		}
 		
 		private function limitSpeed(mc:MovementComponent):void{
