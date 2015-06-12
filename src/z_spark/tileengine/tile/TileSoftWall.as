@@ -46,8 +46,8 @@ package z_spark.tileengine.tile
 				case TileDir.DIR_TOP:
 				{
 					tileHandleInput.cn.movementCmp.getCenterPosition(_tmpVct);
-					var tile:ITile=tileHandleInput.tileMap.getTileByVector(_tmpVct);
-					if(tile.type!=TileType.TYPE_SOFT_WALL){
+					if(top>_tmpVct.y){
+					
 						tmp=_row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
 						mc.fixPosition(0,-(fpos.y-tmp));
 						fpos.y=tmp;
