@@ -3,7 +3,6 @@ package z_spark.tileengine.component
 	import flash.display.Sprite;
 	
 	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.Particle;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	
 	use namespace zspark_tileegine_internal;
@@ -25,9 +24,11 @@ package z_spark.tileengine.component
 			_sprite.scaleY=_scaleY;*/
 			_sprite.x=globalPos.x;
 			_sprite.y=globalPos.y;
+			
+//			_sprite.x=int(globalPos.x);
 		}
 		
-		CONFIG::DEBUG
+		/*CONFIG::DEBUG
 		zspark_tileegine_internal function debugRender(vct:Vector.<Particle>):void{
 			if(_sprite==null)return;
 			_sprite.graphics.clear();
@@ -36,7 +37,7 @@ package z_spark.tileengine.component
 				_sprite.graphics.drawRect(pct.position.x,pct.position.y,1,1);
 			}
 			_sprite.graphics.endFill();
-		}
+		}*/
 		
 	}
 }

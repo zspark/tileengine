@@ -24,8 +24,6 @@ package z_spark.tileengine.tile
 		
 		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void
 		{
-			tileHandleInput.pct.position.reset(tileHandleInput.futurePosition);
-			
 			tileHandleOutput.handleStatus=TileHandleStatus.ST_FIXED;
 			tileHandleOutput.inThroughParticleCount++;
 			

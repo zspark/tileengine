@@ -29,17 +29,10 @@ package z_spark.tileengine.tile
 		
 		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void
 		{
-			if(TileUtil.isAmbigulty(tileHandleInput.pct,this)){
-				tileHandleOutput.handleStatus=TileHandleStatus.ST_DELAY;
-				tileHandleOutput.delayHandleArray.push(tileHandleInput.pct);
-				return;
-			}
 			
-			var fpos:Vector2D=tileHandleInput.futurePosition;
-//			var dir:int=TileUtil.getEnterDir(fpos,this,_tilemap);
-			var dir:int=TileUtil.getEnterDir(fpos,tileHandleInput.pct.position);
-			TileUtil.fixPosition(_row,_col,dir,tileHandleInput.cn.movementCmp,fpos);
-			tileHandleInput.pct.position.reset(fpos);
+			var fpos:Vector2D=tileHandleInput.futurePos;
+			var dir:int=TileUtil.getEnterDir(tileHandleInput);
+			TileUtil.fixPosition(_row,_col,dir,fpos,tileHandleOutput.fixPivot);
 			
 			
 			if(tileHandleInput.cn.statusCmp.status==StatusComponent.STATUS_JUMP){

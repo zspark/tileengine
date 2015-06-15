@@ -1,59 +1,63 @@
 package z_spark.tileengine.debug
 {
-	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import z_spark.tileengine.TileMap;
+	
+	CONFIG::DEBUG{
+	import flash.display.Graphics;
 	
 	import z_spark.tileengine.TileGlobal;
-	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.zspark_tileegine_internal;
 	import z_spark.tileengine.tile.ITile;
 	import z_spark.tileengine.tile.TileNone;
-
 	use namespace zspark_tileegine_internal;
+	};
+
 	public class TileDebugger
 	{
 		public function TileDebugger(){}
 		
-		CONFIG::DEBUG
 		public static function initAndDraw(tileMap:TileMap,canvas:Sprite):void{
-			trace('Draw debug frame line');
-			
-			_tileMap=tileMap;
-			_canvas=canvas;
-			canvas.graphics.clear();
-			var mapInfo:Array=tileMap.debugMapInfo;
-			
-			var szw:int=TileGlobal.TILE_W;
-			var szh:int=TileGlobal.TILE_H;
-			
-			const sw:int=_canvas.stage.stageWidth;
-			const sh:int=_canvas.stage.stageHeight;
-			
-			var grap:Graphics=_canvas.graphics;
-			const col:uint=0x000000;
-			grap.lineStyle(1,col,.5);
-			for (var i:int=0;i<mapInfo[0].length;i++){
-				grap.moveTo(i*szw,0);
-				grap.lineTo(i*szw,sh);
+			CONFIG::DEBUG{
+				trace('Draw debug frame line');
 				
-			}
-			for (var j:int=0;j<mapInfo.length;j++){
-				grap.moveTo(0,j*szh);
-				grap.lineTo(sw,j*szh);
-			}
-			grap.endFill();
-			
-			
-			for (i=0;i<mapInfo.length;i++){
-				for (j=0;j<mapInfo[i].length;j++){
-					var tile:ITile=mapInfo[i][j] as ITile;
-					if(tile is TileNone)continue;
-					grap.beginFill(tile.debugDrawColor,.5);
-					grap.drawRect(tile.left,tile.top,szw,szh);
-					grap.endFill();
+				_tileMap=tileMap;
+				_canvas=canvas;
+				canvas.graphics.clear();
+				var mapInfo:Array=tileMap.debugMapInfo;
+				
+				var szw:int=TileGlobal.TILE_W;
+				var szh:int=TileGlobal.TILE_H;
+				
+				const sw:int=_canvas.stage.stageWidth;
+				const sh:int=_canvas.stage.stageHeight;
+				
+				var grap:Graphics=_canvas.graphics;
+				const col:uint=0x000000;
+				grap.lineStyle(1,col,.5);
+				for (var i:int=0;i<mapInfo[0].length;i++){
+					grap.moveTo(i*szw,0);
+					grap.lineTo(i*szw,sh);
 					
 				}
-			}
+				for (var j:int=0;j<mapInfo.length;j++){
+					grap.moveTo(0,j*szh);
+					grap.lineTo(sw,j*szh);
+				}
+				grap.endFill();
+				
+				
+				for (i=0;i<mapInfo.length;i++){
+					for (j=0;j<mapInfo[i].length;j++){
+						var tile:ITile=mapInfo[i][j] as ITile;
+						if(tile is TileNone)continue;
+						grap.beginFill(tile.debugDrawColor,.5);
+						grap.drawRect(tile.left,tile.top,szw,szh);
+						grap.endFill();
+						
+					}
+				}
+			};
 		}
 		
 		CONFIG::DEBUG{

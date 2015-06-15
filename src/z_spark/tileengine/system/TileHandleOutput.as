@@ -16,10 +16,7 @@ package z_spark.tileengine.system
 		zspark_tileegine_internal var hitWallParticleCount:uint=0;
 		zspark_tileegine_internal var inThroughParticleCount:uint=0;
 		zspark_tileegine_internal var inThroughTopParticleCount:uint=0;
-		/**
-		 * 粒子是从哪个方向进入该格子。 
-		 */
-		public var dir:int;
+		private var _dir:int;
 		/**
 		 * 格子对粒子的处理结果 
 		 */
@@ -30,9 +27,33 @@ package z_spark.tileengine.system
 		 */
 		public var fixSpeed:Vector2D=new Vector2D();
 		
+		/**
+		 * 位置修正向量
+		 * 独立向量； 
+		 */
+		public var fixPivot:Vector2D=new Vector2D();
+		
 		public function TileHandleOutput(){reset();}
 		
 		private var _delayHandleArray:Array=[];
+
+		/**
+		 * 粒子是从哪个方向进入该格子。 
+		 */
+		public function get dir():int
+		{
+			return _dir;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set dir(value:int):void
+		{
+			if(value<0)return ;
+			_dir = value;
+		}
+
 		/**
 		 * 延后处理的粒子； 
 		 * @return 
@@ -42,9 +63,10 @@ package z_spark.tileengine.system
 		{return _delayHandleArray;	}
 
 		zspark_tileegine_internal function reset():void{
-			dir=-1;
+			_dir=-1;
 			handleStatus=-1;
 			fixSpeed.clear();
+			fixPivot.clear();
 			skipLastAllSettings=false;
 			_delayHandleArray.length=0;
 			hitWallParticleCount=0;

@@ -3,7 +3,6 @@ package z_spark.tileengine.system
 	import flash.utils.getTimer;
 	
 	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.Particle;
 	import z_spark.tileengine.TileGlobal;
 	import z_spark.tileengine.TileMap;
 	import z_spark.tileengine.TileUtil;
@@ -39,7 +38,6 @@ package z_spark.tileengine.system
 			_tileHandleInput.gravity=gravity;
 			_tileHandleInput.sensor=sensor;
 			_tileHandleInput.tileMap=tilemap;
-			_tileHandleInput.lastSpeed.reset(mc.speed);
 			switch(cn.statusCmp.status)
 			{
 				case StatusComponent.STATUS_JUMP:
@@ -80,36 +78,67 @@ package z_spark.tileengine.system
 				case StatusComponent.STATUS_STAY:
 				default:break;
 			}
+		}
+		
+		private function update_internal(tilemap:TileMap,cn:CollisionNode,gravity:Vector2D,delta_s:Number):void{
+			var mc:MovementComponent=cn.movementCmp;
+			var tile:ITile;
+			var fpivot:Vector2D=_tileHandleInput.futurePivot;
+			
+			_tileHandleOutput.reset();
+			fpivot.reset(mc._pivot);
+			fpivot.addScale(mc.speed,delta_s);
+			
+			mc.getFirst(fpivot,_tileHandleInput);
+			do{
+				tile=tilemap.getTileByVector(_tileHandleInput.futurePos);
+				tile.handle(_tileHandleInput,_tileHandleOutput);
+				
+				if(_tileHandleOutput.handleStatus==TileHandleStatus.ST_FIXED){
+					fpivot.add(_tileHandleOutput.fixPivot);
+				}
+				_tileHandleOutput.fixPivot.clear();
+			}while(mc.getNext(fpivot,_tileHandleInput));
+			
+			mc._lastPivot.reset(mc._pivot);
+			mc._pivot.reset(fpivot);
+			
+			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT]=_tileHandleOutput.inThroughParticleCount;
+			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT_TOP]=_tileHandleOutput.inThroughTopParticleCount;
+			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_WALL]=_tileHandleOutput.hitWallParticleCount;
 			
 		}
 		
 		private function fixThroughTopPosition():void
 		{
-			var tmpV:Vector2D=_tileHandleInput.futurePosition;
+			var tmpV:Vector2D=new Vector2D();
 			tmpV.reset(_tileHandleInput.gravity);
 			tmpV.setMagTo(TileGlobal.MAX_VELOCITY*17/1000);
 			
 			var mc:MovementComponent=_tileHandleInput.cn.movementCmp;
 			var tilemap:TileMap=_tileHandleInput.tileMap;
-			var flag:Boolean=false;
 			var tile:ITile;
-			for each(var pct:Particle in mc._particleVct){
-				tile=tilemap.getTileByXY(pct.position.x+tmpV.x,pct.position.y+tmpV.y);
-				if(tile){
-					if(tile.type==TileType.TYPE_THROUGHT_TOP){
-						flag=true;
-						break;
-					}
-				}
+			
+			_tileHandleInput.futurePivot.resetComponent(mc.left+tmpV.x,mc.bottom+tmpV.y);
+			_tileHandleInput.currentPos.resetComponent(mc.left,mc.bottom);
+			tile=tilemap.getTileByVector(_tileHandleInput.futurePivot);
+			if(tile.type==TileType.TYPE_THROUGHT_TOP){
+				TileUtil.fixPosition(tile.row,tile.col,TileDir.DIR_TOP,_tileHandleInput.currentPos,_tileHandleOutput.fixPivot);
+				mc._pivot.add(_tileHandleOutput.fixPivot);
+				return;
 			}
-			if(flag){
-				TileUtil.fixPosition(tile.row,tile.col,TileDir.DIR_TOP,mc,pct.position);
-//				_tileHandleInput.cn.statusCmp.status=StatusComponent.STATUS_MOVE;
+			
+			_tileHandleInput.futurePivot.x=mc.right+tmpV.x
+			_tileHandleInput.currentPos.resetComponent(mc.right,mc.bottom);
+			tile=tilemap.getTileByVector(_tileHandleInput.futurePivot);
+			if(tile.type==TileType.TYPE_THROUGHT_TOP){
+				TileUtil.fixPosition(tile.row,tile.col,TileDir.DIR_TOP,_tileHandleInput.currentPos,_tileHandleOutput.fixPivot);
+				mc._pivot.add(_tileHandleOutput.fixPivot);
 			}
 		}
 		
 		private function dispatch_inAir():void{
-			var tmpV:Vector2D=_tileHandleInput.futurePosition;
+			var tmpV:Vector2D=_tileHandleInput.futurePivot;
 			tmpV.reset(_tileHandleInput.gravity);
 			tmpV.setMagTo(TileGlobal.MAG_OF_TESTING_NONE_TILE);
 			var mc:MovementComponent=_tileHandleInput.cn.movementCmp;
@@ -123,7 +152,11 @@ package z_spark.tileengine.system
 				if(tile.type==TileType.TYPE_NONE){
 					_tileHandleInput.sensor.dispatch(SensorEvent.SOR_IN_THE_AIR,_tileHandleOutput);
 					return;
+				}else if(tile.type==TileType.TYPE_WALL || tile.type==TileType.TYPE_SOFT_WALL){
+					return;
 				}
+			}else if(tile.type==TileType.TYPE_WALL || tile.type==TileType.TYPE_SOFT_WALL){
+				return;
 			}
 			
 			//现在的最低点是软墙的话，也是要下落的；
@@ -144,7 +177,6 @@ package z_spark.tileengine.system
 		
 		private function dispatch_through():void{
 			
-			var pcnt:uint=_tileHandleInput.cn.movementCmp._particleVct.length;
 			var tc:uint=_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT];
 			var ltc:uint=_tileHandleInput.cn.statusCmp.tileCountArray_history[TileType.TYPE_THROUGHT];
 			
@@ -153,11 +185,11 @@ package z_spark.tileengine.system
 					fixThroughTopPosition();
 					_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_ALL_OUT_TILE_THROUGH,_tileHandleOutput);
 				}
-			}else if(tc<pcnt){
+			}else if(tc<4){
 				if(ltc==0)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_IN_TILE_THROUGH,_tileHandleOutput);
-				else if(ltc==pcnt)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_OUT_TILE_THROUGH,_tileHandleOutput);
-			}else if(tc==pcnt){
-				if(ltc<pcnt)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_ALL_IN_TILE_THROUGH,_tileHandleOutput);
+				else if(ltc==4)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_OUT_TILE_THROUGH,_tileHandleOutput);
+			}else if(tc==4){
+				if(ltc<4)_tileHandleInput.sensor.dispatch(SensorEvent.SOR_FIRST_ALL_IN_TILE_THROUGH,_tileHandleOutput);
 			}
 		}
 		
@@ -172,8 +204,11 @@ package z_spark.tileengine.system
 				_tileHandleInput.cn.statusCmp.tileCountArray_history=tmp;
 			}
 			
-			_tileHandleInput.cn.movementCmp._lastPivotPos.reset(_tileHandleInput.cn.movementCmp.pivotParticle.position);
-			_tileHandleInput.cn.movementCmp._lastRecordTime=getTimer();
+			//清理当前数组；
+			_tileHandleInput.cn.statusCmp.tileCountArray.length=0;
+			
+			_tileHandleInput.cn.movementCmp._lastPivot.reset(_tileHandleInput.cn.movementCmp._pivot);
+			_tileHandleInput.cn.movementCmp._lastPivotTime=getTimer();
 		}
 		
 		private function limitSpeed(mc:MovementComponent):void{
@@ -182,38 +217,6 @@ package z_spark.tileengine.system
 				mc.speed.setMagTo(TileGlobal.MAX_VELOCITY);
 			}
 		}
-		
-		private function update_internal(tilemap:TileMap,cn:CollisionNode,gravity:Vector2D,delta_s:Number):void{
-			var mc:MovementComponent=cn.movementCmp;
-			var pct:Particle;
-			var tile:ITile;
-			
-			_tileHandleOutput.reset();
-			
-			for each(pct in mc._particleVct){
-				_tileHandleInput.pct=pct;
-				_tileHandleInput.futurePosition.reset(pct.position);
-				_tileHandleInput.futurePosition.addScale(_tileHandleInput.lastSpeed,delta_s);
-				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
-				if(tile!=null)tile.handle(_tileHandleInput,_tileHandleOutput);
-				if(_tileHandleOutput.handleStatus==TileHandleStatus.ST_FIXED)pct.status=Particle.NO_CHECK;
-			}
-			
-			for each( pct in _tileHandleOutput.delayHandleArray){
-				_tileHandleInput.pct=pct;
-				_tileHandleInput.futurePosition.reset(pct.position);
-				_tileHandleInput.futurePosition.addScale(_tileHandleInput.lastSpeed,delta_s);
-				tile=tilemap.getTileByVector(_tileHandleInput.futurePosition);
-				if(tile!=null)tile.handle(_tileHandleInput,_tileHandleOutput);
-				pct.status=Particle.NO_CHECK;
-			}
-			
-			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT]=_tileHandleOutput.inThroughParticleCount;
-			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_THROUGHT_TOP]=_tileHandleOutput.inThroughTopParticleCount;
-			_tileHandleInput.cn.statusCmp.tileCountArray[TileType.TYPE_WALL]=_tileHandleOutput.hitWallParticleCount;
-			
-		}
-		
 		
 	}
 }

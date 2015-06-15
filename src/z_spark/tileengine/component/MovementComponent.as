@@ -1,106 +1,72 @@
 package z_spark.tileengine.component
 {
 	import z_spark.linearalgebra.Vector2D;
-	import z_spark.tileengine.Particle;
 	import z_spark.tileengine.zspark_tileegine_internal;
+	import z_spark.tileengine.system.TileHandleInput;
 	
 	use namespace zspark_tileegine_internal;
 	public class MovementComponent
 	{
-		zspark_tileegine_internal var _particleVct:Vector.<Particle>;
-		zspark_tileegine_internal var _lastPivotPos:Vector2D;
-		zspark_tileegine_internal var _lastRecordTime:uint;
+		public static const LEFT_TOP:uint=0;
+		public static const RIGHT_TOP:uint=1;
+		public static const RIGHT_BOTTOM:uint=2;
+		public static const LEFT_BOTTOM:uint=3;
+		
+		zspark_tileegine_internal var _lastPivot:Vector2D;
+		zspark_tileegine_internal var _pivot:Vector2D;
+		zspark_tileegine_internal var _lastPivotTime:uint;
 		
 		private var _speed:Vector2D;
 		private var _acceleration:Vector2D;
-		private var _startUpTime:uint=200;//ms;启动时间，就是物体从静止到满速的时间间隔;
-		private var _passedTime:uint=0;//ms;
 		
-		private var _mostLeft_relativeToPovit:Number=0;
-		private var _mostRight_relativeToPovit:Number=0;
-		private var _mostTop_relativeToPovit:Number=0;
-		private var _mostBottom_relativeToPovit:Number=0;
+		private var _w:Number=1.0;
+		private var _h:Number=1.0;
 		
 		public function MovementComponent()
 		{
-			_particleVct=new Vector.<Particle>();
+			_pivot=new Vector2D();
+			_lastPivot=new Vector2D();
 			_speed=new Vector2D();
 			_acceleration=new Vector2D();
-			_lastPivotPos=new Vector2D();
 		}
 		
 		public function get right():Number
 		{
-			return pivotParticle.position.x+_mostRight_relativeToPovit;
+			return _pivot.x+_w;
 		}
 
 		public function get left():Number
 		{
-			return pivotParticle.position.x+_mostLeft_relativeToPovit;
+			return _pivot.x;
 		}
 
 		public function get top():Number
 		{
-			return pivotParticle.position.y+_mostTop_relativeToPovit;
+			return _pivot.y;
 		}
 
 		public function get bottom():Number
 		{
-			return pivotParticle.position.y+_mostBottom_relativeToPovit;
+			return _pivot.y+_h;
 		}
 		
 		public function get width():Number{
-			return right-left;
+			return _w;
 		}
 		
 		public function get height():Number{
-			return bottom-top;
-		}
-
-		zspark_tileegine_internal function fixPosition(xx:Number,yy:Number):void{
-			for each(var pct:Particle in _particleVct){
-				pct.position.addComponent(xx,yy);
-			}
+			return _h;
 		}
 		
 		public function getCenterPosition(vct:Vector2D):void{
-			vct.reset(pivotParticle.position);
-			vct.addComponent(_mostLeft_relativeToPovit+_mostRight_relativeToPovit>>1,
-				_mostBottom_relativeToPovit+_mostTop_relativeToPovit>>1);
+			vct.reset(_pivot);
+			vct.addComponent(_w>>1,_h>>1);
 		}
 		
-		public function set pivotParticle(pct:Particle):void{
-			if(_particleVct.length>0 && _particleVct.length>0){
-				var pvotPos:Vector2D=_particleVct[0].position;
-				for each(var p:Particle in _particleVct){
-					if(p==_particleVct[0])continue;
-					p.position.resetComponent(pct.position.x+p.position.x-pvotPos.x,pct.position.y+p.position.y-pvotPos.y);
-				}
-			}
-			_particleVct[0]=pct;
-			pct.velocityShare(_speed);
-			pct.accelerationShare(_acceleration);
-			
-			_lastPivotPos.reset(pct.position);
-		}
-		
-		public function get pivotParticle():Particle{
-			return _particleVct[0];
-		}
-		
-		public function addSubParticle(offx:int,offy:int):void{
-			if(_particleVct.length==0)throw("请先设置锚点粒子");
-			var pvotPos:Vector2D=_particleVct[0].position;
-			var pct:Particle=new Particle();
-			pct.position.resetComponent(pvotPos.x+offx,pvotPos.y+offy);
-			pct.velocityShare(_speed);
-			pct.accelerationShare(_acceleration);
-			_particleVct.push(pct);
-			
-			if(offx>_mostRight_relativeToPovit)_mostRight_relativeToPovit=offx;
-			else if(offx<_mostLeft_relativeToPovit)_mostLeft_relativeToPovit=offx;
-			if(offy>_mostBottom_relativeToPovit)_mostBottom_relativeToPovit=offy;
-			else if(offy<_mostTop_relativeToPovit)_mostTop_relativeToPovit=offy;
+		public function setSize(gx:Number,gy:Number,w:Number=1.0,h:Number=1.0):void{
+			_pivot.x=gx;
+			_pivot.y=gy;
+			_w=w;_h=h;
 		}
 		
 		public function get acceleration():Vector2D
@@ -131,6 +97,38 @@ package z_spark.tileengine.component
 		public function set speed(value:Vector2D):void
 		{
 			_speed.reset(value);
+		}
+		
+		private var i:int=0;
+		zspark_tileegine_internal function getFirst(fpivot:Vector2D,input:TileHandleInput):Boolean{
+			input.currentPos.reset(_pivot);
+			input.futurePos.reset(fpivot);
+			input.corner=LEFT_TOP;
+			i=0;
+			return true;
+		}
+		
+		zspark_tileegine_internal function getNext(fpivot:Vector2D,input:TileHandleInput):Boolean{
+			i++;
+			if(i==1){
+				input.currentPos.resetComponent(_pivot.x+_w,_pivot.y);
+				input.futurePos.resetComponent(fpivot.x+_w,fpivot.y);
+				input.corner=RIGHT_TOP;
+				return true;
+			}
+			if(i==2){
+				input.currentPos.resetComponent(_pivot.x+_w,_pivot.y+_h);
+				input.futurePos.resetComponent(fpivot.x+_w,fpivot.y+_h);
+				input.corner=RIGHT_BOTTOM;
+				return true;
+			}
+			if(i==3){
+				input.currentPos.resetComponent(_pivot.x,_pivot.y+_h);
+				input.futurePos.resetComponent(fpivot.x,fpivot.y+_h);
+				input.corner=LEFT_BOTTOM;
+				return true;
+			}
+			return false;
 		}
 	}
 }

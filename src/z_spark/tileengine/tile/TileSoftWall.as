@@ -29,49 +29,35 @@ package z_spark.tileengine.tile
 		
 		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void
 		{
-			if(TileUtil.isAmbigulty(tileHandleInput.pct,this)){
-				tileHandleOutput.handleStatus=TileHandleStatus.ST_DELAY;
-				tileHandleOutput.delayHandleArray.push(tileHandleInput.pct);
-				return;
-			}
 			
-			var flag:Boolean=true;
 			var mc:MovementComponent=tileHandleInput.cn.movementCmp;
-			var fpos:Vector2D=tileHandleInput.futurePosition;
-			var tmp:Number;
-			var dir:int=TileUtil.getEnterDir(fpos,tileHandleInput.pct.position);
-			tileHandleOutput.dir=dir;
-			switch(dir)
-			{
-				case TileDir.DIR_TOP:
+			if(tileHandleInput.corner==MovementComponent.LEFT_BOTTOM ||
+				tileHandleInput.corner==MovementComponent.RIGHT_BOTTOM){
+				
+				var fpos:Vector2D=tileHandleInput.futurePos;
+				var tmp:Number;
+				var dir:int=TileUtil.getEnterDir(tileHandleInput);
+				tileHandleOutput.dir=dir;
+				switch(dir)
 				{
-					tileHandleInput.cn.movementCmp.getCenterPosition(_tmpVct);
-					if(top>_tmpVct.y){
-					
+					case TileDir.DIR_TOP:
+					{
 						tmp=_row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
-						mc.fixPosition(0,-(fpos.y-tmp));
-						fpos.y=tmp;
-						
-						tileHandleInput.pct.position.reset(fpos);
-						flag=false;
+						tileHandleOutput.fixPivot.resetComponent(0,-(fpos.y-tmp));
 						
 						tileHandleOutput.hitWallParticleCount++;
 						tileHandleOutput.fixSpeed.reset(tileHandleInput.cn.movementCmp.speed);
 						tileHandleOutput.fixSpeed.mulComponent(-_frictionDecrease,_bounceDecrease-2);
+						break;
 					}
-					break;
-				}
-				case TileDir.DIR_DOWN:
-				case TileDir.DIR_LEFT:
-				case TileDir.DIR_RIGHT:
-				default:{
-					break;
+					case TileDir.DIR_DOWN:
+					case TileDir.DIR_LEFT:
+					case TileDir.DIR_RIGHT:
+					default:{
+						break;
+					}
 				}
 			}
-			if(flag){
-				tileHandleInput.pct.position.reset(tileHandleInput.futurePosition);
-			}
-			
 			tileHandleOutput.handleStatus=TileHandleStatus.ST_FIXED;
 		}
 	}

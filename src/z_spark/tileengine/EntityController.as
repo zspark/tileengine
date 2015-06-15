@@ -4,7 +4,6 @@ package z_spark.tileengine
 	import flash.utils.getTimer;
 	
 	import z_spark.core.utils.KeyboardConst;
-	import z_spark.linearalgebra.LAMath;
 	import z_spark.linearalgebra.Vector2D;
 	import z_spark.tileengine.component.StatusComponent;
 	import z_spark.tileengine.constance.TileDir;
@@ -17,7 +16,7 @@ package z_spark.tileengine
 	public class EntityController
 	{
 		private var _centerVct:Vector2D=new Vector2D();
-		private var spdY:Number=200;
+		private var spdY:Number=210;
 		private var spdX:Number=170;
 		private var hitWallCount:uint=0;
 		private var _isBodyInTileThrough:Boolean=false;
@@ -71,10 +70,12 @@ package z_spark.tileengine
 							_vx=0;
 						}else{
 							_vx=-spdX*.7;
+							_vy=-spdY*.2;
 						}
 					}else{
 						if(_keyStatus[KeyboardConst.RIGHT+'']==1){
 							_vx=spdX*.7;
+							_vy=-spdY*.2;
 						}else{
 							_vx=0;
 						}
@@ -136,7 +137,8 @@ package z_spark.tileengine
 			var velocity:Number=dis*1000/time;//pps;
 			
 			trace(dis,time,velocity);
-			_body.movementComponent.speed.x=_vx*velocity/Math.abs(_vx);
+			var spdx:Number=_vx*velocity/Math.abs(_vx);
+			_body.movementComponent.speed.x=isNaN(spdx)?0:spdx;
 		}
 		
 		
@@ -185,10 +187,10 @@ package z_spark.tileengine
 		
 		private function saveInfo():void
 		{
-			_recentDisInfo.push(_body.movementComponent.zspark_tileegine_internal::_lastPivotPos.x);
+			_recentDisInfo.push(_body.movementComponent.zspark_tileegine_internal::_lastPivot.x);
 			if(_recentDisInfo.length>TileGlobal.RECENT_STEP_COUNT)_recentDisInfo.shift();
 			
-			_recentTimeInfo.push(_body.movementComponent.zspark_tileegine_internal::_lastRecordTime);
+			_recentTimeInfo.push(_body.movementComponent.zspark_tileegine_internal::_lastPivotTime);
 			if(_recentTimeInfo.length>TileGlobal.RECENT_STEP_COUNT)_recentTimeInfo.shift();
 		}
 		
@@ -254,9 +256,7 @@ package z_spark.tileengine
 		}
 		
 		private function fixClimbPos(midX:Number):void{
-			var oppos:Vector2D=_body.movementComponent.pivotParticle.position;
-			var pct:Particle=new Particle(midX-20/2,oppos.y);
-			_body.movementComponent.pivotParticle=pct;
+			_body.movementComponent.zspark_tileegine_internal::_pivot.x=midX-20/2;
 			_body.statusComponent.status=StatusComponent.STATUS_MOVE;
 			_isBodyClimbing=true;
 		}

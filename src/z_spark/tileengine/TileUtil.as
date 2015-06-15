@@ -4,27 +4,11 @@ package z_spark.tileengine
 	import z_spark.tileengine.component.MovementComponent;
 	import z_spark.tileengine.constance.TileDir;
 	import z_spark.tileengine.constance.TileWorldConst;
-	import z_spark.tileengine.tile.ITile;
+	import z_spark.tileengine.system.TileHandleInput;
 
 	use namespace zspark_tileegine_internal;
 	final public class TileUtil
 	{
-		
-		zspark_tileegine_internal static function isAmbigulty(pct:Particle,adjTile:ITile):Boolean{
-			var result:Boolean=false;
-			if(pct.status==Particle.NO_CHECK){
-				if(pct.position.x<adjTile.left){
-					if(pct.position.y<adjTile.top || pct.position.y>=adjTile.bottom)result=true;
-					else result=false;
-				}else if(pct.position.x>=adjTile.right){
-					if(pct.position.y<adjTile.top || pct.position.y>=adjTile.bottom)result=true;
-					else result=false;
-				}
-				
-				pct.status=result?Particle.AMBIGUOUS:Particle.ABSOLUTE;
-			}
-			return result;
-		}
 		
 		/**
 		*有个问题就是有可能‘未来点’处在对角线上，此时哪个方向谁先判断
@@ -78,50 +62,71 @@ package z_spark.tileengine
 		}*/
 		
 		
-		zspark_tileegine_internal static function getEnterDir(fpos:Vector2D,opos:Vector2D):int{
-			if(int(fpos.x/TileGlobal.TILE_W)==int(opos.x/TileGlobal.TILE_W)){
+		zspark_tileegine_internal static function getEnterDir(input:TileHandleInput):int{
+			var fpos:Vector2D=input.futurePos;
+			var cpox:Vector2D=input.currentPos;
+			 
+			if(int(fpos.x/TileGlobal.TILE_W)==int(cpox.x/TileGlobal.TILE_W)){
 				//垂直方向相同，肯定是从上下进入的；
-				if(int(fpos.y/TileGlobal.TILE_H)>int(opos.y/TileGlobal.TILE_H))return TileDir.DIR_TOP;
-				else if(int(fpos.y/TileGlobal.TILE_H)<int(opos.y/TileGlobal.TILE_H))return TileDir.DIR_DOWN;
+				if(int(fpos.y/TileGlobal.TILE_H)>int(cpox.y/TileGlobal.TILE_H))return TileDir.DIR_TOP;
+				else if(int(fpos.y/TileGlobal.TILE_H)<int(cpox.y/TileGlobal.TILE_H))return TileDir.DIR_DOWN;
 				else return -1;
+			}else if(int(fpos.x/TileGlobal.TILE_W)>int(cpox.x/TileGlobal.TILE_W)){
+				//左边进入;
+				if(int(fpos.y/TileGlobal.TILE_H)>int(cpox.y/TileGlobal.TILE_H)){
+					//左上进入
+					if(input.corner==MovementComponent.RIGHT_TOP)return TileDir.DIR_LEFT;
+					else if(input.corner==MovementComponent.LEFT_BOTTOM)return TileDir.DIR_TOP;
+					else return TileDir.DIR_LEFT;
+				}else if(int(fpos.y/TileGlobal.TILE_H)<int(cpox.y/TileGlobal.TILE_H)){
+					//左下；
+					if(input.corner==MovementComponent.RIGHT_BOTTOM)return TileDir.DIR_LEFT;
+					else if(input.corner==MovementComponent.LEFT_TOP)return TileDir.DIR_DOWN;
+					else return TileDir.DIR_LEFT;
+				}else return TileDir.DIR_LEFT;
 			}else{
-				//水平方向相同，肯定是从左右进入的；
-				if(int(fpos.x/TileGlobal.TILE_W)>int(opos.x/TileGlobal.TILE_W))return TileDir.DIR_LEFT;
-				else if(int(fpos.x/TileGlobal.TILE_W)<int(opos.x/TileGlobal.TILE_W))return TileDir.DIR_RIGHT;
-				else return -1;
+				//右边进入
+				if(int(fpos.y/TileGlobal.TILE_H)>int(cpox.y/TileGlobal.TILE_H)){
+					//右上进入
+					if(input.corner==MovementComponent.RIGHT_BOTTOM)return TileDir.DIR_TOP;
+					else if(input.corner==MovementComponent.LEFT_TOP)return TileDir.DIR_RIGHT;
+					else return TileDir.DIR_RIGHT;
+				}else if(int(fpos.y/TileGlobal.TILE_H)<int(cpox.y/TileGlobal.TILE_H)){
+					//右下；
+					if(input.corner==MovementComponent.RIGHT_TOP)return TileDir.DIR_DOWN;
+					else if(input.corner==MovementComponent.LEFT_BOTTOM)return TileDir.DIR_RIGHT;
+					else return TileDir.DIR_DOWN;
+				}else return TileDir.DIR_RIGHT;
 			}
 		}
 		
-		zspark_tileegine_internal static function fixPosition(row:uint,col:uint,toDir:int,mc:MovementComponent,fpos:Vector2D):void{
+		zspark_tileegine_internal static function fixPosition(row:uint,col:uint,toDir:int,fpos:Vector2D,fixVector:Vector2D):void{
 			var tmp:Number;
+			fixVector.clear();
 			switch(toDir)
 			{
 				case TileDir.DIR_LEFT:
 				{
 					tmp=col*TileGlobal.TILE_W-TileWorldConst.MIN_NUMBER;
-					mc.fixPosition(-(fpos.x-tmp),0);
-					fpos.x=tmp;
+					fixVector.addComponent(-(fpos.x-tmp),0);
 					break;
 				}
 				case TileDir.DIR_RIGHT:
 				{
 					tmp=(col+1)*TileGlobal.TILE_W;
-					mc.fixPosition(-(fpos.x-tmp),0);
-					fpos.x=tmp;
+					fixVector.addComponent(-(fpos.x-tmp),0);
 					break;
 				}
 				case TileDir.DIR_TOP:
 				{
 					tmp=row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
-					mc.fixPosition(0,-(fpos.y-tmp));
-					fpos.y=tmp;
+					fixVector.addComponent(0,-(fpos.y-tmp));
 					break;
 				}
 				case TileDir.DIR_DOWN:
 				{
 					tmp=(row+1)*TileGlobal.TILE_H;
-					mc.fixPosition(0,-(fpos.y-tmp));
-					fpos.y=tmp;
+					fixVector.addComponent(0,-(fpos.y-tmp));
 					break;
 				}
 				default:

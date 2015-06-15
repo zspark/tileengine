@@ -30,18 +30,16 @@ package z_spark.tileengine.tile
 		
 		public function handle(tileHandleInput:TileHandleInput,tileHandleOutput:TileHandleOutput):void
 		{
-			if(TileUtil.isAmbigulty(tileHandleInput.pct,this)){
-				tileHandleOutput.handleStatus=TileHandleStatus.ST_DELAY;
-				tileHandleOutput.delayHandleArray.push(tileHandleInput.pct);
-				return;
-			}
+			if(tileHandleInput.corner!=MovementComponent.LEFT_BOTTOM &&
+				tileHandleInput.corner!=MovementComponent.RIGHT_BOTTOM)return;
+			
 			
 			var flag:Boolean=true;
 			if(tileHandleInput.cn.statusCmp.status==StatusComponent.STATUS_JUMP){
 				var mc:MovementComponent=tileHandleInput.cn.movementCmp;
-				var fpos:Vector2D=tileHandleInput.futurePosition;
+				var fpos:Vector2D=tileHandleInput.futurePos;
 				var tmp:Number;
-				var dir:int=TileUtil.getEnterDir(fpos,tileHandleInput.pct.position);
+				var dir:int=TileUtil.getEnterDir(tileHandleInput);
 				tileHandleOutput.dir=dir;
 				switch(dir)
 				{
@@ -51,10 +49,9 @@ package z_spark.tileengine.tile
 						var tile:ITile=tileHandleInput.tileMap.getTileByVector(_tmpVct);
 						if(tile.type!=TileType.TYPE_THROUGHT_TOP){
 							tmp=_row*TileGlobal.TILE_H-TileWorldConst.MIN_NUMBER;
-							mc.fixPosition(0,-(fpos.y-tmp));
+							tileHandleInput.futurePivot.addComponent(0,-(fpos.y-tmp));
 							fpos.y=tmp;
 							
-							tileHandleInput.pct.position.reset(fpos);
 							flag=false;
 							
 							tileHandleOutput.hitWallParticleCount++;
@@ -72,7 +69,6 @@ package z_spark.tileengine.tile
 				}
 			}
 			if(flag){
-				tileHandleInput.pct.position.reset(tileHandleInput.futurePosition);
 				tileHandleOutput.inThroughTopParticleCount++;
 				tileHandleOutput.inThroughParticleCount++;
 			}

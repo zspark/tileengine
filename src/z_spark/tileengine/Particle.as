@@ -69,11 +69,11 @@ package z_spark.tileengine
 			_speed.reset(value);
 		}
 		
-		public function velocityShare(value:Vector2D):void{
+		public function speedShare(value:Vector2D):void{
 			_speed=value;
 		}
 		
-		public function setVelocity(x:Number,y:Number):void 
+		public function setSpeed(x:Number,y:Number):void 
 		{
 			_speed.resetComponent(x,y);
 		}
@@ -91,6 +91,10 @@ package z_spark.tileengine
 		public function setPosition(x:Number,y:Number):void
 		{
 			_position.resetComponent(x,y);
+		}
+		
+		public function positionShare(value:Vector2D):void{
+			_position=value;
 		}
 	}
 }
