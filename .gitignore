@@ -8,5 +8,11 @@
 *.actionScriptProperties
 *.flexLibProperties
 *.project
-build/.settings/
-build/bin/
+build/demo/.settings/
+build/tileengine/.settings/
+build/tileengine/bin/
+build/demo/bin-debug/
+build/demo/bin-release/
+res/地图.fla
+.metadata
+tmp/
