@@ -8,5 +8,5 @@
 *.actionScriptProperties
 *.flexLibProperties
 *.project
-.settings/
-bin/
+build/.settings/
+build/bin/
